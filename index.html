@@ -43,6 +43,7 @@
 <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 
 <link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/pages.css">
 <script>document.documentElement.classList.add('js');</script>
 <script src="/assets/js/main.js" defer></script>
 
@@ -122,22 +123,72 @@
   ]
 }
 </script>
-<noscript>
-  <style>
-    /* Without JS the toggle button cannot open the menu — show the links inline. */
-    @media (max-width: 860px) {
-      .nav__links { display: flex !important; }
-      .nav-toggle { display: none !important; }
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://www.arcooutdoors.com/#faq",
+  "isPartOf": { "@id": "https://www.arcooutdoors.com/#webpage" },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Which areas of South Florida do you serve?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We work across Broward, Miami-Dade and Palm Beach counties from our base in Davie. Parkland, Davie, Weston, Plantation, Fort Lauderdale, Pembroke Pines, Coral Springs and Boca Raton are among the markets we serve most often. If your address is nearby but not listed, call and ask."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Arco Outdoors licensed and insured?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We hold Florida Certified Building Contractor license CBC1269393 and carry insurance. The license number appears in our footer on every page so you can verify it independently before you hire anyone."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can one contractor really handle an entire outdoor remodel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "That is the reason Arco exists. Rather than hiring a paver installer, a carpenter for the pergola, a separate turf company and a fencing crew, one team designs and builds the whole space. We cover paver installation, patios, driveways, pool decks, outdoor kitchens, pergolas, tiki huts, artificial turf, fencing and impact windows and doors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens during the free consultation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A designer comes to your property, measures the area, and walks you through the material options that suit it. You leave with an understanding of what the space could become and a written estimate, with no obligation to proceed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about permits?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Permitting requirements differ from one South Florida municipality to the next, and they depend on what you are building. We review what applies to your specific project during the on-site consultation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I reach you?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Call 305-951-8862 or email jonah@arcooutdoors.com. Our office hours are Monday to Friday, 8:00 AM to 6:00 PM."
+      }
     }
-  </style>
-</noscript>
+  ]
+}
+</script>
 </head>
 
-<body>
+<body data-page="home">
+<!-- @partial:header -->
 <a class="skip-link" href="#main">Skip to main content</a>
 
-<!-- ============================== HEADER ============================== -->
-<header class="site-header">
+<header class="site-header" data-header>
   <div class="container header-top">
     <a class="brand" href="/" aria-label="Arco Outdoors — home">
       <span class="brand__mark" aria-hidden="true">A</span>
@@ -153,44 +204,102 @@
         <a class="header-phone__num" href="tel:+13059518862">305-951-8862</a>
       </div>
 
-      <a class="btn btn--gold btn--sm header-quote-btn" href="#consult">Get a Quote</a>
+      <a class="btn btn--gold btn--sm header-quote-btn" href="/get-a-quote/">Get a Quote</a>
 
       <a class="header-call-icon" href="tel:+13059518862" aria-label="Call Arco Outdoors at 305-951-8862">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#241d15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
       </a>
 
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
         <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
         <span class="visually-hidden">Menu</span>
       </button>
     </div>
   </div>
 
-  <nav class="nav" aria-label="Primary">
+  <nav class="nav" id="primary-nav" aria-label="Primary" data-nav-panel>
     <div class="container nav__inner">
-      <ul class="nav__links" id="primary-nav">
-        <li><a href="#top" aria-current="page">Home</a></li>
-        <li><a href="#about">About Us</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#journal">Blog</a></li>
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#consult">Contact Us</a></li>
-      </ul>
-      <ul class="nav__social">
-        <li>
-          <a class="social-dot" href="#" aria-label="Arco Outdoors on Facebook">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#e0a94e" aria-hidden="true" focusable="false"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H17V3.6c-.28-.04-1.24-.12-2.36-.12-2.34 0-3.94 1.43-3.94 4.05v2.26H8v3.1h2.7V21z"></path></svg>
-          </a>
+      <ul class="nav__links">
+        <li class="nav__item"><a href="/" data-nav="home">Home</a></li>
+
+        <li class="nav__item nav__group" data-nav-group>
+          <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="nav-services" data-nav="services">
+            Services
+            <svg class="nav__chevron" width="10" height="7" viewBox="0 0 10 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 1.5 5 5.5 9 1.5"></path></svg>
+          </button>
+          <div class="nav__panel nav__panel--two" id="nav-services" hidden>
+            <ul class="nav__panelList">
+              <li><a href="/services/outdoor-remodeling/">Complete Outdoor Remodeling</a></li>
+              <li><a href="/services/paver-installation/">Paver Installation</a></li>
+              <li><a href="/services/patios/">Patios</a></li>
+              <li><a href="/services/driveways/">Driveways</a></li>
+              <li><a href="/services/pool-decks/">Pool Decks</a></li>
+              <li><a href="/services/outdoor-kitchens/">Outdoor Kitchens</a></li>
+              <li><a href="/services/pergolas/">Pergolas</a></li>
+              <li><a href="/services/tiki-huts/">Tiki Huts</a></li>
+              <li><a href="/services/turf/">Artificial Turf</a></li>
+              <li><a href="/services/fence/">Fencing</a></li>
+              <li><a href="/services/impact-windows-doors/">Impact Windows &amp; Doors</a></li>
+            </ul>
+            <p class="nav__panelFoot"><a href="/services/">View All Services <span aria-hidden="true">→</span></a></p>
+          </div>
         </li>
-        <li>
-          <a class="social-dot" href="#" aria-label="Arco Outdoors on Instagram">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e0a94e" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#e0a94e" stroke="none"></circle></svg>
-          </a>
+
+        <li class="nav__item"><a href="/projects/" data-nav="projects">Projects</a></li>
+
+        <li class="nav__item nav__group" data-nav-group>
+          <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="nav-areas" data-nav="service-areas">
+            Service Areas
+            <svg class="nav__chevron" width="10" height="7" viewBox="0 0 10 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 1.5 5 5.5 9 1.5"></path></svg>
+          </button>
+          <div class="nav__panel nav__panel--two" id="nav-areas" hidden>
+            <ul class="nav__panelList">
+              <li><a href="/service-areas/parkland-fl/">Parkland</a></li>
+              <li><a href="/service-areas/davie-fl/">Davie</a></li>
+              <li><a href="/service-areas/weston-fl/">Weston</a></li>
+              <li><a href="/service-areas/plantation-fl/">Plantation</a></li>
+              <li><a href="/service-areas/fort-lauderdale-fl/">Fort Lauderdale</a></li>
+              <li><a href="/service-areas/pembroke-pines-fl/">Pembroke Pines</a></li>
+              <li><a href="/service-areas/coral-springs-fl/">Coral Springs</a></li>
+              <li><a href="/service-areas/boca-raton-fl/">Boca Raton</a></li>
+            </ul>
+            <p class="nav__panelFoot"><a href="/service-areas/">View All Service Areas <span aria-hidden="true">→</span></a></p>
+          </div>
+        </li>
+
+        <li class="nav__item"><a href="/about-us/" data-nav="about">About</a></li>
+
+        <li class="nav__item nav__group" data-nav-group>
+          <button class="nav__trigger" type="button" aria-expanded="false" aria-controls="nav-resources" data-nav="resources">
+            Resources
+            <svg class="nav__chevron" width="10" height="7" viewBox="0 0 10 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 1.5 5 5.5 9 1.5"></path></svg>
+          </button>
+          <div class="nav__panel nav__panel--end" id="nav-resources" hidden>
+            <ul class="nav__panelList">
+              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/gallery/">Gallery</a></li>
+              <li><a href="/reviews/">Reviews</a></li>
+            </ul>
+          </div>
         </li>
       </ul>
+
+      <!-- Shown only inside the mobile drawer; hidden at desktop widths. -->
+      <div class="nav__actions">
+        <a class="nav__call" href="tel:+13059518862">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span>
+            <span class="nav__callLabel">Call us today</span>
+            <span class="nav__callNum">305-951-8862</span>
+          </span>
+        </a>
+        <a class="btn btn--gold btn--block" href="/get-a-quote/">Get a Quote</a>
+        <p class="nav__license">Licensed &amp; insured · CBC1269393<br>Mon – Fri · 8:00 AM – 6:00 PM</p>
+      </div>
     </div>
   </nav>
 </header>
+<!-- @endpartial:header -->
 
 <main id="main">
 
@@ -210,7 +319,7 @@
       <div class="hero__content">
         <p class="hero__eyebrow">South Florida · Broward · Miami-Dade · Palm Beach</p>
         <h1 class="h1" id="hero-heading">Outdoor remodeling, elevated to an <em>art form.</em></h1>
-        <p class="hero__lead">Licensed &amp; insured paver and outdoor-living contractors crafting custom patios, pool decks, driveways &amp; outdoor kitchens across South Florida.</p>
+        <p class="hero__lead">Licensed &amp; insured South Florida contractors delivering complete outdoor transformations — patios, pool decks, driveways, outdoor kitchens, pergolas, turf &amp; fencing, coordinated by one accountable team.</p>
         <div class="hero__actions">
           <a class="btn btn--gold" href="#consult">Get a Free Quote</a>
           <a class="btn btn--ghostLight" href="#services">View Our Services</a>
@@ -236,6 +345,92 @@
       <li class="trust__item"><span class="mark mark--onDark" aria-hidden="true">✦</span> Transparent, Fixed Pricing</li>
     </ul>
   </div>
+
+  <!-- ============================== SERVICES ============================== -->
+  <section class="section section--sand" id="services" aria-labelledby="services-heading">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--center">What we do</p>
+        <h2 class="h2" id="services-heading">Our South Florida outdoor remodeling services</h2>
+      </div>
+
+      <div class="grid-auto">
+        <article class="card reveal">
+          <div class="card__media">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Paver patio with outdoor seating beside a modern home.">
+            <span class="card__num" aria-hidden="true">01</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">Patios</h3>
+            <p class="card__text">Custom paver patios designed for South Florida living — outdoor dining, lounge zones, and seamless transitions from home to garden.</p>
+            <a class="link-action" href="/services/patios/">Explore <span aria-hidden="true">→</span><span class="visually-hidden"> patios</span></a>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__media">
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Residential driveway approach with a paved surface and landscaping.">
+            <span class="card__num" aria-hidden="true">02</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">Driveways</h3>
+            <p class="card__text">Engineered driveway pavers built for strength and lasting curb appeal, with patterns and stone tones tailored to your home.</p>
+            <a class="link-action" href="/services/driveways/">Explore <span aria-hidden="true">→</span><span class="visually-hidden"> driveways</span></a>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__media">
+            <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Swimming pool bordered by a light stone deck.">
+            <span class="card__num" aria-hidden="true">03</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">Pool Decks</h3>
+            <p class="card__text">Heat-resistant travertine and paver pool decks with slip-safe surfaces, elegant coping, and waterline detailing.</p>
+            <a class="link-action" href="/services/pool-decks/">Explore <span aria-hidden="true">→</span><span class="visually-hidden"> pool decks</span></a>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__media">
+            <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Built-in counter and cabinetry of the kind used in an outdoor kitchen.">
+            <span class="card__num" aria-hidden="true">04</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">Outdoor Kitchens</h3>
+            <p class="card__text">Full outdoor kitchens with built-in grills, counters, and storage — the centerpiece of backyard entertaining.</p>
+            <a class="link-action" href="/services/outdoor-kitchens/">Explore <span aria-hidden="true">→</span><span class="visually-hidden"> outdoor kitchens</span></a>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__media">
+            <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Close view of a dense, evenly cut green lawn.">
+            <span class="card__num" aria-hidden="true">05</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">Artificial Turf</h3>
+            <p class="card__text">Premium, low-maintenance turf installation that stays lush and green year-round with virtually no upkeep.</p>
+            <a class="link-action" href="/services/turf/">Explore <span aria-hidden="true">→</span><span class="visually-hidden"> artificial turf</span></a>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card__media">
+            <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Timber-framed shade structure over a backyard seating area.">
+            <span class="card__num" aria-hidden="true">06</span>
+          </div>
+          <div class="card__body">
+            <h3 class="card__title">Fencing &amp; More</h3>
+            <p class="card__text">Fencing, pergolas, custom tiki huts, and impact windows &amp; doors to complete and protect your outdoor space.</p>
+            <a class="link-action" href="/services/fence/">Explore <span aria-hidden="true">→</span><span class="visually-hidden"> fencing, pergolas and tiki huts</span></a>
+          </div>
+        </article>
+      </div>
+
+      <p class="gallery-cta"><a class="btn btn--ghostDark" href="/services/">View All 11 Services</a></p>
+    </div>
+  </section>
 
   <!-- ============================== ABOUT ============================== -->
   <section class="container section about reveal" id="about" aria-labelledby="about-heading">
@@ -273,115 +468,6 @@
         <p>One accountable team from first sketch to final paver.</p>
       </figcaption>
     </figure>
-  </section>
-
-  <!-- ============================== SERVICES ============================== -->
-  <section class="section section--sand" id="services" aria-labelledby="services-heading">
-    <div class="container">
-      <div class="section-head">
-        <p class="eyebrow eyebrow--center">What we do</p>
-        <h2 class="h2" id="services-heading">Our South Florida outdoor remodeling services</h2>
-      </div>
-
-      <div class="grid-auto">
-        <article class="card reveal">
-          <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Paver patio with outdoor seating beside a modern home.">
-            <span class="card__num" aria-hidden="true">01</span>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Patios</h3>
-            <p class="card__text">Custom paver patios designed for South Florida living — outdoor dining, lounge zones, and seamless transitions from home to garden.</p>
-            <a class="link-action" href="#consult">Explore <span aria-hidden="true">→</span><span class="visually-hidden">patios</span></a>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Residential driveway approach with a paved surface and landscaping.">
-            <span class="card__num" aria-hidden="true">02</span>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Driveways</h3>
-            <p class="card__text">Engineered driveway pavers built for strength and lasting curb appeal, with patterns and stone tones tailored to your home.</p>
-            <a class="link-action" href="#consult">Explore <span aria-hidden="true">→</span><span class="visually-hidden">driveways</span></a>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Swimming pool bordered by a light stone deck.">
-            <span class="card__num" aria-hidden="true">03</span>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Pool Decks</h3>
-            <p class="card__text">Heat-resistant travertine and paver pool decks with slip-safe surfaces, elegant coping, and waterline detailing.</p>
-            <a class="link-action" href="#consult">Explore <span aria-hidden="true">→</span><span class="visually-hidden">pool decks</span></a>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Built-in counter and cabinetry of the kind used in an outdoor kitchen.">
-            <span class="card__num" aria-hidden="true">04</span>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Outdoor Kitchens</h3>
-            <p class="card__text">Full outdoor kitchens with built-in grills, counters, and storage — the centerpiece of backyard entertaining.</p>
-            <a class="link-action" href="#consult">Explore <span aria-hidden="true">→</span><span class="visually-hidden">outdoor kitchens</span></a>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Close view of a dense, evenly cut green lawn.">
-            <span class="card__num" aria-hidden="true">05</span>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Artificial Turf</h3>
-            <p class="card__text">Premium, low-maintenance turf installation that stays lush and green year-round with virtually no upkeep.</p>
-            <a class="link-action" href="#consult">Explore <span aria-hidden="true">→</span><span class="visually-hidden">artificial turf</span></a>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Timber-framed shade structure over a backyard seating area.">
-            <span class="card__num" aria-hidden="true">06</span>
-          </div>
-          <div class="card__body">
-            <h3 class="card__title">Fencing &amp; More</h3>
-            <p class="card__text">Fencing, pergolas, custom tiki huts, and impact windows &amp; doors to complete and protect your outdoor space.</p>
-            <a class="link-action" href="#consult">Explore <span aria-hidden="true">→</span><span class="visually-hidden">fencing and more</span></a>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================== WHY ARCO ============================== -->
-  <section class="why" aria-labelledby="why-heading">
-    <img class="why__texture" src="/assets/images/texture-palms-dusk.webp" width="1400" height="1811" loading="lazy" decoding="async" alt="" aria-hidden="true">
-    <div class="container why__inner">
-      <div class="why__head">
-        <p class="eyebrow eyebrow--onDark">Why Arco</p>
-        <h2 class="h2 h2--onDark" id="why-heading">Craftsmanship you can stand on — for decades.</h2>
-      </div>
-      <div class="why__grid">
-        <div class="why__item reveal">
-          <h3>Engineered to last</h3>
-          <p>Proper base prep, drainage, and premium pavers rated for South Florida heat, salt, and storms — not just a pretty surface.</p>
-        </div>
-        <div class="why__item reveal">
-          <h3>Transparent pricing</h3>
-          <p>Detailed, fixed proposals with no surprise line items. You approve the design and the number before we break ground.</p>
-        </div>
-        <div class="why__item reveal">
-          <h3>One accountable team</h3>
-          <p>In-house designers and installers manage your project end to end — clean sites, clear timelines, dependable communication.</p>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ============================== GALLERY ============================== -->
@@ -452,7 +538,113 @@
       </figure>
     </div>
 
-    <p class="gallery-cta"><a class="btn btn--ghostDark" href="#consult">Request Your Project Consultation</a></p>
+    <p class="gallery-cta"><a class="btn btn--ghostDark" href="/gallery/">View All Photos</a></p>
+  </section>
+
+    <!-- ============================== PROCESS ============================== -->
+  <section class="section section--sand" id="process" aria-labelledby="process-heading">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--center">How we work</p>
+        <h2 class="h2" id="process-heading">One team, one plan, from first sketch to final paver</h2>
+        <p class="lead" style="font-size:16.5px; line-height:1.7; margin-top:18px;">Coordinating separate trades is where outdoor projects usually go wrong. Arco designs and installs in house, so the same team is accountable for the whole space.</p>
+      </div>
+
+      <ol class="steps reveal">
+        <li>
+          <h3>Consultation</h3>
+          <p>A designer visits your property, measures the space, and talks through how you actually want to use it — dining, entertaining, shade, pets, parking.</p>
+        </li>
+        <li>
+          <h3>Design &amp; proposal</h3>
+          <p>You see the layout and the material options together — paver patterns, stone tones, coping, structures — with an itemised proposal to approve before anything starts.</p>
+        </li>
+        <li>
+          <h3>Preparation</h3>
+          <p>Excavation, base preparation, compaction and drainage. It is the part nobody sees and the part that decides whether the surface still looks right years from now.</p>
+        </li>
+        <li>
+          <h3>Installation</h3>
+          <p>Hardscaping, structures, turf and fencing are sequenced by one crew rather than handed between subcontractors, with the site cleaned down as work progresses.</p>
+        </li>
+        <li>
+          <h3>Walkthrough</h3>
+          <p>We walk the finished space with you, confirm every detail is as approved, and leave you with guidance on caring for the materials we installed.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+<!-- ============================== WHY ARCO ============================== -->
+  <section class="why" aria-labelledby="why-heading">
+    <img class="why__texture" src="/assets/images/texture-palms-dusk.webp" width="1400" height="1811" loading="lazy" decoding="async" alt="" aria-hidden="true">
+    <div class="container why__inner">
+      <div class="why__head">
+        <p class="eyebrow eyebrow--onDark">Why Arco</p>
+        <h2 class="h2 h2--onDark" id="why-heading">Craftsmanship you can stand on — for decades.</h2>
+      </div>
+      <div class="why__grid">
+        <div class="why__item reveal">
+          <h3>Engineered to last</h3>
+          <p>Proper base prep, drainage, and premium pavers rated for South Florida heat, salt, and storms — not just a pretty surface.</p>
+        </div>
+        <div class="why__item reveal">
+          <h3>Transparent pricing</h3>
+          <p>Detailed, fixed proposals with no surprise line items. You approve the design and the number before we break ground.</p>
+        </div>
+        <div class="why__item reveal">
+          <h3>One accountable team</h3>
+          <p>In-house designers and installers manage your project end to end — clean sites, clear timelines, dependable communication.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== SERVICE AREAS ============================== -->
+  <section class="container section" id="service-areas" aria-labelledby="areas-heading">
+    <div class="section-head section-head--wide">
+      <p class="eyebrow eyebrow--center">Service area</p>
+      <h2 class="h2 h2--sm" id="areas-heading">Building custom outdoor spaces across South Florida</h2>
+      <p class="lead" style="font-size:16px; line-height:1.7; margin-top:18px;">Patios, pool decks, outdoor kitchens &amp; driveways throughout Broward, Miami-Dade &amp; Palm Beach counties.</p>
+    </div>
+
+    <ul class="areas-grid">
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Aventura</li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/boca-raton-fl/">Boca Raton</a></li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Cooper City</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Coral Gables</li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/coral-springs-fl/">Coral Springs</a></li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/davie-fl/">Davie</a></li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Deerfield Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Doral</li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/fort-lauderdale-fl/">Fort Lauderdale</a></li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Hallandale Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Hialeah</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Hollywood</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Jupiter</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Miami Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Miami Gardens</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Miami Shores</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>North Miami</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Oakland Park</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Palm Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Palm Beach Gardens</li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/parkland-fl/">Parkland</a></li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/pembroke-pines-fl/">Pembroke Pines</a></li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Pinecrest</li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/plantation-fl/">Plantation</a></li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Pompano Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Royal Palm Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>South Miami</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Sunny Isles Beach</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Sunrise</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Tamarac</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Wellington</li>
+      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>West Palm Beach</li>
+      <li class="areas-grid__linked"><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg><a href="/service-areas/weston-fl/">Weston</a></li>
+    </ul>
+
+    <p class="gallery-cta"><a class="btn btn--ghostDark" href="/service-areas/">View All Service Areas</a></p>
   </section>
 
   <!-- ============================== REVIEWS ============================== -->
@@ -562,7 +754,7 @@
           <div class="card__body">
             <h3 class="card__title">Tiki hut designs that fit Parkland backyard entertainment spaces</h3>
             <p class="card__text">Most homeowners think a backyard upgrade means new furniture. But the real game-changer is a custom structure that anchors the space.</p>
-            <a class="link-action" href="#journal">Read article <span aria-hidden="true">→</span><span class="visually-hidden"> about tiki hut designs</span></a>
+            <a class="link-action" href="/blog/">Read article <span aria-hidden="true">→</span><span class="visually-hidden"> about tiki hut designs</span></a>
           </div>
         </article>
 
@@ -574,7 +766,7 @@
           <div class="card__body">
             <h3 class="card__title">Driveway pavers in Parkland that stand out in neighborhoods</h3>
             <p class="card__text">Most homeowners think pavers are just about looks — pattern, color, done. But curb appeal only holds up if the base is done right.</p>
-            <a class="link-action" href="#journal">Read article <span aria-hidden="true">→</span><span class="visually-hidden"> about driveway pavers</span></a>
+            <a class="link-action" href="/blog/">Read article <span aria-hidden="true">→</span><span class="visually-hidden"> about driveway pavers</span></a>
           </div>
         </article>
 
@@ -586,58 +778,54 @@
           <div class="card__body">
             <h3 class="card__title">Pool deck pavers that help reduce slippery surfaces</h3>
             <p class="card__text">Most homeowners think pool pavers are just about looks. Pick something pretty, lay it down, done. Safety says otherwise.</p>
-            <a class="link-action" href="#journal">Read article <span aria-hidden="true">→</span><span class="visually-hidden"> about pool deck pavers</span></a>
+            <a class="link-action" href="/blog/">Read article <span aria-hidden="true">→</span><span class="visually-hidden"> about pool deck pavers</span></a>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ============================== SERVICE AREAS ============================== -->
-  <section class="container section" id="service-areas" aria-labelledby="areas-heading">
+    <!-- ============================== FAQ ============================== -->
+  <section class="container section" id="faq" aria-labelledby="faq-heading">
     <div class="section-head section-head--wide">
-      <p class="eyebrow eyebrow--center">Service area</p>
-      <h2 class="h2 h2--sm" id="areas-heading">Building custom outdoor spaces across South Florida</h2>
-      <p class="lead" style="font-size:16px; line-height:1.7; margin-top:18px;">Patios, pool decks, outdoor kitchens &amp; driveways throughout Broward, Miami-Dade &amp; Palm Beach counties.</p>
+      <p class="eyebrow eyebrow--center">Common questions</p>
+      <h2 class="h2 h2--sm" id="faq-heading">What South Florida homeowners ask us first</h2>
     </div>
 
-    <ul class="areas-grid">
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Aventura</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Boca Raton</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Coral Gables</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Coral Springs</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Cooper City</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Davie</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Deerfield Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Doral</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Fort Lauderdale</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Hallandale Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Hialeah</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Hollywood</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Jupiter</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Miami Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Miami Gardens</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Miami Shores</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>North Miami</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Oakland Park</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Palm Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Palm Beach Gardens</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Pembroke Pines</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Pinecrest</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Plantation</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Pompano Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Royal Palm Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>South Miami</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Sunny Isles Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Sunrise</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Tamarac</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Wellington</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>West Palm Beach</li>
-      <li><svg width="12" height="12" viewBox="0 0 24 24" fill="#c69749" aria-hidden="true" focusable="false"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"></path></svg>Weston</li>
-    </ul>
+    <div class="faq" style="margin:0 auto;">
+      <details>
+        <summary>Which areas of South Florida do you serve?</summary>
+        <p>We work across Broward, Miami-Dade and Palm Beach counties from our base in Davie. Parkland, Davie, Weston, Plantation, Fort Lauderdale, Pembroke Pines, Coral Springs and Boca Raton are among the markets we serve most often — you can see the full list on our <a href="/service-areas/">service areas</a> page. If your address is nearby but not listed, call and ask.</p>
+      </details>
+
+      <details>
+        <summary>Is Arco Outdoors licensed and insured?</summary>
+        <p>Yes. We hold Florida Certified Building Contractor license <strong>CBC1269393</strong> and carry insurance. The license number appears in our footer on every page so you can verify it independently before you hire anyone — something worth doing with any contractor you consider.</p>
+      </details>
+
+      <details>
+        <summary>Can one contractor really handle an entire outdoor remodel?</summary>
+        <p>That is the reason Arco exists. Rather than hiring a paver installer, a carpenter for the pergola, a separate turf company and a fencing crew — then coordinating them yourself — one team designs and builds the whole space. We cover <a href="/services/paver-installation/">paver installation</a>, <a href="/services/patios/">patios</a>, <a href="/services/driveways/">driveways</a>, <a href="/services/pool-decks/">pool decks</a>, <a href="/services/outdoor-kitchens/">outdoor kitchens</a>, <a href="/services/pergolas/">pergolas</a>, <a href="/services/tiki-huts/">tiki huts</a>, <a href="/services/turf/">artificial turf</a>, <a href="/services/fence/">fencing</a> and <a href="/services/impact-windows-doors/">impact windows &amp; doors</a>.</p>
+      </details>
+
+      <details>
+        <summary>What happens during the free consultation?</summary>
+        <p>A designer comes to your property, measures the area, and walks you through the material options that suit it. You leave with an understanding of what the space could become and a written estimate — with no obligation to proceed.</p>
+      </details>
+
+      <details>
+        <summary>What about permits?</summary>
+        <p>Permitting requirements differ from one South Florida municipality to the next, and they depend on what you are building — a paver patio and a roofed structure are not treated the same way. We review what applies to your specific project during the on-site consultation, so there are no surprises after you have committed.</p>
+      </details>
+
+      <details>
+        <summary>How do I reach you?</summary>
+        <p>Call <a href="tel:+13059518862">305-951-8862</a> or email <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a>. Our office hours are Monday to Friday, 8:00 AM to 6:00 PM. You can also <a href="/get-a-quote/">request a quote</a> and we will come back to you.</p>
+      </details>
+    </div>
   </section>
 
-  <!-- ============================== CONSULTATION ============================== -->
+<!-- ============================== CONSULTATION ============================== -->
   <section class="section section--sand" id="consult" aria-labelledby="consult-heading">
     <div class="container consult">
       <div class="consult__intro">
@@ -744,70 +932,88 @@
 
 </main>
 
-<!-- ============================== FOOTER ============================== -->
+<!-- @partial:footer -->
 <footer class="site-footer">
-  <div class="site-footer__grid">
-    <div>
+  <div class="container site-footer__grid">
+
+    <div class="site-footer__brandCol">
       <div class="footer-brand">
         <span class="footer-brand__mark" aria-hidden="true">A</span>
         <span class="footer-brand__name">ARCO OUTDOORS</span>
       </div>
-      <p class="site-footer__about">South Florida paver and outdoor-remodeling specialists. Custom patios, driveways, pool decks, outdoor kitchens, turf &amp; more — built to last.</p>
-      <p class="site-footer__hours">Mon – Fri · 8:00 AM – 6:00 PM<br>License CBC1269393</p>
+      <p class="site-footer__about">One accountable contractor for coordinated South Florida outdoor spaces — hardscaping, outdoor kitchens, shade structures, turf and fencing, designed and built by a single in-house team.</p>
+      <p class="site-footer__license">
+        <span class="site-footer__licenseLabel">Licensed &amp; Insured</span>
+        <span class="site-footer__licenseNum">License CBC1269393</span>
+      </p>
     </div>
 
-    <nav aria-labelledby="footer-explore">
-      <h2 id="footer-explore">Explore</h2>
-      <div class="footer-links">
-        <a href="#top">Home</a>
-        <a href="#about">About Us</a>
-        <a href="#services">Services</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#journal">Blog</a>
-      </div>
-    </nav>
-
-    <nav aria-labelledby="footer-services">
+    <nav class="site-footer__col" aria-labelledby="footer-services">
       <h2 id="footer-services">Services</h2>
-      <div class="footer-links">
-        <a href="#services">Patios</a>
-        <a href="#services">Driveways</a>
-        <a href="#services">Pool Decks</a>
-        <a href="#services">Outdoor Kitchens</a>
-        <a href="#services">Artificial Turf</a>
-      </div>
+      <ul class="footer-links">
+        <li><a href="/services/paver-installation/">Paver Installation</a></li>
+        <li><a href="/services/patios/">Patios</a></li>
+        <li><a href="/services/driveways/">Driveways</a></li>
+        <li><a href="/services/pool-decks/">Pool Decks</a></li>
+        <li><a href="/services/outdoor-kitchens/">Outdoor Kitchens</a></li>
+        <li><a href="/services/pergolas/">Pergolas</a></li>
+        <li><a href="/services/tiki-huts/">Tiki Huts</a></li>
+        <li><a href="/services/turf/">Artificial Turf</a></li>
+        <li><a href="/services/fence/">Fencing</a></li>
+      </ul>
     </nav>
 
-    <div>
+    <nav class="site-footer__col" aria-labelledby="footer-areas">
+      <h2 id="footer-areas">Service Areas</h2>
+      <ul class="footer-links">
+        <li><a href="/service-areas/parkland-fl/">Parkland</a></li>
+        <li><a href="/service-areas/davie-fl/">Davie</a></li>
+        <li><a href="/service-areas/weston-fl/">Weston</a></li>
+        <li><a href="/service-areas/plantation-fl/">Plantation</a></li>
+        <li><a href="/service-areas/fort-lauderdale-fl/">Fort Lauderdale</a></li>
+        <li><a href="/service-areas/pembroke-pines-fl/">Pembroke Pines</a></li>
+        <li><a class="footer-links__more" href="/service-areas/">View All Areas <span aria-hidden="true">→</span></a></li>
+      </ul>
+    </nav>
+
+    <nav class="site-footer__col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul class="footer-links">
+        <li><a href="/about-us/">About</a></li>
+        <li><a href="/projects/">Projects</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/reviews/">Reviews</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contact-us/">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="site-footer__col site-footer__contact">
       <h2 id="footer-contact">Contact</h2>
+      <a class="footer-phone" href="tel:+13059518862">305-951-8862</a>
+      <a class="footer-email" href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a>
       <address>
         2940 SW 81st Way<br>
         Davie, FL 33328
       </address>
-      <a class="footer-phone" href="tel:+13059518862">305-951-8862</a>
-      <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a>
-      <ul class="footer-social">
-        <li>
-          <a class="social-dot" href="#" aria-label="Arco Outdoors on Facebook">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#e0a94e" aria-hidden="true" focusable="false"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H17V3.6c-.28-.04-1.24-.12-2.36-.12-2.34 0-3.94 1.43-3.94 4.05v2.26H8v3.1h2.7V21z"></path></svg>
-          </a>
-        </li>
-        <li>
-          <a class="social-dot" href="#" aria-label="Arco Outdoors on Instagram">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e0a94e" stroke-width="2" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#e0a94e" stroke="none"></circle></svg>
-          </a>
-        </li>
-      </ul>
+      <p class="site-footer__hours">Mon – Fri · 8:00 AM – 6:00 PM</p>
+      <a class="btn btn--gold btn--sm site-footer__cta" href="/get-a-quote/">Get a Quote</a>
     </div>
+
   </div>
 
   <div class="site-footer__bar">
     <div class="container">
-      <span>© <span id="year">2026</span> Arco Outdoors · All rights reserved.</span>
-      <span class="site-footer__legal">Privacy Policy · Accessibility Statement · Cookie Policy</span>
+      <span>© <span data-year>2026</span> Arco Outdoors · All rights reserved.</span>
+      <nav class="site-footer__legal" aria-label="Legal">
+        <a href="/privacy-policy/">Privacy Policy</a>
+        <a href="/cookie-policy/">Cookie Policy</a>
+        <a href="/accessibility/">Accessibility Statement</a>
+      </nav>
     </div>
   </div>
 </footer>
+<!-- @endpartial:footer -->
 
 </body>
 </html>

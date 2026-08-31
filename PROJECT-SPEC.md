@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-08-31 (audit + de-bundle + static structure pass)
+Last updated: 2026-08-31 (pass 2 — global navigation, footer, homepage architecture)
 
 ---
 
@@ -87,18 +87,24 @@ Priority location pages, in build order:
 
 | # | City | Route |
 |---|---|---|
-| 1 | Parkland | `/service-areas/parkland/` |
-| 2 | Davie | `/service-areas/davie/` |
-| 3 | Weston | `/service-areas/weston/` |
-| 4 | Plantation | `/service-areas/plantation/` |
-| 5 | Fort Lauderdale | `/service-areas/fort-lauderdale/` |
-| 6 | Pembroke Pines | `/service-areas/pembroke-pines/` |
-| 7 | Coral Springs | `/service-areas/coral-springs/` |
-| 8 | Boca Raton | `/service-areas/boca-raton/` |
+| 1 | Parkland | `/service-areas/parkland-fl/` |
+| 2 | Davie | `/service-areas/davie-fl/` |
+| 3 | Weston | `/service-areas/weston-fl/` |
+| 4 | Plantation | `/service-areas/plantation-fl/` |
+| 5 | Fort Lauderdale | `/service-areas/fort-lauderdale-fl/` |
+| 6 | Pembroke Pines | `/service-areas/pembroke-pines-fl/` |
+| 7 | Coral Springs | `/service-areas/coral-springs-fl/` |
+| 8 | Boca Raton | `/service-areas/boca-raton-fl/` |
+
+City slugs carry the `-fl` suffix. Service slugs do not mirror their display
+names exactly — see §8 for the three that differ.
 
 Counties named on the homepage: Broward, Miami-Dade, Palm Beach.
-The homepage service-area list carries 32 municipalities; that list is a
-coverage statement, not a claim of completed work in each.
+The homepage service-area list carries 33 municipalities (Parkland was missing
+until pass 2 despite being priority market #1). That list is a coverage
+statement, not a claim of completed work in each. The eight priority markets
+are hyperlinked to their pages; the remaining 25 are plain text, so the link
+affordance itself signals which markets have a page.
 
 **Never claim an Arco project occurred in a particular city unless that project
 location is verified.**
@@ -124,54 +130,147 @@ the tooling must not become a repository dependency.
 /
   index.html                    ← homepage (live)
   404.html                      ← live
-  robots.txt                    ← live
-  sitemap.xml                   ← live; add each new URL as it ships
-  favicon.svg                   ← live
-  PROJECT-SPEC.md               ← this file
+  robots.txt  sitemap.xml  favicon.svg  PROJECT-SPEC.md
 
   assets/
-    css/style.css               ← design system + homepage components (live)
-    css/pages.css               ← shared interior-page components (live, unused until first interior page)
-    js/main.js                  ← nav, reveal, form, year (live)
-    images/                     ← 17 WebP files (live)
-    fonts/                      ← 6 WOFF2 subsets (live)
+    css/style.css               ← tokens, global nav, footer, homepage components
+    css/pages.css               ← shared interior-page components
+    js/main.js                  ← nav, current-page, reveal, form, year
+    images/  fonts/
+    partials/header.html        ← canonical header markup (source of truth)
+    partials/footer.html        ← canonical footer markup (source of truth)
+
+  tools/sync-partials.py        ← authoring helper, never a deploy step
 ```
 
-### Planned routes — not yet built
+### 8.1 The partial system — how to build every future page
 
-Directories are created **when their page is written**, never as empty
-placeholders (git cannot track an empty directory, and a stub file would be a
-placeholder). Each page below gets an `index.html` at its route.
+The header and footer are **generated, not written**. Each page carries markers:
 
-```
-/services/                      hub
-/services/<service-slug>/       one per §5 service
-/service-areas/                 hub
-/service-areas/<city-slug>/     one per §6 city
-/projects/                      hub + individual project pages
-/gallery/
-/about-us/
-/reviews/
-/blog/                          index + /blog/<post-slug>/
-/contact-us/
-/get-a-quote/
-/privacy-policy/
-/cookie-policy/
-/accessibility/
+```html
+<body data-page="services">
+<!-- @partial:header -->
+   …generated — do not hand-edit…
+<!-- @endpartial:header -->
+
+<main id="main"> … </main>
+
+<!-- @partial:footer -->
+<!-- @endpartial:footer -->
+</body>
 ```
 
-### Rules when adding a page
+Workflow for a new page:
 
-1. Add its `<url>` entry to `sitemap.xml`. Never list a URL before it resolves.
-2. Link it from the primary nav and/or footer, and from at least one relevant
-   body-copy location.
-3. Load `style.css` **then** `pages.css`.
-4. Convert the homepage's in-page anchors that now point at `#services`,
-   `#gallery`, `#journal`, `#consult` to the real routes as they ship
-   (see §13 for the current placeholder inventory).
-5. Wire the footer legal line (currently plain text, deliberately not links) to
-   `/privacy-policy/`, `/cookie-policy/` and `/accessibility/` once those pages
-   exist.
+1. Copy `index.html`'s `<head>` block and swap the title, description, canonical,
+   Open Graph and JSON-LD. Load `style.css` **then** `pages.css` — every page
+   loads both, so the `<head>` boilerplate is identical everywhere.
+2. Set `<body data-page="…">` (see the table below). Nothing else drives the
+   navigation's current state.
+3. Paste the two marker pairs; leave them empty.
+4. Run `python3 tools/sync-partials.py` — it fills them from `assets/partials/`.
+5. Add the URL to `sitemap.xml`.
+
+To change the navigation or footer **anywhere**, edit the partial and re-run the
+script. Never edit the copy inside a page; `python3 tools/sync-partials.py --check`
+exits non-zero when a page has drifted, and is the pre-commit guard.
+
+The script is Python 3 stdlib only and touches nothing at deploy time. The
+committed HTML is complete and static — §7's "no build step" rule still holds.
+
+| `data-page` value | Marks as current |
+|---|---|
+| `home` | Home |
+| `services` | Services |
+| `projects` | Projects |
+| `service-areas` | Service Areas |
+| `about` | About |
+| `resources` | Resources (blog, gallery, reviews) |
+
+`main.js` also sets `aria-current="page"` on any dropdown-panel or footer link
+whose `href` matches the current path, so a service page lights up both its
+top-level trigger and its own entry.
+
+### 8.2 Canonical routes
+
+Three service slugs deliberately differ from their display names. Use the slug
+in URLs and the display name in copy — never the reverse.
+
+| Nav label | Route |
+|---|---|
+| Complete Outdoor Remodeling | `/services/outdoor-remodeling/` |
+| Paver Installation | `/services/paver-installation/` |
+| Patios | `/services/patios/` |
+| Driveways | `/services/driveways/` |
+| Pool Decks | `/services/pool-decks/` |
+| Outdoor Kitchens | `/services/outdoor-kitchens/` |
+| Pergolas | `/services/pergolas/` |
+| Tiki Huts | `/services/tiki-huts/` |
+| **Artificial Turf** | `/services/turf/` |
+| **Fencing** | `/services/fence/` |
+| Impact Windows & Doors | `/services/impact-windows-doors/` |
+
+Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
+routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
+`/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
+
+**Every one of these is linked from the global nav or footer and returns 404
+until its page is built.** That is a deliberate, approved state, not a defect.
+`sitemap.xml` still lists only URLs that resolve — add each entry as it ships.
+
+### 8.3 Navigation model
+
+Six top-level items; three carry dropdowns.
+
+| Item | Route | Dropdown |
+|---|---|---|
+| Home | `/` | — |
+| Services | trigger only | 11 services + View All Services |
+| Projects | `/projects/` | — |
+| Service Areas | trigger only | 8 cities + View All Service Areas |
+| About | `/about-us/` | — |
+| Resources | trigger only | Blog, Gallery, Reviews |
+
+The primary CTA (`Get a Quote` → `/get-a-quote/`) and the phone number sit in the
+sand bar above the ink nav bar, and both reappear as large actions inside the
+mobile drawer.
+
+Dropdown triggers are `<button>` elements, never links — they do not navigate,
+so a link would lie to assistive technology. `aria-expanded` on the trigger is
+the single source of truth in both presentations; CSS reads it for the chevron
+and the hamburger, JS toggles the panel's `hidden` attribute.
+
+Behaviour, desktop (>860px): hover opens; a click on an already-hover-opened
+panel keeps it open (a plain toggle would shut the panel the instant the visitor
+clicked what they wanted) and a second click closes it; opening one closes the
+others; `Escape` closes and returns focus to the trigger; moving focus out of
+the group closes it; an outside click closes everything.
+
+Behaviour, mobile (≤860px): the ink bar becomes a fixed drawer offset by
+`--header-h` (measured by JS, because the header wraps to two rows on phones).
+Panels become accordions and several may sit open at once. Opening the drawer
+locks body scroll with `position: fixed` — `overflow: hidden` alone does not
+hold on iOS Safari — and restores the exact scroll offset on close, with
+`scroll-behavior` forced to `auto` so the restore does not animate. Tab is
+trapped inside the drawer. `Escape` closes it and returns focus to the toggle.
+Choosing any link closes it. Crossing the breakpoint closes everything, so no
+overlay is ever stranded.
+
+Without JavaScript (`html:not(.js)` in `style.css`, not a per-page `<noscript>`):
+desktop panels open on `:hover`/`:focus-within`; on mobile the drawer becomes a
+static, fully expanded list and the hamburger is hidden. Every destination stays
+reachable.
+
+### 8.4 Footer model
+
+Five columns — brand + license, Services (9), Service Areas (6 + View All),
+Company (6), Contact — over a legal bar carrying Privacy Policy, Cookie Policy
+and Accessibility Statement. Collapses to three columns at 1180px and to
+`auto-fit` at 860px.
+
+**No social profile links.** None have been verified for this business (§3). Do
+not add them on the strength of an icon looking nice; the four `href="#"`
+placeholders that shipped in pass 1 were removed in pass 2.
 
 ## 9. DESIGN SYSTEM
 
@@ -278,12 +377,18 @@ The identity is predominantly **square**. Radius is the exception, not the rule.
 
 | Width | Behaviour |
 |---|---|
-| `> 860px` | full desktop: horizontal nav, header phone block + quote button |
-| `≤ 860px` | gutter 20px, section padding 56px; header phone and quote button hide, round call icon and hamburger appear; nav collapses to a stacked panel; trust strip stacks and dividers hide; gallery becomes one column at 220px rows |
+| `> 1180px` | five-column footer |
+| `≤ 1180px` | footer drops to three columns, brand column spans full width |
+| `861–1080px` | nav link padding and header phone tighten so six items still fit one row |
+| `> 860px` | full desktop: horizontal nav with dropdown panels, header phone block + quote button |
+| `≤ 860px` | gutter 20px, section padding 56px; header phone and quote button hide, round call icon and hamburger appear; nav becomes a fixed drawer with accordions; trust strip stacks and dividers hide; gallery becomes one column at 220px rows; about badge un-offsets |
 | `≤ 480px` | headings allowed to break long words |
 
-There is no other breakpoint. Interior pages add `1024px` only for the
-`.with-rail` article layout.
+Interior pages add `1024px` only for the `.with-rail` article layout.
+
+`--header-h` is set on `<html>` by `main.js` from the measured height of
+`.header-top` (92px on tablet and up, 158–184px on phones where the brand row
+wraps). The mobile drawer is offset by it. Never hard-code that value.
 
 ### 9.7 Image treatment
 
@@ -296,10 +401,26 @@ knocked back (`.14`–`.22` opacity) over `--ink`.
 ### 9.8 Navigation treatment
 
 Two-tier sticky header: a sand top bar (wordmark, phone, gold CTA) above an ink
-bar carrying uppercase tracked links, with the active item in `--gold`. Social
-dots are gold-outlined circles that fill gold on hover. On mobile the ink bar
-becomes a full-width stacked list toggled by a bordered square hamburger that
-morphs into an X.
+bar carrying uppercase tracked links, with the active item in `--gold`. Dropdown
+triggers are visually identical to plain links plus a 10×7 chevron that rotates
+180° when open.
+
+Dropdown panels are `--ink` with a 2px `--gold` top border and a
+`0 26px 50px rgba(20,16,10,.45)` shadow, anchored to the trigger's left edge —
+except the last item (Resources), which anchors right so it cannot overflow the
+viewport. Services and Service Areas use two 190px columns; a `View All …` link
+sits below a gold hairline. Panel links are 13.5px `--cream-2`, going `--gold`
+on hover.
+
+On mobile the ink bar becomes a fixed drawer sliding in from the right over
+280ms, offset from the top by `--header-h`. Panels become accordions indented
+behind a gold left rule. Below them sit a large outlined phone action (display
+serif number over a tracked micro-label), a full-width gold `Get a Quote`
+button, and the licence and hours in `--foot-muted`. The toggle is a bordered
+square hamburger that morphs into an X.
+
+Behaviour, keyboard support and the no-JS fallback are specified in §8.3.
+Social dots were removed in pass 2 — the class no longer exists.
 
 ### 9.9 CTA treatment
 
@@ -379,40 +500,92 @@ of them may be repeated on any new page until verified.
 | 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". |
 | 8 | Services + journal cards | 9 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. |
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
-| 10 | Header + footer | Facebook and Instagram icons link to `href="#"` | Profile URLs were never supplied. |
+| 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
+| 12 | Global nav + footer | 31 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` correctly lists only `/`. Do not submit the sitemap or launch until the routes resolve. |
 
-## 13. HOMEPAGE CHANGE LOG (this pass)
+## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
-The homepage was **de-bundled, not redesigned**. Rendered height changed by 3px
-desktop (9359 → 9362) and 63px mobile (16507 → 16570).
+### 13.1 Section order (set in pass 2)
 
-Three copy changes, all mandated by §6 (homepage must not be a Parkland page):
+The homepage runs hero → proof → offer → positioning → evidence → method →
+differentiation → geography → social proof → content → objections → conversion.
 
-| Was | Now |
-|---|---|
-| `PARKLAND · BROWARD · MIAMI-DADE · PALM BEACH` (hero eyebrow) | `SOUTH FLORIDA · BROWARD · MIAMI-DADE · PALM BEACH` |
-| `Our Parkland outdoor remodeling services` (H2) | `Our South Florida outdoor remodeling services` |
-| `Parkland's paver and outdoor-remodeling experts…` (footer) | `South Florida paver and outdoor-remodeling specialists…` |
-
-Two functional changes:
-
-| Was | Now | Why |
+| # | Section | `id` |
 |---|---|---|
-| Gallery button `VIEW ALL PHOTOS` → `#gallery` | `REQUEST YOUR PROJECT CONSULTATION` → `#consult` | The link scrolled to the section the visitor was already reading. Restore the original label and point it at `/gallery/` once that page ships. |
-| Form select: 7 options, some off-list | 12 options matching §5 exactly | Canonical service naming. |
+| 1 | Hero — core value proposition | `top` |
+| 2 | Trust / licensing strip | — |
+| 3 | Main services (6 cards + View All 11 Services) | `services` |
+| 4 | Complete-outdoor-transformation positioning | `about` |
+| 5 | Featured work / gallery | `gallery` |
+| 6 | Process — 5 steps | `process` |
+| 7 | Why Arco | — |
+| 8 | Service areas (33 markets, 8 linked) | `service-areas` |
+| 9 | Reviews | `reviews` |
+| 10 | Journal | `journal` |
+| 11 | FAQs — 6 questions | `faq` |
+| 12 | Consultation form | `consult` |
+| 13 | Closing CTA | `quote` |
 
-### Placeholder link inventory — repoint as routes ship
+Keep this order. Sections 6 and 11 were added in pass 2; everything else was
+reordered, not rewritten.
 
-| Current target | Count | Becomes |
+### 13.2 Pass 1 — de-bundling
+
+Three Parkland-first strings became South Florida (hero eyebrow, services H2,
+footer summary). Form select expanded to the canonical service list. The gallery
+CTA was relabelled because it scrolled to the section already on screen.
+
+### 13.3 Pass 2 — navigation, footer, architecture
+
+Header and footer replaced by the generated partials (§8.1). Homepage sections
+reordered per §13.1.
+
+**Added:**
+
+- *Process* section (`.steps` from `pages.css`): consultation → design &
+  proposal → preparation → installation → walkthrough. Describes method only —
+  no durations, prices or guarantees.
+- *FAQ* section (`.faq`, native `<details>`): service area, licensing,
+  single-contractor scope, what the consultation involves, permits, contact.
+  Every answer is drawn from §3 and §5 alone. `FAQPage` JSON-LD mirrors it.
+- `View All 11 Services` and `View All Service Areas` CTAs.
+- Parkland added to the service-area list — it was absent despite being
+  priority market #1.
+
+**Copy changed (one string):** the hero lead listed four paver-adjacent trades,
+which undersold §4. It now reads "…delivering complete outdoor transformations —
+patios, pool decks, driveways, outdoor kitchens, pergolas, turf & fencing,
+coordinated by one accountable team."
+
+**Removed:** the four Facebook/Instagram `href="#"` placeholders, and the
+per-page `<noscript>` blocks (the fallback now lives in `style.css`).
+
+**Fixed:** `.about__badge` sits at `left: -34px` to overhang its image; on
+phones that pushed it past the viewport edge where `overflow-x: hidden` clipped
+the text. It now un-offsets at ≤860px. Inherited from the original bundle.
+
+### 13.4 Remaining Parkland references — all intentional
+
+Three, and each is correct: one testimonial location (already flagged in §12)
+and two journal headlines targeting Parkland as a market. Parkland is one
+important market, never the company's home positioning.
+
+### 13.5 Link inventory
+
+All 32 unique routes on the homepage are on the §8.2 map; zero `href="#"`
+remain. Four in-page anchors are deliberate and resolve today:
+
+| Anchor | Used by | Why not a route |
 |---|---|---|
-| `#services` (service card "Explore", footer service links) | 11 | `/services/<slug>/` |
-| `#journal` ("Read article") | 3 | `/blog/<slug>/` |
-| `#consult` | 6 | `/get-a-quote/` or `/contact-us/` |
-| `#gallery` | 2 | `/gallery/` |
-| `#about` | 2 | `/about-us/` |
-| `href="#"` (social) | 4 | real profile URLs, or remove the icons |
-| Footer legal text (unlinked on purpose) | 3 | `/privacy-policy/`, `/cookie-policy/`, `/accessibility/` |
+| `#main` | skip link | — |
+| `#services` | hero "View Our Services" | the section is on screen; scrolling beats a page load |
+| `#about` | hero scroll cue | as above |
+| `#consult` | hero CTA, gallery/FAQ/closing CTA | the working quote form is on this page |
+
+`/get-a-quote/` is used by the header, drawer and footer CTAs. When that page
+ships, decide per-CTA whether the on-page form or the dedicated page is the
+better destination; do not blanket-replace.
 
 ## 14. FORMS
 
@@ -443,9 +616,10 @@ Required on every page:
 
 - semantic landmarks (`header`, `nav[aria-label]`, `main`, `footer`), one `main`
 - a skip link as the first tab stop
-- keyboard-operable navigation; the mobile menu is a `<button aria-expanded>`
-  driving CSS, closing on link choice, on `Escape`, and on resize to desktop
-- a `<noscript>` block that exposes the nav when JS is unavailable
+- keyboard-operable navigation — see §8.3 for the full dropdown and drawer
+  contract (`aria-expanded`, `Escape`, focus return, focus trap, scroll lock)
+- a CSS no-JS fallback (`html:not(.js)` in `style.css`) that keeps every
+  navigation destination reachable when scripting is off
 - visible focus (`3px` outline, `3px` offset; cream on dark grounds)
 - correct heading order, exactly one `h1`
 - meaningful `alt`; decorative images get `alt=""` + `aria-hidden="true"`
@@ -552,4 +726,10 @@ repository root is enough to serve it.
 - [ ] Renders and navigates with JavaScript disabled
 - [ ] `prefers-reduced-motion: reduce` leaves all content visible and still
 - [ ] New URL added to `sitemap.xml`
+- [ ] `python3 tools/sync-partials.py --check` exits 0
+- [ ] `<body data-page="…">` set, and the right nav item shows as current
+- [ ] Both stylesheets loaded, `style.css` before `pages.css`
+- [ ] Dropdowns open on hover, click and `Enter`; `Escape` returns focus
+- [ ] Mobile drawer: opens, accordions expand, body scroll locks, scroll offset
+      restores on close, `Escape` closes, Tab stays inside
 - [ ] No claim from §4 or §11 introduced
