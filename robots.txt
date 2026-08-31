@@ -1,0 +1,5 @@
+# https://www.arcooutdoors.com/robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://www.arcooutdoors.com/sitemap.xml
