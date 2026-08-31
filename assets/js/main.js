@@ -11,74 +11,220 @@
     : { matches: false };
 
   /* ---------------------------------------------------------------------------
-     1. Mobile navigation
-     The button carries the state; CSS reads `aria-expanded` so the control and
-     its visual affordance can never disagree.
+     1. Global navigation
+     One controller drives both presentations:
+       desktop (>860px) — dropdown panels opened by hover, click or keyboard
+       mobile  (<=860px) — a slide-in drawer whose panels behave as accordions
+     `aria-expanded` on the trigger is the single source of truth in both.
      ------------------------------------------------------------------------- */
-  function initNav() {
-    var toggle = document.querySelector('.nav-toggle');
-    var links = document.getElementById('primary-nav');
-    if (!toggle || !links) return;
+  var MOBILE = '(max-width: 860px)';
 
-    function setOpen(open) {
-      toggle.setAttribute('aria-expanded', String(open));
-      links.classList.toggle('is-open', open);
+  function onMediaChange(mq, fn) {
+    if (mq.addEventListener) mq.addEventListener('change', fn);
+    else if (mq.addListener) mq.addListener(fn);
+  }
+
+  function initNav() {
+    var header = document.querySelector('[data-header]');
+    var toggle = document.querySelector('[data-nav-toggle]');
+    var drawer = document.querySelector('[data-nav-panel]');
+    if (!header || !toggle || !drawer) return;
+
+    var groups = Array.prototype.slice.call(document.querySelectorAll('[data-nav-group]'))
+      .map(function (group) {
+        var trigger = group.querySelector('.nav__trigger');
+        var panel = trigger && document.getElementById(trigger.getAttribute('aria-controls'));
+        return trigger && panel ? { group: group, trigger: trigger, panel: panel } : null;
+      })
+      .filter(Boolean);
+
+    var mobile = window.matchMedia(MOBILE);
+    var scrollY = 0;
+    var hoverTimer = null;
+
+    /* -- the drawer needs to start below the header, whatever height it is -- */
+    function measureHeader() {
+      var bar = header.querySelector('.header-top');
+      if (bar) {
+        document.documentElement.style.setProperty(
+          '--header-h', Math.round(bar.getBoundingClientRect().height) + 'px');
+      }
     }
 
-    toggle.addEventListener('click', function () {
-      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    /* -- dropdown / accordion -------------------------------------------- */
+    function setPanel(entry, open) {
+      entry.trigger.setAttribute('aria-expanded', String(open));
+      entry.panel.hidden = !open;
+    }
+
+    function closeAllPanels(except) {
+      groups.forEach(function (entry) {
+        if (entry !== except) setPanel(entry, false);
+      });
+    }
+
+    groups.forEach(function (entry) {
+      entry.trigger.addEventListener('click', function () {
+        var open = entry.trigger.getAttribute('aria-expanded') === 'true';
+
+        // On a mouse, hovering the trigger has already opened the panel by the
+        // time the click lands. Toggling here would shut it the instant the
+        // visitor clicked the thing they wanted, so the first click only makes
+        // the open state deliberate; a second one closes it.
+        if (open && entry.hoverOpened) {
+          entry.hoverOpened = false;
+          return;
+        }
+
+        if (!mobile.matches) closeAllPanels(entry);
+        setPanel(entry, !open);
+        entry.hoverOpened = false;
+      });
+
+      // Pointer affordance is desktop-only; touch fires click instead.
+      entry.group.addEventListener('mouseenter', function () {
+        if (mobile.matches) return;
+        window.clearTimeout(hoverTimer);
+        closeAllPanels(entry);
+        setPanel(entry, true);
+        entry.hoverOpened = true;
+      });
+      entry.group.addEventListener('mouseleave', function () {
+        if (mobile.matches) return;
+        hoverTimer = window.setTimeout(function () {
+          setPanel(entry, false);
+          entry.hoverOpened = false;
+        }, 120);
+      });
+
+      // Tabbing out of the group closes it, so focus never lands behind a panel.
+      entry.group.addEventListener('focusout', function (e) {
+        if (mobile.matches) return;
+        if (!entry.group.contains(e.relatedTarget)) setPanel(entry, false);
+      });
     });
 
-    // Choosing a destination closes the menu.
-    links.addEventListener('click', function (e) {
-      if (e.target.closest('a')) setOpen(false);
+    /* -- body scroll lock -------------------------------------------------
+       position:fixed rather than overflow:hidden, because iOS Safari ignores
+       overflow on <body> and scrolls the page behind the drawer anyway. */
+    function lockScroll() {
+      scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      document.body.style.top = '-' + scrollY + 'px';
+      document.body.classList.add('is-nav-locked');
+    }
+    function unlockScroll() {
+      document.body.classList.remove('is-nav-locked');
+      document.body.style.top = '';
+      // `scroll-behavior: smooth` would animate the restore and leave the
+      // visitor watching the page fly back to where they already were.
+      var root = document.documentElement;
+      var previous = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, scrollY);
+      root.style.scrollBehavior = previous;
+    }
+
+    /* -- drawer ------------------------------------------------------------ */
+    function drawerOpen() { return toggle.getAttribute('aria-expanded') === 'true'; }
+
+    function setDrawer(open) {
+      if (open === drawerOpen()) return;
+      toggle.setAttribute('aria-expanded', String(open));
+      drawer.classList.toggle('is-open', open);
+      if (open) {
+        measureHeader();
+        lockScroll();
+      } else {
+        unlockScroll();
+        closeAllPanels();
+      }
+    }
+
+    toggle.addEventListener('click', function () { setDrawer(!drawerOpen()); });
+
+    // Choosing a destination dismisses whatever is open.
+    drawer.addEventListener('click', function (e) {
+      var link = e.target.closest && e.target.closest('a');
+      if (!link) return;
+      if (mobile.matches) setDrawer(false);
+      else closeAllPanels();
     });
 
+    /* -- global dismissal -------------------------------------------------- */
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
-        setOpen(false);
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      var openPanel = groups.filter(function (entry) {
+        return entry.trigger.getAttribute('aria-expanded') === 'true';
+      })[0];
+
+      if (openPanel && !mobile.matches) {
+        setPanel(openPanel, false);
+        openPanel.trigger.focus();
+      } else if (drawerOpen()) {
+        setDrawer(false);
         toggle.focus();
+      } else if (openPanel) {
+        setPanel(openPanel, false);
       }
     });
 
-    // Returning to desktop width must not leave the menu latched open.
-    var wide = window.matchMedia('(min-width: 861px)');
-    var onChange = function (e) { if (e.matches) setOpen(false); };
-    if (wide.addEventListener) wide.addEventListener('change', onChange);
-    else if (wide.addListener) wide.addListener(onChange);
+    document.addEventListener('click', function (e) {
+      if (mobile.matches || header.contains(e.target)) return;
+      closeAllPanels();
+    });
+
+    /* -- focus trap, drawer only ------------------------------------------- */
+    var FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab' || !drawerOpen() || !mobile.matches) return;
+      var items = Array.prototype.slice.call(header.querySelectorAll(FOCUSABLE))
+        .filter(function (el) { return el.offsetParent !== null || el === document.activeElement; });
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    /* -- crossing the breakpoint must never strand an open overlay --------- */
+    onMediaChange(mobile, function () {
+      setDrawer(false);
+      closeAllPanels();
+      measureHeader();
+    });
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function () {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(measureHeader, 120);
+    });
+
+    measureHeader();
   }
 
   /* ---------------------------------------------------------------------------
-     2. Current-section highlighting in the primary nav
+     2. Current-page marking
+     Pages declare themselves with <body data-page="services">; the shared header
+     partial stays byte-identical everywhere.
      ------------------------------------------------------------------------- */
-  function initNavHighlight() {
-    if (!('IntersectionObserver' in window)) return;
+  function initCurrentPage() {
+    var page = document.body.getAttribute('data-page');
+    if (page) {
+      var item = document.querySelector('[data-nav="' + page + '"]');
+      if (item) item.setAttribute('aria-current', 'page');
+    }
 
-    var links = Array.prototype.slice.call(
-      document.querySelectorAll('#primary-nav a[href^="#"]')
-    );
-    if (!links.length) return;
-
-    var map = {};
-    var sections = [];
-    links.forEach(function (a) {
-      var id = a.getAttribute('href').slice(1);
-      var el = id && document.getElementById(id);
-      if (el) { map[id] = a; sections.push(el); }
-    });
-    if (!sections.length) return;
-
-    var visible = {};
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        visible[entry.target.id] = entry.isIntersecting;
+    // Mark the exact destination inside dropdown panels and the footer.
+    var here = window.location.pathname.replace(/index\.html$/, '');
+    if (here !== '/') {
+      var links = document.querySelectorAll('.nav__panelList a, .footer-links a');
+      Array.prototype.forEach.call(links, function (a) {
+        if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
       });
-      var active = sections.filter(function (s) { return visible[s.id]; })[0];
-      links.forEach(function (a) { a.removeAttribute('aria-current'); });
-      if (active && map[active.id]) map[active.id].setAttribute('aria-current', 'page');
-    }, { rootMargin: '-40% 0px -55% 0px' });
-
-    sections.forEach(function (s) { io.observe(s); });
+    }
   }
 
   /* ---------------------------------------------------------------------------
@@ -262,13 +408,15 @@
      5. Footer year
      ------------------------------------------------------------------------- */
   function initYear() {
-    var el = document.getElementById('year');
-    if (el) el.textContent = String(new Date().getFullYear());
+    var els = document.querySelectorAll('[data-year]');
+    Array.prototype.forEach.call(els, function (el) {
+      el.textContent = String(new Date().getFullYear());
+    });
   }
 
   function init() {
     initNav();
-    initNavHighlight();
+    initCurrentPage();
     initReveal();
     initForm();
     initYear();

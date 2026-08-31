@@ -193,6 +193,7 @@ summary:focus-visible,
 }
 /* On dark grounds the brown-gold ring is too low-contrast — use cream */
 .nav a:focus-visible,
+.nav button:focus-visible,
 .site-footer a:focus-visible,
 .hero a:focus-visible,
 .cta a:focus-visible {
@@ -369,11 +370,13 @@ summary:focus-visible,
 
 /* --------------------------------------------------------------------------
    6. Header + navigation
+   Desktop: two-tier sticky header with hover/keyboard dropdown panels.
+   Mobile (<=860px): the ink bar becomes a slide-in drawer with accordions.
    -------------------------------------------------------------------------- */
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 60;
   background: var(--sand-50);
   box-shadow: 0 1px 0 var(--hairline);
 }
@@ -433,6 +436,7 @@ summary:focus-visible,
   letter-spacing: .26em;
   color: var(--muted);
   font-weight: 600;
+  text-transform: uppercase;
 }
 .header-phone__num {
   font-family: var(--font-display);
@@ -466,17 +470,18 @@ summary:focus-visible,
   flex-shrink: 0;
   padding: 0;
 }
-.nav-toggle span {
+.nav-toggle span[aria-hidden] {
   display: block;
   width: 20px; height: 2px;
   background: var(--ink);
   border-radius: 2px;
   transition: transform var(--dur) ease, opacity var(--dur) ease;
 }
-.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-toggle[aria-expanded="true"] span[aria-hidden]:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span[aria-hidden]:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span[aria-hidden]:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+/* ---- The ink bar ---- */
 .nav { background: var(--ink); }
 .nav__inner {
   display: flex;
@@ -485,30 +490,204 @@ summary:focus-visible,
   align-items: center;
   justify-content: space-between;
 }
-.nav__links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.nav__links a {
-  color: var(--cream-2);
+.nav__links { display: flex; flex-wrap: wrap; align-items: center; }
+.nav__item { position: relative; }
+
+/* Top-level links and dropdown triggers must be pixel-identical. */
+.nav__links > .nav__item > a,
+.nav__trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 18px;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: .16em;
-  padding: 18px;
   text-transform: uppercase;
-  display: block;
+  color: var(--cream-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .2s ease;
 }
-.nav__links a:hover { color: var(--gold); }
-.nav__links a[aria-current="page"] { color: var(--gold); font-weight: 700; }
+.nav__links > .nav__item > a:hover,
+.nav__trigger:hover,
+.nav__trigger[aria-expanded="true"] { color: var(--gold); }
+.nav__links > .nav__item > a[aria-current="page"],
+.nav__trigger[aria-current="page"] { color: var(--gold); font-weight: 700; }
 
-.nav__social { display: flex; align-items: center; gap: 10px; }
-.social-dot {
-  width: 34px; height: 34px;
-  border: 1px solid rgba(224, 169, 78, .4);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+.nav__chevron { transition: transform var(--dur) var(--ease); }
+.nav__trigger[aria-expanded="true"] .nav__chevron { transform: rotate(180deg); }
+
+/* ---- Dropdown panel ---- */
+.nav__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 70;
+  min-width: 240px;
+  padding: 22px 26px;
+  background: var(--ink);
+  border-top: 2px solid var(--gold);
+  box-shadow: 0 26px 50px rgba(20, 16, 10, .45);
 }
-.social-dot:hover, .social-dot:focus-visible { background: var(--gold); border-color: var(--gold); }
-.social-dot:hover svg [fill]:not([fill="none"]) { fill: var(--ink); }
-.social-dot:hover svg [stroke]:not([stroke="none"]) { stroke: var(--ink); }
+.nav__panel--end { left: auto; right: 0; }
+.nav__panelList { display: grid; gap: 2px; }
+.nav__panel--two .nav__panelList {
+  grid-template-columns: repeat(2, minmax(190px, 1fr));
+  gap: 2px 30px;
+}
+.nav__panelList a {
+  display: block;
+  padding: 9px 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: var(--cream-2);
+  white-space: nowrap;
+}
+.nav__panelList a:hover,
+.nav__panelList a:focus-visible { color: var(--gold); }
+.nav__panelList a[aria-current="page"] { color: var(--gold); font-weight: 700; }
+
+.nav__panelFoot {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(224, 169, 78, .28);
+}
+.nav__panelFoot a {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.nav__panelFoot a:hover { color: var(--cream); }
+
+/* Drawer-only actions — desktop hides them entirely. */
+.nav__actions { display: none; }
+
+/* --------------------------------------------------------------------------
+   6b. Mobile drawer
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .header-phone,
+  .header-quote-btn { display: none; }
+  .header-call-icon { display: flex; }
+  .nav-toggle { display: flex; }
+
+  .nav {
+    position: fixed;
+    top: var(--header-h, 92px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform .28s var(--ease), visibility 0s linear .28s;
+  }
+  .nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform .28s var(--ease), visibility 0s;
+  }
+
+  .nav__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-bottom: 40px;
+    min-height: 100%;
+  }
+  .nav__links { flex-direction: column; align-items: stretch; width: 100%; }
+  .nav__item { border-bottom: 1px solid rgba(255, 255, 255, .09); }
+
+  .nav__links > .nav__item > a,
+  .nav__trigger {
+    width: 100%;
+    padding: 17px 4px;
+    font-size: 13px;
+    justify-content: space-between;
+  }
+
+  /* Accordion, not a floating panel. */
+  .nav__panel {
+    position: static;
+    min-width: 0;
+    padding: 4px 0 16px 14px;
+    border-top: none;
+    box-shadow: none;
+    background: transparent;
+    border-left: 1px solid rgba(224, 169, 78, .3);
+    margin: 0 0 14px 4px;
+  }
+  .nav__panel--two .nav__panelList { grid-template-columns: 1fr; gap: 0; }
+  .nav__panelList a { padding: 11px 0; font-size: 14.5px; white-space: normal; }
+  .nav__panelFoot { margin-top: 10px; padding-top: 12px; }
+
+  .nav__actions { display: block; padding-top: 28px; }
+
+  .nav__call {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+  }
+  .nav__call:hover, .nav__call:focus-visible { background: var(--gold); color: var(--ink); }
+  .nav__call > span { display: flex; flex-direction: column; }
+  .nav__callLabel {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    opacity: .8;
+  }
+  .nav__callNum {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.15;
+  }
+  .nav__license {
+    margin-top: 18px;
+    font-size: 12px;
+    line-height: 1.7;
+    letter-spacing: .04em;
+    color: var(--foot-muted);
+  }
+}
+
+/* ---- No-JavaScript fallback --------------------------------------------
+   main.js adds `.js` to <html> before first paint, so these rules apply only
+   when scripting is off. Desktop panels open on hover/focus; the mobile drawer
+   becomes a static, fully expanded list and the toggle disappears. */
+html:not(.js) .nav__group:hover > .nav__panel[hidden],
+html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
+
+@media (max-width: 860px) {
+  html:not(.js) .nav {
+    position: static;
+    transform: none;
+    visibility: visible;
+    overflow: visible;
+  }
+  html:not(.js) .nav-toggle { display: none; }
+  html:not(.js) .nav__panel[hidden] { display: block; }
+  html:not(.js) .nav__chevron { display: none; }
+  html:not(.js) .nav__trigger { cursor: default; }
+}
+
+/* Body scroll lock while the drawer is open (set by main.js). */
+.is-nav-locked { position: fixed; width: 100%; overflow: hidden; }
 
 /* --------------------------------------------------------------------------
    7. Hero
@@ -914,6 +1093,10 @@ summary:focus-visible,
   color: var(--body-2);
 }
 .areas-grid svg { flex: none; }
+/* Markets with their own page read as links; the rest are coverage only. */
+.areas-grid__linked a { color: var(--gold-link); font-weight: 600; }
+.areas-grid__linked a:hover,
+.areas-grid__linked a:focus-visible { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
 /* --------------------------------------------------------------------------
    15. Consultation form
@@ -1083,24 +1266,29 @@ summary:focus-visible,
 
 /* --------------------------------------------------------------------------
    17. Footer
+   Five columns: brand + services + areas + company + contact, over a legal bar.
    -------------------------------------------------------------------------- */
 .site-footer { background: var(--ink-900); color: var(--foot-text); }
+
 .site-footer__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 48px;
-  padding: 80px var(--gutter) 40px;
+  grid-template-columns: 1.6fr repeat(3, 1fr) 1.15fr;
+  gap: 48px 40px;
+  padding-block: 80px 48px;
 }
 .site-footer a { color: var(--foot-text); }
 .site-footer a:hover { color: var(--gold); }
+
 .site-footer h2 {
-  font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 500;
-  color: var(--cream);
-  margin: 0 0 20px;
-  letter-spacing: .06em;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 22px;
 }
+
 .footer-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
 .footer-brand__mark {
   width: 46px; height: 46px;
@@ -1125,39 +1313,79 @@ summary:focus-visible,
   font-size: 14px;
   line-height: 1.75;
   color: var(--foot-muted);
-  margin: 0 0 22px;
-  max-width: 340px;
+  margin: 0 0 24px;
+  max-width: 38ch;
 }
-.site-footer__hours { font-size: 13px; letter-spacing: .06em; color: var(--foot-muted); }
-.footer-links { display: flex; flex-direction: column; gap: 12px; font-size: 14px; }
+.site-footer__license {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 1px solid rgba(224, 169, 78, .3);
+}
+.site-footer__licenseLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.site-footer__licenseNum {
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: .04em;
+  color: var(--cream);
+}
+
+.footer-links { display: flex; flex-direction: column; gap: 11px; font-size: 14px; }
+.footer-links__more {
+  margin-top: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.site-footer__contact .footer-phone {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--gold-light);
+  display: block;
+  margin-bottom: 8px;
+}
+.footer-email { display: block; font-size: 14px; margin-bottom: 18px; word-break: break-word; }
 .site-footer address {
   font-style: normal;
   font-size: 14px;
   line-height: 1.7;
   color: var(--foot-muted);
-  margin-bottom: 16px;
-}
-.footer-phone {
-  font-family: var(--font-display);
-  font-size: 22px;
-  color: var(--gold-light);
-  display: block;
   margin-bottom: 10px;
 }
-.footer-social { display: flex; gap: 10px; margin-top: 22px; }
-.footer-social .social-dot { width: 36px; height: 36px; border-color: rgba(224, 169, 78, .35); }
+.site-footer__hours {
+  font-size: 13px;
+  letter-spacing: .04em;
+  color: var(--foot-muted);
+  margin-bottom: 22px;
+}
+.site-footer__cta { color: var(--ink) !important; }
+.site-footer__cta:hover { color: var(--ink) !important; }
 
 .site-footer__bar { border-top: 1px solid rgba(255, 255, 255, .08); }
 .site-footer__bar > .container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 12px 28px;
   padding-block: 24px;
   font-size: 12.5px;
   color: var(--foot-dim);
 }
-.site-footer__legal { display: flex; flex-wrap: wrap; gap: 6px; }
+.site-footer__legal { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.site-footer__legal a { color: var(--foot-dim); }
+.site-footer__legal a:hover { color: var(--gold); }
 
 /* --------------------------------------------------------------------------
    18. Animation
@@ -1186,37 +1414,42 @@ summary:focus-visible,
 /* --------------------------------------------------------------------------
    19. Responsive
    -------------------------------------------------------------------------- */
+/* Tablet / small laptop: the five footer columns and the six nav items both
+   need relief before the mobile drawer takes over at 860px. */
+@media (max-width: 1180px) {
+  .site-footer__grid { grid-template-columns: repeat(3, 1fr); gap: 44px 36px; }
+  .site-footer__brandCol { grid-column: 1 / -1; }
+}
+
+@media (min-width: 861px) and (max-width: 1080px) {
+  .nav__links > .nav__item > a,
+  .nav__trigger { padding-inline: 12px; font-size: 12px; letter-spacing: .12em; }
+  .header-actions { gap: 18px; }
+  .header-phone__num { font-size: 21px; }
+}
+
 @media (max-width: 860px) {
   :root { --gutter: 20px; --section-y: 56px; }
 
   html { scroll-padding-top: 96px; }
-
-  .header-phone { display: none; }
-  .header-quote-btn { display: none; }
-  .header-call-icon { display: flex; }
-  .nav-toggle { display: flex; }
-
-  .nav__inner { flex-direction: column; align-items: stretch; }
-  .nav__links {
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    gap: 0;
-  }
-  .nav__links a { width: 100%; padding: 16px 4px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
-  .nav__social { display: none; }
-  .nav__links.is-open { display: flex; }
 
   .trust__list { flex-direction: column; align-items: flex-start; gap: 14px; }
   .trust__divider { display: none; }
 
   .why__inner { padding-block: var(--section-y); }
 
+  /* The badge overhangs the image by -34px on desktop; on a phone that pushes
+     it past the viewport edge, where overflow-x:hidden clips the text. */
+  .about__badge { left: 0; bottom: -24px; max-width: none; }
+
   .gallery-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
   .gallery-item--xl, .gallery-item--wide { grid-column: span 1; grid-row: span 1; }
 
-  .site-footer__grid { padding-block: var(--section-y); }
+  .site-footer__grid {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 40px 32px;
+    padding-block: var(--section-y) 40px;
+  }
 }
 
 @media (max-width: 480px) {

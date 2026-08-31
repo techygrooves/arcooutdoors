@@ -1,25 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  CANONICAL SITE HEADER — source of truth.
+  Do not hand-edit the copy of this block inside a page. Edit this file, then run
+  `python3 tools/sync-partials.py` to push it into every page between the
+  `@partial:header` markers. See PROJECT-SPEC.md §8.1.
 
-<title>Page Not Found | Arco Outdoors</title>
-<meta name="description" content="The page you were looking for is not available. Browse Arco Outdoors' South Florida outdoor remodeling services or call 305-951-8862.">
-<meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#241d15">
-
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/style.css">
-<link rel="stylesheet" href="/assets/css/pages.css">
-<script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js" defer></script>
-</head>
-
-<body data-page="404">
-<!-- @partial:header -->
+  Per-page differences are driven by data attributes, never by editing the markup:
+    <body data-page="services">  → main.js marks [data-nav="services"] as current.
+-->
 <a class="skip-link" href="#main">Skip to main content</a>
 
 <header class="site-header" data-header>
@@ -133,114 +120,3 @@
     </div>
   </nav>
 </header>
-<!-- @endpartial:header -->
-
-<main id="main">
-  <section class="page-hero page-hero--plain">
-    <div class="container page-hero__inner">
-      <p class="eyebrow">Error 404</p>
-      <h1>That page has moved, or never existed.</h1>
-      <p class="page-hero__lead">The link you followed doesn't lead anywhere on this site. Head back to the homepage, or call us and we'll point you in the right direction.</p>
-      <div class="page-hero__actions">
-        <a class="btn btn--gold" href="/">Back to Homepage</a>
-        <a class="btn btn--ghostDark" href="tel:+13059518862">Call 305-951-8862</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="container section" aria-labelledby="popular-heading">
-    <h2 class="h2 h2--sm" id="popular-heading">Where you might be headed</h2>
-    <div class="link-index" style="margin-top:36px;">
-      <a href="/services/">Our Services <span>Patios, driveways, pool decks, outdoor kitchens and more</span></a>
-      <a href="/gallery/">Gallery <span>A look at completed outdoor spaces</span></a>
-      <a href="/service-areas/">Service Areas <span>Broward, Miami-Dade and Palm Beach counties</span></a>
-      <a href="/get-a-quote/">Get a Quote <span>Book a free on-site design consultation</span></a>
-    </div>
-  </section>
-</main>
-
-<!-- @partial:footer -->
-<footer class="site-footer">
-  <div class="container site-footer__grid">
-
-    <div class="site-footer__brandCol">
-      <div class="footer-brand">
-        <span class="footer-brand__mark" aria-hidden="true">A</span>
-        <span class="footer-brand__name">ARCO OUTDOORS</span>
-      </div>
-      <p class="site-footer__about">One accountable contractor for coordinated South Florida outdoor spaces — hardscaping, outdoor kitchens, shade structures, turf and fencing, designed and built by a single in-house team.</p>
-      <p class="site-footer__license">
-        <span class="site-footer__licenseLabel">Licensed &amp; Insured</span>
-        <span class="site-footer__licenseNum">License CBC1269393</span>
-      </p>
-    </div>
-
-    <nav class="site-footer__col" aria-labelledby="footer-services">
-      <h2 id="footer-services">Services</h2>
-      <ul class="footer-links">
-        <li><a href="/services/paver-installation/">Paver Installation</a></li>
-        <li><a href="/services/patios/">Patios</a></li>
-        <li><a href="/services/driveways/">Driveways</a></li>
-        <li><a href="/services/pool-decks/">Pool Decks</a></li>
-        <li><a href="/services/outdoor-kitchens/">Outdoor Kitchens</a></li>
-        <li><a href="/services/pergolas/">Pergolas</a></li>
-        <li><a href="/services/tiki-huts/">Tiki Huts</a></li>
-        <li><a href="/services/turf/">Artificial Turf</a></li>
-        <li><a href="/services/fence/">Fencing</a></li>
-      </ul>
-    </nav>
-
-    <nav class="site-footer__col" aria-labelledby="footer-areas">
-      <h2 id="footer-areas">Service Areas</h2>
-      <ul class="footer-links">
-        <li><a href="/service-areas/parkland-fl/">Parkland</a></li>
-        <li><a href="/service-areas/davie-fl/">Davie</a></li>
-        <li><a href="/service-areas/weston-fl/">Weston</a></li>
-        <li><a href="/service-areas/plantation-fl/">Plantation</a></li>
-        <li><a href="/service-areas/fort-lauderdale-fl/">Fort Lauderdale</a></li>
-        <li><a href="/service-areas/pembroke-pines-fl/">Pembroke Pines</a></li>
-        <li><a class="footer-links__more" href="/service-areas/">View All Areas <span aria-hidden="true">→</span></a></li>
-      </ul>
-    </nav>
-
-    <nav class="site-footer__col" aria-labelledby="footer-company">
-      <h2 id="footer-company">Company</h2>
-      <ul class="footer-links">
-        <li><a href="/about-us/">About</a></li>
-        <li><a href="/projects/">Projects</a></li>
-        <li><a href="/gallery/">Gallery</a></li>
-        <li><a href="/reviews/">Reviews</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href="/contact-us/">Contact</a></li>
-      </ul>
-    </nav>
-
-    <div class="site-footer__col site-footer__contact">
-      <h2 id="footer-contact">Contact</h2>
-      <a class="footer-phone" href="tel:+13059518862">305-951-8862</a>
-      <a class="footer-email" href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a>
-      <address>
-        2940 SW 81st Way<br>
-        Davie, FL 33328
-      </address>
-      <p class="site-footer__hours">Mon – Fri · 8:00 AM – 6:00 PM</p>
-      <a class="btn btn--gold btn--sm site-footer__cta" href="/get-a-quote/">Get a Quote</a>
-    </div>
-
-  </div>
-
-  <div class="site-footer__bar">
-    <div class="container">
-      <span>© <span data-year>2026</span> Arco Outdoors · All rights reserved.</span>
-      <nav class="site-footer__legal" aria-label="Legal">
-        <a href="/privacy-policy/">Privacy Policy</a>
-        <a href="/cookie-policy/">Cookie Policy</a>
-        <a href="/accessibility/">Accessibility Statement</a>
-      </nav>
-    </div>
-  </div>
-</footer>
-<!-- @endpartial:footer -->
-
-</body>
-</html>
