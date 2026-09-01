@@ -240,6 +240,10 @@
       return;
     }
 
+    // Only now does the CSS hide anything. Everything above this line leaves the
+    // page fully visible, so a failed script can never blank the content.
+    document.documentElement.classList.add('reveal-on');
+
     var io = new IntersectionObserver(function (entries, obs) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
