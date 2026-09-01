@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 8 — outdoor kitchens, pergolas, tiki huts)
+Last updated: 2026-09-01 (pass 9 — remaining location pages, Areas We Serve)
 
 ---
 
@@ -169,6 +169,10 @@ the tooling must not become a repository dependency.
   service-areas/davie-fl/index.html          ← live
   service-areas/weston-fl/index.html         ← live
   service-areas/plantation-fl/index.html     ← live
+  service-areas/fort-lauderdale-fl/index.html  ← live
+  service-areas/pembroke-pines-fl/index.html   ← live
+  service-areas/coral-springs-fl/index.html    ← live
+  service-areas/boca-raton-fl/index.html       ← live
 
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
@@ -254,18 +258,20 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 8 (18 URLs):** `/`, `/services/`, all eleven service pages
-`outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
-`pool-decks`, `outdoor-kitchens`, `pergolas`, `tiki-huts`, `turf`, `fence`,
-`impact-windows-doors`, plus `/service-areas/` and the four city pages
-`parkland-fl`, `davie-fl`, `weston-fl`, `plantation-fl`. Everything else is linked from the global nav or footer and
-returns 404 until its page is built — a deliberate, approved state, not a
-defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
+**Live as of pass 9 (22 URLs):** `/`, `/services/`, all eleven service pages,
+`/service-areas/`, and all eight city pages — `parkland-fl`, `davie-fl`,
+`weston-fl`, `plantation-fl`, `fort-lauderdale-fl`, `pembroke-pines-fl`,
+`coral-springs-fl`, `boca-raton-fl`. Everything else is linked from the global
+nav or footer and returns 404 until its page is built — a deliberate, approved
+state, not a defect. `sitemap.xml` lists only URLs that resolve; add each entry
+as it ships.
 
-**The service tier is complete** — all eleven §5 services have a page.
-**Four location pages remain:** Fort Lauderdale, Pembroke Pines, Coral
-Springs, Boca Raton — all four linked from the `/service-areas/` hub, which
-says plainly which pages are written and which are still coming.
+**The service and location tiers are both complete** — all eleven §5 services
+and all eight §6 priority markets have a page.
+
+**What remains** is the non-service, non-location routes: `/projects/`,
+`/about-us/`, `/contact-us/`, `/get-a-quote/`, `/gallery/`, `/reviews/`,
+`/blog/`, `/privacy-policy/`, `/cookie-policy/` and `/accessibility/`.
 
 ### 8.3 Navigation model
 
@@ -577,6 +583,7 @@ Added in pass 3, all built on existing tokens:
 | `.card--feature` | one service across the full grid width, image beside copy |
 | `.spec-grid` | hairline-topped definition blocks for comparisons |
 | `.jumpbar` | sticky-adjacent anchor row for long pages |
+| `.areas-grid--compact` | width cap on the shared `.areas-grid`, so the eight-market *Areas we serve* block on a service page reads as two rows of four |
 
 `.table-wrap` carries `tabindex="0"`, `role="region"` and an `aria-label`
 wherever it is used, because the container scrolls horizontally and a scrollable
@@ -613,6 +620,10 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-outdoor-kitchens` | covered terrace, dining and a built-in cooking unit | `/services/outdoor-kitchens/` banner |
 | `hero-pergolas` | timber post-and-beam frame with drapes | `/services/pergolas/` banner |
 | `hero-tiki-huts` | thatched roof among palms beside a pool | `/services/tiki-huts/` banner |
+| `hero-fort-lauderdale-fl` | pool edge meeting open water at dusk | `/service-areas/fort-lauderdale-fl/` banner |
+| `hero-pembroke-pines-fl` | rear lawn to a lit elevation at dusk | `/service-areas/pembroke-pines-fl/` banner |
+| `hero-coral-springs-fl` | single-storey house, deep overhang, terrace | `/service-areas/coral-springs-fl/` banner |
+| `hero-boca-raton-fl` | white rendered volumes against a clear sky | `/service-areas/boca-raton-fl/` banner |
 
 **The nine source photographs are now carrying eleven pages.** Pass 4 believed
 the usable material was exhausted; pass 6 found three more frames by going back
@@ -713,7 +724,7 @@ of them may be repeated on any new page until verified.
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 14 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 18 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 10 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 22 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -1141,6 +1152,111 @@ merged alongside — re-measured after the merge, not assumed. When the overlap
 check reports a hit, confirm it is one of these two before treating it as
 templated filler.
 
+### 13.12 Pass 9 — the remaining location pages, and one shared component
+
+Shipped `/service-areas/fort-lauderdale-fl/`, `pembroke-pines-fl/`,
+`coral-springs-fl/` and `boca-raton-fl/`, completing the eight §6 priority
+markets. Word counts 3,083 / 2,576 / 2,919 / 2,802.
+
+**Four more spines, none of them a city swap.** Added to the four from §13.10,
+that is eight location pages each led by a different section:
+
+| Page | Organising question | Leads with | Signature section |
+|---|---|---|---|
+| Fort Lauderdale | How does the work get in, and what does the air do to it? | site access | the access grid, then coastal specification of fixings and hardware |
+| Pembroke Pines | What should be built first? | a six-stage order of works | the order itself, as a `.steps` list, with each service mapped onto a stage |
+| Coral Springs | Who is using this yard? | four competing users | a table of adults / children / dog / pool and where their needs collide |
+| Boca Raton | What should "premium" mean from a contractor? | the refusal to claim it | *Where quality actually shows* — setting out, cuts, edges, junctions, falls, joints |
+
+**Claims deliberately not made.**
+
+- *Fort Lauderdale* declines marine work outright: docks, seawalls and boat
+  lifts are named as a separate licensed trade. No claim is made about any
+  waterway, neighbourhood or street.
+- *Pembroke Pines* was written under an explicit instruction to avoid
+  neighbourhood claims, and names no community, development or subdivision.
+  Its differentiation comes entirely from the order-of-works argument, which
+  needs no local assertion to be useful.
+- *Coral Springs* repeats the two standing cautions in its own words — no
+  surface is slip-proof, and a fence is not automatically a pool barrier — and
+  gives the pavers-versus-concrete answer as a partial one, flagging that Arco
+  installs paver surrounds (§13.7).
+- *Boca Raton* states plainly that Arco does **not** claim to be a luxury or
+  high-end specialist, and that the reader should be sceptical of contractors
+  who do. The premium register is carried by craft detail and by a `.note`
+  separating what is claimed (licence, written scope, confirmed requirements)
+  from what is not (specialisation, a local portfolio, knowledge of a
+  community's rules before reading them). It is also the only market outside
+  Broward, so the county difference is treated as a practical section rather
+  than a boast.
+- All four carry the photography note in their own wording: illustrative, not
+  presented as completed projects, not claimed to have been taken in that city.
+
+### The "Areas we serve" component
+
+Every service page now ends with the same compact block: the eight priority
+markets as plain city-name links in `.areas-grid areas-grid--compact`, under
+the page's own H2, above a *View All Service Areas* button.
+
+It replaced ten heavier `.link-index` blocks that each carried eight
+hand-written descriptors — those were ten slightly different versions of the
+same list, which is exactly the shape of near-duplicate content the §13.7 rule
+exists to prevent, and their shared lead sentence ("Broward, Miami-Dade and
+Palm Beach counties, working from Davie.") was a genuine cross-page duplicate
+that the overlap check had been missing because each unique H2 above it split
+the sentence chunk. Anchor text is now the city name alone — deliberately not
+optimised. `paver-installation` had no such block at all and gained one; it
+sits after its FAQ rather than before, because on that page's rhythm that is
+the only position where two adjacent bands do not share a ground.
+
+### Duplication review — the method, and what it caught
+
+Ran before finishing, across all 22 pages, at two thresholds:
+
+1. **Exact** shared sentences at ≥45 characters.
+2. **Near-duplicate** sentence pairs by token Jaccard ≥ 0.55 — which is the
+   check that matters, because paraphrase is how city pages actually go wrong.
+
+The fuzzy pass found 20 pairs on first run and 13 distinct passages were
+rewritten: the salt-air sentence shared between Boca Raton and Fort
+Lauderdale, the base-construction list shared between three pages and the
+services hub, the pergola-versus-tiki-hut line shared with Parkland, the
+footings note and site-assessment step shared with Pembroke Pines, the
+poured-slab line shared with Plantation, the slip-proof and turf-odour
+sentences shared with the pool-decks and turf service pages, the screened-
+enclosure passage shared with Weston, and the closing line of two photography
+notes. Three permitting answers that had converged on identical wording were
+rewritten so each page answers in its own voice.
+
+**Final state: zero exact overlaps involving any page from this pass, and zero
+fuzzy pairs above 0.55.** Four exact pairs remain site-wide, all pre-existing
+and all accounted for: three are the §13.11 fixed-text exceptions between
+outdoor kitchens, pergolas and tiki huts, and one is a single sentence shared
+between the homepage and the services hub since pass 3 ("If your address is
+nearby but not listed, call and ask.") — recorded here rather than left as an
+unexplained hit for a later session to chase.
+
+**Re-run this two-threshold check before shipping any further page.** Exact
+matching alone will pass content that a reader would recognise instantly as
+the same paragraph reworded.
+
+**Imagery.** Four new hero crops from the recovered originals (§9.11 method),
+no new third-party URLs. `hero-fort-lauderdale-fl` is a lower, water-level band
+of the photograph the service-areas hub crops higher; `hero-pembroke-pines-fl`
+is a lawn-weighted band of the frame Parkland uses; `hero-coral-springs-fl` and
+`hero-boca-raton-fl` are upper bands of two frames previously cropped lower.
+Every source frame is now used at least twice.
+
+**Verified.** `sync-partials.py --check` and `check-links.py` both exit 0. The
+four new pages plus the hub and two service pages at 390 / 768 / 1440: HTTP
+200, zero console errors, zero failed requests, no horizontal overflow, hero
+decoded. Scroll-reveal returns everything to full opacity; with `main.js`
+blocked nothing is hidden. Drawer opens and closes on `Escape`. Renders with
+JavaScript disabled. Titles, descriptions and canonicals unique across all 22
+pages. FAQ JSON-LD matches the visible `<details>` text exactly, six per page,
+and each location page's `@graph` was asserted to contain no `LocalBusiness`,
+no `GeneralContractor` and no address node.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1311,3 +1427,8 @@ Additionally, for a location page:
 - [ ] `@graph` carries no `LocalBusiness`, `GeneralContractor` or address
       node; the city appears only as `Service.areaServed` (§8.5)
 - [ ] Section order, not just wording, differs from every sibling city page
+- [ ] Duplication reviewed at BOTH thresholds (§13.12): exact shared sentences
+      at ≥45 chars, and near-duplicate pairs at token Jaccard ≥ 0.55. Exact
+      matching alone is not sufficient
+- [ ] Service pages carry the `.areas-grid areas-grid--compact` *Areas we
+      serve* block, with city-name-only anchor text
