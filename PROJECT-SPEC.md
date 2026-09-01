@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 7 — local SEO architecture)
+Last updated: 2026-09-01 (pass 8 — outdoor kitchens, pergolas, tiki huts)
 
 ---
 
@@ -157,6 +157,9 @@ the tooling must not become a repository dependency.
   services/patios/index.html                 ← live
   services/driveways/index.html              ← live
   services/pool-decks/index.html             ← live
+  services/outdoor-kitchens/index.html       ← live
+  services/pergolas/index.html               ← live
+  services/tiki-huts/index.html              ← live
   services/turf/index.html                   ← live
   services/fence/index.html                  ← live
   services/impact-windows-doors/index.html   ← live
@@ -251,15 +254,15 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 7 (15 URLs):** `/`, `/services/`, the eight service pages
+**Live as of pass 8 (18 URLs):** `/`, `/services/`, all eleven service pages
 `outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
-`pool-decks`, `turf`, `fence`, `impact-windows-doors`, plus `/service-areas/`
-and the four city pages `parkland-fl`, `davie-fl`, `weston-fl`,
-`plantation-fl`. Everything else is linked from the global nav or footer and
+`pool-decks`, `outdoor-kitchens`, `pergolas`, `tiki-huts`, `turf`, `fence`,
+`impact-windows-doors`, plus `/service-areas/` and the four city pages
+`parkland-fl`, `davie-fl`, `weston-fl`, `plantation-fl`. Everything else is linked from the global nav or footer and
 returns 404 until its page is built — a deliberate, approved state, not a
 defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
 
-**Three service pages remain:** outdoor kitchens, pergolas, tiki huts.
+**The service tier is complete** — all eleven §5 services have a page.
 **Four location pages remain:** Fort Lauderdale, Pembroke Pines, Coral
 Springs, Boca Raton — all four linked from the `/service-areas/` hub, which
 says plainly which pages are written and which are still coming.
@@ -607,6 +610,9 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-davie-fl` | paved path to a white house entrance, lawn alongside | `/service-areas/davie-fl/` banner |
 | `hero-weston-fl` | white rear elevation, covered terrace, pool foreground | `/service-areas/weston-fl/` banner |
 | `hero-plantation-fl` | dappled tree shadow across a paved terrace | `/service-areas/plantation-fl/` banner |
+| `hero-outdoor-kitchens` | covered terrace, dining and a built-in cooking unit | `/services/outdoor-kitchens/` banner |
+| `hero-pergolas` | timber post-and-beam frame with drapes | `/services/pergolas/` banner |
+| `hero-tiki-huts` | thatched roof among palms beside a pool | `/services/tiki-huts/` banner |
 
 **The nine source photographs are now carrying eleven pages.** Pass 4 believed
 the usable material was exhausted; pass 6 found three more frames by going back
@@ -618,6 +624,16 @@ introduce a new third-party URL. It is also nearly spent — `hero-turf` is only
 900px wide because its source is, and every remaining frame has been used at
 least once. Real project photography is still the binding constraint — see §12
 item 7.
+
+**Two passes have now declared this material exhausted and been wrong.** Pass 4
+said pass 4 had spent it; pass 8 said the same and called real photography a
+blocker; passes 6 and 7 nonetheless found eight further usable framings by
+going back to the recovered originals. The honest statement is the one above:
+every source frame is now used at least once, several are used two or three
+times in different bands, and the next page that needs a genuinely new subject
+— rather than another crop of a subject already on the site — cannot be served
+from this material. That is the real blocker, and it arrives with the first
+page whose subject is not already photographed.
 
 Each new crop was reviewed against the service it illustrates. A pool photograph
 originally cropped for the fencing card was rejected and re-sourced, because a
@@ -697,7 +713,7 @@ of them may be repeated on any new page until verified.
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 17 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 15 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 14 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 18 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -1059,6 +1075,71 @@ are unique across all 16 pages, with descriptions trimmed to 151–161
 characters. FAQ JSON-LD compared programmatically against the visible
 `<details>` text — exact match, six entries per page — and each location
 page's `@graph` asserted to contain no `LocalBusiness` and no address node.
+
+### 13.11 Pass 8 — outdoor kitchens, pergolas, tiki huts
+
+Shipped `/services/outdoor-kitchens/`, `/services/pergolas/` and
+`/services/tiki-huts/`, completing the eleven-service tier. Word counts
+2,527 / 2,565 / 2,700. Written in parallel with passes 6 and 7 on a separate
+branch and merged afterwards; the pass numbering here reflects merge order,
+not the order the work was done.
+
+Each page is organised around a different question, as §13.7 established:
+
+| | Organising question | Signature section | Workflow keyed to |
+|---|---|---|---|
+| Outdoor kitchens | Where do the services run, and where does the cook stand? | four-layout comparison; zones and circulation | rough-in while the ground is open |
+| Pergolas | Which hours do you want back? | sun path and orientation; attached vs freestanding | footings before paving |
+| Tiki huts | What is the destination in the yard? | placement; seating and bar layouts | position fixed first, planning raised early |
+
+**Claims deliberately not made.**
+
+- *No appliance or product brands.* The outdoor kitchen page plans by appliance
+  type and cut-out dimension, and says so explicitly. All eleven service pages
+  scanned against a brand list — zero mentions.
+- *No wind or structural ratings.* The pergolas page refuses one in a callout
+  and in its FAQ: performance figures belong to a specific product or
+  engineered design and come from the manufacturer or that engineering, not
+  from a marketing page. Zero rating figures anywhere. This is the same
+  position §13.9 takes on impact windows, reached independently.
+- *No blanket permit statements.* Never that a structure does or does not
+  require a permit.
+- *No thatch service life in years, and no claim about which thatch Arco
+  supplies.* The tiki huts page presents natural and synthetic thatch as the
+  two families that exist and what each trades, with the choice settled at
+  consultation rather than declared in advance. Apply the same pattern to any
+  material question where Arco's actual offering is unconfirmed.
+
+**Two accepted forms of the permitting caution.** These three pages use one
+sentence pair verbatim wherever permitting comes up:
+
+> Requirements can vary by jurisdiction and project scope. Arco can discuss
+> planning considerations for your specific project.
+
+It appears three times on each of them, and the tiki huts page adds a callout
+explaining why the answer is not given on a web page. **Do not paraphrase it on
+those pages** — a legal caution phrased differently every time is worse than
+one phrased identically.
+
+The pages from passes 6 and 7 answer the same question in their own words,
+routing it to "confirmed for your address as part of the project" and, on the
+location pages, naming the authority having jurisdiction. Both forms say the
+same thing and neither states a requirement. Either is acceptable on a new
+page; mixing them within one page is not.
+
+**Exception to the zero-overlap rule.** §13.7 requires zero shared sentences
+between sibling pages. These three share exactly two sentence-pairs with each
+other, and both are deliberate:
+
+1. the mandated permitting sentences above;
+2. *"Which elements are performed directly and which are coordinated is set out
+   in your written proposal."* — the scope-boundary statement from §13.6, which
+   should read identically wherever it appears.
+
+Everything else is zero, including against all thirteen pages these three were
+merged alongside — re-measured after the merge, not assumed. When the overlap
+check reports a hit, confirm it is one of these two before treating it as
+templated filler.
 
 ## 14. FORMS
 
