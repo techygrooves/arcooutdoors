@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-08-31 (pass 3 — services hub + first two service pages)
+Last updated: 2026-08-31 (pass 4 — patios, driveways, pool decks)
 
 ---
 
@@ -135,6 +135,9 @@ the tooling must not become a repository dependency.
   services/index.html                        ← live (hub)
   services/outdoor-remodeling/index.html     ← live
   services/paver-installation/index.html     ← live
+  services/patios/index.html                 ← live
+  services/driveways/index.html              ← live
+  services/pool-decks/index.html             ← live
 
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
@@ -218,11 +221,14 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 3:** `/`, `/services/`, `/services/outdoor-remodeling/`,
-`/services/paver-installation/`. Everything else is linked from the global nav
-or footer and returns 404 until its page is built — a deliberate, approved
-state, not a defect. `sitemap.xml` lists only the four URLs that resolve; add
-each entry as it ships.
+**Live as of pass 4 (7 URLs):** `/`, `/services/`, and the five service pages
+`outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
+`pool-decks`. Everything else is linked from the global nav or footer and
+returns 404 until its page is built — a deliberate, approved state, not a
+defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
+
+**Five service pages remain:** outdoor kitchens, pergolas, tiki huts, turf,
+fencing, impact windows & doors.
 
 ### 8.3 Navigation model
 
@@ -504,6 +510,15 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `card-fencing` | white masonry garden walls | hub card |
 | `card-impact-windows` | glazed wall, interior to exterior | hub card |
 | `card-complete-remodeling` | house at dusk with lawn | hub feature card |
+| `hero-patios` | covered terrace and lawn at dusk | `/services/patios/` banner |
+| `hero-driveways` | garage and paved approach | `/services/driveways/` banner |
+| `hero-pool-decks` | pool, surround and loungers | `/services/pool-decks/` banner |
+
+**The nine source photographs are now carrying eight pages.** Pass 4 exhausted
+the usable material: `hero-driveways` and `card-fencing` are different crops of
+the same building, and `hero-pool-decks` is only 700px wide because its source
+is. Real project photography is now the binding constraint on further pages —
+see §12 item 7.
 
 Each new crop was reviewed against the service it illustrates. A pool photograph
 originally cropped for the fencing card was rejected and re-sourced, because a
@@ -701,6 +716,54 @@ leaves the page fully visible. Regression test: `revealtest.js` step 2 blocks
 operable; it now carries `tabindex="0"`, `role="region"`, an `aria-label` and a
 focus ring.
 
+### 13.7 Pass 4 — patios, driveways, pool decks
+
+Shipped `/services/patios/`, `/services/driveways/` and
+`/services/pool-decks/`. Word counts 2,348 / 2,347 / 2,624.
+
+**Differentiation is the point, and it is measurable.** The brief was explicitly
+not to build three pages from one template with the nouns swapped. Each page is
+organised around a different question, and therefore has a different spine:
+
+| | Organising question | Signature section | Process type |
+|---|---|---|---|
+| Patios | How will the space be used? | zone-sizing table with furniture clearances | install sequence |
+| Driveways | It carries cars *and* fronts the house | pavers-vs-concrete comparison | **replacement** sequence, incl. exposing the sub-grade |
+| Pool decks | Wet, barefoot, hot, chemical | scope boundary vs the pool contractor | **overlay-or-rebuild** decision, then remodel sequence |
+
+Measured overlap between the body copy of all six service pages is **zero
+shared sentences** (checked at ≥45 characters, chrome excluded). H2 sequences
+are unique per page. Re-run that check before shipping any further service page.
+
+**Three claims deliberately not made.**
+
+- *Concrete driveways.* §5 lists paver installation, not concrete. The
+  driveways page states plainly that Arco installs paver driveways and that
+  concrete appears only because it is what most existing driveways are made of.
+  A callout invites the visitor to say so if they have decided on concrete, and
+  promises an honest answer about fit. Do not turn this into a service claim
+  without verification.
+- *Slip resistance.* The pool-decks page says outright that no surface is
+  slip-proof and that a contractor claiming otherwise is selling rather than
+  advising. It discusses how much traction a finish **retains** when wet, which
+  is the honest and useful framing. Never write "slip-proof", "non-slip" or
+  "slip-free" as a property of a material.
+- *Property value.* No percentage, anywhere. The driveways page says why —
+  curb appeal is real, a quoted return figure is not supportable, and a
+  contractor offering one is worth treating with caution.
+
+**Scope boundary, pool decks.** The page states explicitly that the pool shell,
+interior finish, waterline tile, plumbing, equipment and any structural pool
+work belong to a licensed pool contractor; that Arco builds the deck and
+coordinates at the coping line; and that where both trades are working, the
+pool's finished levels govern the deck's. A three-part panel sets out ours /
+not ours / shared. Keep that boundary on any future page that touches water.
+
+**Also.** Two ordinary uses of "guaranteed" were reworded to "a certainty" —
+the word reads as warranty language on a contractor site even when it is not
+doing that job. One sentence duplicated verbatim across two pages was rewritten
+so each answers its own question in its own words.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -849,5 +912,8 @@ repository root is enough to serve it.
 - [ ] Interior pages follow the §8.5 skeleton and alternate section grounds
 - [ ] JSON-LD matches the §8.5 table; FAQ answers match the visible text
 - [ ] Any new image crop actually depicts the thing it illustrates
+- [ ] Zero shared sentences with sibling pages (see §13.7); H2 spine is its own
+- [ ] No "slip-proof"/"non-slip" as a material property, no value percentages,
+      no service claimed that §5 does not list
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
