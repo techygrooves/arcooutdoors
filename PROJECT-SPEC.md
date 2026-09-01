@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 5 — portable paths, deployment fix)
+Last updated: 2026-09-01 (pass 6 — outdoor kitchens, pergolas, tiki huts)
 
 ---
 
@@ -157,6 +157,9 @@ the tooling must not become a repository dependency.
   services/patios/index.html                 ← live
   services/driveways/index.html              ← live
   services/pool-decks/index.html             ← live
+  services/outdoor-kitchens/index.html       ← live
+  services/pergolas/index.html               ← live
+  services/tiki-huts/index.html              ← live
 
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
@@ -242,14 +245,16 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 4 (7 URLs):** `/`, `/services/`, and the five service pages
+**Live as of pass 6 (10 URLs):** `/`, `/services/`, and the eight service pages
 `outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
-`pool-decks`. Everything else is linked from the global nav or footer and
-returns 404 until its page is built — a deliberate, approved state, not a
-defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
+`pool-decks`, `outdoor-kitchens`, `pergolas`, `tiki-huts`. Everything else is
+linked from the global nav or footer and returns 404 until its page is built —
+a deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
+resolve; add each entry as it ships.
 
-**Five service pages remain:** outdoor kitchens, pergolas, tiki huts, turf,
-fencing, impact windows & doors.
+**Three service pages remain:** artificial turf (`/services/turf/`), fencing
+(`/services/fence/`), impact windows & doors
+(`/services/impact-windows-doors/`).
 
 ### 8.3 Navigation model
 
@@ -578,9 +583,17 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-patios` | covered terrace and lawn at dusk | `/services/patios/` banner |
 | `hero-driveways` | garage and paved approach | `/services/driveways/` banner |
 | `hero-pool-decks` | pool, surround and loungers | `/services/pool-decks/` banner |
+| `hero-outdoor-kitchens` | covered terrace, dining and a built-in cooking unit | `/services/outdoor-kitchens/` banner |
+| `hero-pergolas` | timber post-and-beam frame with drapes | `/services/pergolas/` banner |
+| `hero-tiki-huts` | thatched roof among palms beside a pool | `/services/tiki-huts/` banner |
 
-**The nine source photographs are now carrying eight pages.** Pass 4 exhausted
-the usable material: `hero-driveways` and `card-fencing` are different crops of
+**The nine source photographs are now carrying eleven pages.** Pass 6 took the
+last usable framings: `hero-pergolas` and `hero-tiki-huts` are different crops
+of the same photograph, chosen because that image happens to contain both a
+draped timber structure and a thatched roof. `hero-outdoor-kitchens` is a crop
+of the same house as `hero-patios`. There is nothing left to re-crop for the
+three remaining service pages — **real project photography is now a blocker,
+not a nice-to-have.** Pass 4 had already exhausted the obvious material: `hero-driveways` and `card-fencing` are different crops of
 the same building, and `hero-pool-decks` is only 700px wide because its source
 is. Real project photography is now the binding constraint on further pages —
 see §12 item 7.
@@ -861,6 +874,68 @@ Two test suites asserted on root-absolute selectors and were updated to match
 on href suffix, which is deployment-agnostic. That was a test defect, not a
 site defect.
 
+### 13.9 Pass 6 — outdoor kitchens, pergolas, tiki huts
+
+Shipped `/services/outdoor-kitchens/`, `/services/pergolas/` and
+`/services/tiki-huts/`. Word counts 2,527 / 2,565 / 2,700.
+
+Each page is organised around a different question, as §13.7 established:
+
+| | Organising question | Signature section | Workflow keyed to |
+|---|---|---|---|
+| Outdoor kitchens | Where do the services run, and where does the cook stand? | four-layout comparison; zones and circulation | rough-in while the ground is open |
+| Pergolas | Which hours do you want back? | sun path and orientation; attached vs freestanding | footings before paving |
+| Tiki huts | What is the destination in the yard? | placement; seating and bar layouts | position fixed first, planning raised early |
+
+### Three claims deliberately not made
+
+- **No appliance or product brands.** The outdoor kitchen page plans by
+  appliance *type and cut-out dimension*, and says so explicitly. Scanned all
+  nine service pages against a brand list — zero mentions.
+- **No wind or structural ratings.** The pergolas page refuses one in a callout
+  and in its FAQ: performance figures belong to a specific product or engineered
+  design and come from the manufacturer or the engineering for that design, not
+  from a marketing page. Zero rating figures anywhere.
+- **No blanket permit statements.** Never that a structure does or does not
+  require a permit. The mandated wording is used instead — see below.
+
+### The permitting wording is fixed text
+
+Use this verbatim wherever permitting comes up:
+
+> Requirements can vary by jurisdiction and project scope. Arco can discuss
+> planning considerations for your specific project.
+
+It appears three times on each of the three pages. The tiki huts page adds a
+callout explaining *why* the answer is not given on a web page: it depends on
+location, scope, size, siting and use, and the consequences of a wrong blanket
+claim land on the homeowner.
+
+**Do not paraphrase it.** A safety or legal caution phrased differently on every
+page is worse than one phrased identically — consistency is the point.
+
+### Exception to the zero-overlap rule
+
+§13.7 requires zero shared sentences between sibling pages. These three share
+exactly two sentence-pairs with each other, and all are deliberate:
+
+1. the two mandated permitting sentences above;
+2. *"Which elements are performed directly and which are coordinated is set out
+   in your written proposal."* — the scope-boundary statement from §13.6, which
+   should read identically wherever it appears.
+
+Everything else is zero. When the overlap check reports a hit, confirm it is one
+of these before treating it as templated filler.
+
+### Thatch and other unverified offerings
+
+The tiki huts page presents natural and synthetic thatch as the two families
+that exist and what each trades, with the choice "settled for your project at
+consultation rather than declared in advance". It does **not** claim which Arco
+supplies, because that is not verified. It also declines to publish a service
+life in years, and says why. Apply the same pattern to any future material
+question where Arco's actual offering is unconfirmed.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1011,7 +1086,12 @@ repository root is enough to serve it.
 - [ ] Interior pages follow the §8.5 skeleton and alternate section grounds
 - [ ] JSON-LD matches the §8.5 table; FAQ answers match the visible text
 - [ ] Any new image crop actually depicts the thing it illustrates
-- [ ] Zero shared sentences with sibling pages (see §13.7); H2 spine is its own
+- [ ] Zero shared sentences with sibling pages (see §13.7), except the fixed
+      safety and scope wording listed in §13.9; H2 spine is its own
+- [ ] Permitting, if mentioned, uses the §13.9 wording verbatim — never a
+      blanket claim either way
+- [ ] No product or appliance brands, no wind or structural ratings, no service
+      life in years, unless verified for the specific product or design
 - [ ] No "slip-proof"/"non-slip" as a material property, no value percentages,
       no service claimed that §5 does not list
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
