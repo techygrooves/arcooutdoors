@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 6 — turf, fencing, impact windows & doors)
+Last updated: 2026-09-01 (pass 7 — local SEO architecture)
 
 ---
 
@@ -161,6 +161,12 @@ the tooling must not become a repository dependency.
   services/fence/index.html                  ← live
   services/impact-windows-doors/index.html   ← live
 
+  service-areas/index.html                   ← live (hub)
+  service-areas/parkland-fl/index.html       ← live
+  service-areas/davie-fl/index.html          ← live
+  service-areas/weston-fl/index.html         ← live
+  service-areas/plantation-fl/index.html     ← live
+
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
     css/pages.css               ← shared interior-page components
@@ -245,14 +251,18 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 6 (10 URLs):** `/`, `/services/`, and the eight service pages
+**Live as of pass 7 (15 URLs):** `/`, `/services/`, the eight service pages
 `outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
-`pool-decks`, `turf`, `fence`, `impact-windows-doors`. Everything else is
-linked from the global nav or footer and returns 404 until its page is built —
-a deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
-resolve; add each entry as it ships.
+`pool-decks`, `turf`, `fence`, `impact-windows-doors`, plus `/service-areas/`
+and the four city pages `parkland-fl`, `davie-fl`, `weston-fl`,
+`plantation-fl`. Everything else is linked from the global nav or footer and
+returns 404 until its page is built — a deliberate, approved state, not a
+defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
 
 **Three service pages remain:** outdoor kitchens, pergolas, tiki huts.
+**Four location pages remain:** Fort Lauderdale, Pembroke Pines, Coral
+Springs, Boca Raton — all four linked from the `/service-areas/` hub, which
+says plainly which pages are written and which are still coming.
 
 ### 8.3 Navigation model
 
@@ -336,6 +346,14 @@ centred `.section-head` is reserved for the homepage.
 |---|---|
 | Hub | `BreadcrumbList` + `CollectionPage` (with `ItemList`) + `FAQPage` |
 | Service | `BreadcrumbList` + `Service` + `WebPage` + `FAQPage` |
+| Location | `BreadcrumbList` + `Service` (`areaServed` = that `City`) + `WebPage` + `FAQPage` |
+
+**Location pages must never emit `LocalBusiness`, `GeneralContractor`, or any
+`address` / `PostalAddress` node.** Doing so implies a branch office in that
+city. The business is declared once, on the homepage, at the one verified
+address (§3); every location page references it as
+`provider: { "@id": "…/#business" }` and expresses the city through
+`Service.areaServed` only.
 
 `Service.provider` and `WebPage.isPartOf` reference the homepage `@id`s
 (`…/#business`, `…/#website`) rather than redeclaring the business. Every FAQ
@@ -584,6 +602,11 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-turf` | ground-level turf lawn, screening behind | `/services/turf/` banner |
 | `hero-fence` | low white boundary wall dividing lawn from path | `/services/fence/` banner |
 | `hero-impact-windows-doors` | dark-framed sliding doors onto a pool terrace | `/services/impact-windows-doors/` banner |
+| `hero-service-areas` | draped cabanas beside a lit pool at sunset | `/service-areas/` banner |
+| `hero-parkland-fl` | lit rear elevation over a level lawn at dusk | `/service-areas/parkland-fl/` banner |
+| `hero-davie-fl` | paved path to a white house entrance, lawn alongside | `/service-areas/davie-fl/` banner |
+| `hero-weston-fl` | white rear elevation, covered terrace, pool foreground | `/service-areas/weston-fl/` banner |
+| `hero-plantation-fl` | dappled tree shadow across a paved terrace | `/service-areas/plantation-fl/` banner |
 
 **The nine source photographs are now carrying eleven pages.** Pass 4 believed
 the usable material was exhausted; pass 6 found three more frames by going back
@@ -674,7 +697,7 @@ of them may be repeated on any new page until verified.
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 22 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 10 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 17 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 15 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -957,6 +980,86 @@ JavaScript disabled. Served correctly from both a root mount and
 `/arcooutdoors/`. FAQ JSON-LD compared programmatically against the visible
 `<details>` text on all three pages — exact match, 6 entries each.
 
+### 13.10 Pass 7 — local SEO architecture
+
+Shipped `/service-areas/` and the first four city pages: `parkland-fl`,
+`davie-fl`, `weston-fl`, `plantation-fl`. Word counts (body inside `<main>`,
+chrome excluded): hub 1,897; Parkland 2,308; Davie 2,466; Weston 2,492;
+Plantation 2,420.
+
+**The anti-doorway rule was the whole brief, and it is measurable.** Overlap
+re-measured across all 16 pages on the site: **zero shared sentences** at ≥45
+characters. Each city page is organised around a different question and leads
+with a different section, so the section order itself differs, not only the
+nouns:
+
+| Page | Organising question | Leads with | Distinct spine element |
+|---|---|---|---|
+| Parkland | What do you do with a yard this big? | the seven services, as breadth | zoning-and-phasing section; buried work before later phases |
+| Davie | Which of four property types are you on? | what proximity does and does not change | four-lot-type analysis (acreage / ranch / subdivision / zero-lot) |
+| Weston | What will the community allow? | the approvals track, before any material | screened-enclosure scope boundary; two parallel approvals |
+| Plantation | Why did the existing surface fail? | reading what is already in the ground | mature-canopy and root section; survey-first process |
+
+**What each page refuses to claim.**
+
+- *No project is asserted in any city.* Every location page carries an
+  "About these photographs" note stating the images illustrate the type of
+  work described, are not presented as completed projects, and are not
+  claimed to have been taken in that city — including on the Davie page, the
+  town of the published address. Parkland's sixth FAQ answers the "have you
+  worked here" question by saying to ask, and the hub's second FAQ says the
+  same at the coverage level. §12 item 7 records that the photography appears
+  to be stock, so it is never described as Arco's work either.
+- *No invented local rules.* No height, setback, permit rule, fee, review
+  time, barrier requirement or HOA guideline appears on any of the five
+  pages. Weston states outright that it will not quote a rule from memory or
+  from another community and that the association is the authority on its own
+  guidelines. Every page routes requirements to "confirmed for your address as
+  part of the project".
+- *No demographics.* No income, price, population or "affluent"-class
+  language. City character is described only through property-stock
+  observations — housing age, lot size and shape, exposure, canopy, water,
+  whether associations are typically involved.
+- *No branch offices.* See §8.5: location pages emit no `LocalBusiness` and no
+  address node. Davie says "our published business address is in Davie" and
+  explicitly adds that we do not maintain premises elsewhere, rather than
+  implying local presence in each market.
+- *No service radius in miles.* The hub says why: a radius sounds precise and
+  decides nothing, when scope, access and schedule are what actually
+  determine fit. §3 forbids inventing one in any case.
+
+**Hub.** H1 is `Outdoor Remodeling Service Areas in South Florida`, as briefed.
+It links all eight priority markets with a substantive character note each
+(`.spec-grid`, not a bare list), states the three-county coverage, and includes
+a "what actually changes from one city to the next" section that doubles as the
+justification for the location-page architecture. It deliberately does not list
+the 33 municipalities the homepage names — that list is a coverage statement in
+its own context and would be keyword padding here. A `.note` says plainly which
+four city pages are written and which four are still coming, so the four links
+that 404 today are disclosed on the page rather than discovered.
+
+**Imagery.** Five new hero crops, again cut from the original pass-1 JPEGs
+recovered from `ae67717` (§9.11 method), no new third-party URLs:
+`hero-service-areas`, `hero-parkland-fl`, `hero-davie-fl`, `hero-weston-fl`,
+`hero-plantation-fl`. `hero-weston-fl` is only 700px wide because its source
+is, and `hero-plantation-fl` is a different band of the same photograph that
+`hero-impact-windows-doors` crops — the shaded-paving foreground rather than
+the glazed elevation. Section and gallery images are existing files, re-alt-
+texted for what is in the frame, and the gallery captions describe the frame
+rather than naming a client or a place (§12 item 6 is the failure mode being
+avoided).
+
+**Verified.** `sync-partials.py --check` and `check-links.py` both exit 0. All
+five pages at 390 / 768 / 1440: HTTP 200, zero console errors, zero failed
+requests, no horizontal overflow, hero decoded, `Service Areas` showing as the
+current nav item. Scroll-reveal returns every element to full opacity; with
+`main.js` blocked nothing is hidden. Mobile drawer opens and closes on
+`Escape`. Renders with JavaScript disabled. Titles, descriptions and canonicals
+are unique across all 16 pages, with descriptions trimmed to 151–161
+characters. FAQ JSON-LD compared programmatically against the visible
+`<details>` text — exact match, six entries per page — and each location
+page's `@graph` asserted to contain no `LocalBusiness` and no address node.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1116,3 +1219,14 @@ repository root is enough to serve it.
       listed in §13.9 unless verified documentation is in this repository
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
+
+Additionally, for a location page:
+
+- [ ] No completed project asserted in that city, and the photography note is
+      present wherever images appear
+- [ ] No local code, permit, fee, timeline, barrier requirement or HOA rule
+      stated — requirements are routed to "confirmed for your address"
+- [ ] No demographic, income or property-value characterisation of the city
+- [ ] `@graph` carries no `LocalBusiness`, `GeneralContractor` or address
+      node; the city appears only as `Service.areaServed` (§8.5)
+- [ ] Section order, not just wording, differs from every sibling city page
