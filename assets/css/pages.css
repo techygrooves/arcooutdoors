@@ -514,6 +514,11 @@
 }
 .spec-grid p { font-size: 14.5px; line-height: 1.75; color: var(--body); margin: 0; }
 
+/* Compact eight-market strip — the "Areas we serve" block on service pages.
+   Constrained so the eight priority markets read as two rows of four rather
+   than one long row with two orphans. */
+.areas-grid--compact { max-width: 800px; }
+
 /* Anchor row — jump links to the sections of a long service page. */
 .jumpbar { background: var(--sand-100); border-bottom: 1px solid var(--hairline); }
 .jumpbar ul {
