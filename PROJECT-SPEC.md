@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-08-31 (pass 2 — global navigation, footer, homepage architecture)
+Last updated: 2026-08-31 (pass 3 — services hub + first two service pages)
 
 ---
 
@@ -132,6 +132,10 @@ the tooling must not become a repository dependency.
   404.html                      ← live
   robots.txt  sitemap.xml  favicon.svg  PROJECT-SPEC.md
 
+  services/index.html                        ← live (hub)
+  services/outdoor-remodeling/index.html     ← live
+  services/paver-installation/index.html     ← live
+
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
     css/pages.css               ← shared interior-page components
@@ -214,9 +218,11 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Every one of these is linked from the global nav or footer and returns 404
-until its page is built.** That is a deliberate, approved state, not a defect.
-`sitemap.xml` still lists only URLs that resolve — add each entry as it ships.
+**Live as of pass 3:** `/`, `/services/`, `/services/outdoor-remodeling/`,
+`/services/paver-installation/`. Everything else is linked from the global nav
+or footer and returns 404 until its page is built — a deliberate, approved
+state, not a defect. `sitemap.xml` lists only the four URLs that resolve; add
+each entry as it ships.
 
 ### 8.3 Navigation model
 
@@ -271,6 +277,40 @@ and Accessibility Statement. Collapses to three columns at 1180px and to
 **No social profile links.** None have been verified for this business (§3). Do
 not add them on the strength of an icon looking nice; the four `href="#"`
 placeholders that shipped in pass 1 were removed in pass 2.
+
+### 8.5 Interior page recipe
+
+Every interior page shipped so far follows the same skeleton. Copy it rather
+than inventing a new arrangement — the point is that a visitor cannot tell which
+page was built in which pass.
+
+```
+breadcrumb (.breadcrumb)                    ← always, on every page below root
+page banner (.page-hero + __media/__scrim)  ← one H1, eyebrow, lead, two CTAs
+jump bar (.jumpbar)                         ← optional; long pages only
+intro (.prose)                              ← states the page's actual argument
+…body sections, alternating .section--sand…
+related links (.link-index)
+service areas (.link-index)
+FAQ (.faq, native <details>)                ← 6 entries, mirrored in FAQPage JSON-LD
+closing CTA (.cta-band)
+```
+
+Section rhythm alternates `.section` and `.section--sand` so no two adjacent
+bands share a ground. Headings inside a section use `.section-head--left`;
+centred `.section-head` is reserved for the homepage.
+
+**Structured data per page type**
+
+| Page | `@graph` nodes |
+|---|---|
+| Hub | `BreadcrumbList` + `CollectionPage` (with `ItemList`) + `FAQPage` |
+| Service | `BreadcrumbList` + `Service` + `WebPage` + `FAQPage` |
+
+`Service.provider` and `WebPage.isPartOf` reference the homepage `@id`s
+(`…/#business`, `…/#website`) rather than redeclaring the business. Every FAQ
+answer in JSON-LD must match the visible `<details>` text. Still **no**
+`aggregateRating` or `Review` anywhere (§12).
 
 ## 9. DESIGN SYSTEM
 
@@ -430,6 +470,47 @@ gold primary button, the outlined secondary button beside it, and the
 links. The closing CTA band is a full-bleed dark section with a centred eyebrow,
 display heading, one line of copy and a gold/outline button pair.
 
+### 9.10 Interior-page components (pages.css §14)
+
+Added in pass 3, all built on existing tokens:
+
+| Class | Use |
+|---|---|
+| `.section-head--left` | left-aligned section header; the interior-page default |
+| `.note` / `.note--onDark` | callout with a gold left rule — climate notes, scope caveats |
+| `.card--service` | homepage `.card` with a 200px media box, for category grids |
+| `.card--feature` | one service across the full grid width, image beside copy |
+| `.spec-grid` | hairline-topped definition blocks for comparisons |
+| `.jumpbar` | sticky-adjacent anchor row for long pages |
+
+`.table-wrap` carries `tabindex="0"`, `role="region"` and an `aria-label`
+wherever it is used, because the container scrolls horizontally and a scrollable
+region has to be operable by keyboard.
+
+### 9.11 Image inventory
+
+All photography is self-hosted WebP except nine service-card images still
+hot-linked from Unsplash (§12 item 8). Pass 3 recovered the nine original JPEGs
+from the pass-1 bundle in git history (`git show ae67717:index.html`) and
+re-derived new crops from them, so no new third-party URLs were introduced.
+
+| File | Source | Used by |
+|---|---|---|
+| `hero-services-outdoor-remodeling` | modern home exterior | `/services/` banner |
+| `hero-complete-outdoor-transformation` | draped shade structures at sunset | `/services/outdoor-remodeling/` banner |
+| `hero-paver-installation` | paved terrace beside a pool | `/services/paver-installation/` banner |
+| `card-paver-installation` | as above, 3:2 crop | hub card |
+| `card-tiki-huts` | shade structures, left crop | hub card, remodel gallery |
+| `card-fencing` | white masonry garden walls | hub card |
+| `card-impact-windows` | glazed wall, interior to exterior | hub card |
+| `card-complete-remodeling` | house at dusk with lawn | hub feature card |
+
+Each new crop was reviewed against the service it illustrates. A pool photograph
+originally cropped for the fencing card was rejected and re-sourced, because a
+card labelled *Fencing* showing a pool is the same category of error as §12
+item 6. Alt text describes what is actually in the frame, never what the card is
+selling.
+
 ## 10. SEO RULES
 
 Every indexable page needs, without exception:
@@ -587,6 +668,39 @@ remain. Four in-page anchors are deliberate and resolve today:
 ships, decide per-CTA whether the on-page form or the dedicated page is the
 better destination; do not blanket-replace.
 
+### 13.6 Pass 3 — services hub and first two service pages
+
+Shipped `/services/`, `/services/outdoor-remodeling/` and
+`/services/paver-installation/`, plus the interior-page recipe in §8.5 and the
+components in §9.10.
+
+**Content approach.** Every claim is either a verified fact from §3, general
+construction practice that is publicly documented, or an observable South
+Florida climate fact. Nothing about Arco's volume, history, pricing, timelines
+or warranties appears anywhere. Two places deliberately decline to claim:
+
+- *Who performs what.* The remodeling page states plainly that no contractor
+  self-performs every trade, that specialist work is separately licensed in
+  Florida, and that the split between performed and coordinated work is set out
+  in the written proposal. It never asserts Arco self-performs anything.
+- *Permitting.* Described only as varying by municipality and reviewed at the
+  consultation. No code, fee, timeline or requirement is named.
+
+Word counts: hub 1,508, remodeling 1,912, paver installation 2,150.
+
+**Bug fixed — scroll-reveal could blank a page.** `.js .reveal { opacity: 0 }`
+was gated on `.js`, which the inline `<head>` script sets before `main.js`
+loads. If `main.js` failed to load or threw, every `.reveal` element stayed
+invisible permanently. Harmless-looking on the homepage; on these service pages
+`.reveal` carries most of the body content. The gate is now `.reveal-on`, which
+`main.js` adds itself immediately before it starts observing, so a failed script
+leaves the page fully visible. Regression test: `revealtest.js` step 2 blocks
+`main.js` and asserts nothing is hidden.
+
+**Also fixed.** `.table-wrap` scrolls horizontally but was not keyboard
+operable; it now carries `tabindex="0"`, `role="region"`, an `aria-label` and a
+focus ring.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -732,4 +846,8 @@ repository root is enough to serve it.
 - [ ] Dropdowns open on hover, click and `Enter`; `Escape` returns focus
 - [ ] Mobile drawer: opens, accordions expand, body scroll locks, scroll offset
       restores on close, `Escape` closes, Tab stays inside
+- [ ] Interior pages follow the §8.5 skeleton and alternate section grounds
+- [ ] JSON-LD matches the §8.5 table; FAQ answers match the visible text
+- [ ] Any new image crop actually depicts the thing it illustrates
+- [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced

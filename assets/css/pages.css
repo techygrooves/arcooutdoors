@@ -319,6 +319,8 @@
    8. Fact table — specification and comparison data.
    -------------------------------------------------------------------------- */
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* The container scrolls, so it carries tabindex="0" and needs a focus ring. */
+.table-wrap:focus-visible { outline: 3px solid var(--gold-link); outline-offset: 3px; }
 .table-wrap table {
   width: 100%;
   min-width: 520px;
@@ -439,4 +441,101 @@
   .steps { gap: 30px; }
   .cta-band { padding: 32px 22px; }
   .prose { font-size: 16.5px; }
+}
+
+/* --------------------------------------------------------------------------
+   14. Service-page components (added for /services/)
+   -------------------------------------------------------------------------- */
+
+/* Left-aligned section header — the hub's category bands read as a stack of
+   labelled groups rather than a run of centred announcements. */
+.section-head--left {
+  text-align: left;
+  max-width: 62ch;
+  margin: 0 0 44px;
+}
+.section-head--left .eyebrow { justify-content: flex-start; }
+.section-head--left .eyebrow::after { content: none; }
+.section-head--left p.lead { margin-top: 16px; }
+
+/* Callout — climate notes, scope caveats, anything the reader should not skim. */
+.note {
+  border-left: 3px solid var(--gold-deep);
+  background: var(--sand-100);
+  padding: 26px 30px;
+  max-width: 74ch;
+}
+.note > * + * { margin-top: 14px; }
+.note h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 21px;
+  color: var(--ink);
+  margin: 0;
+}
+.note p { font-size: 15.5px; line-height: 1.8; color: var(--body); margin: 0; }
+.note--onDark {
+  background: rgba(255, 255, 255, .04);
+  border-left-color: var(--gold);
+}
+.note--onDark h3 { color: var(--gold-light); }
+.note--onDark p { color: rgba(253, 250, 243, .78); }
+
+/* Category card grid — the homepage `.card` frame, with a compact media box. */
+.card--service .card__media img { height: 200px; }
+.card--service .card__body { padding: 26px 26px 30px; }
+.card--service .card__title { font-size: 24px; }
+
+/* Feature card — one service given the full width of the grid. */
+.card--feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+}
+.card--feature .card__media img { height: 100%; min-height: 320px; }
+.card--feature .card__body { padding: 44px 46px; justify-content: center; }
+.card--feature .card__title { font-size: 32px; margin-bottom: 16px; }
+.card--feature .card__text { font-size: 16px; flex: none; }
+
+/* Two-column definition list for material / option comparisons. */
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px 40px;
+}
+.spec-grid > div { border-top: 1px solid var(--hairline-2); padding-top: 20px; }
+.spec-grid h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 21px;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+.spec-grid p { font-size: 14.5px; line-height: 1.75; color: var(--body); margin: 0; }
+
+/* Anchor row — jump links to the sections of a long service page. */
+.jumpbar { background: var(--sand-100); border-bottom: 1px solid var(--hairline); }
+.jumpbar ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 26px;
+  padding-block: 16px;
+}
+.jumpbar a {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--body);
+}
+.jumpbar a:hover, .jumpbar a:focus-visible { color: var(--gold-link); }
+
+@media (max-width: 860px) {
+  .card--feature { grid-template-columns: 1fr; }
+  .card--feature .card__media img { min-height: 220px; height: 220px; }
+  .card--feature .card__body { padding: 30px 26px 34px; }
+  .card--feature .card__title { font-size: 27px; }
+  .note { padding: 22px 22px; }
+  .section-head--left { margin-bottom: 32px; }
 }

@@ -1403,9 +1403,13 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
   50%      { transform: translate(-50%, 9px); }
 }
 
-/* Scroll-reveal, applied by main.js only when motion is welcome */
-.js .reveal { opacity: 0; transform: translateY(22px); }
-.js .reveal.is-visible {
+/* Scroll-reveal.
+   Gated on `.reveal-on`, which main.js adds itself immediately before it starts
+   observing — NOT on `.js`, which the inline head script sets. If main.js fails
+   to load or throws, nothing is ever hidden. Content visible by default is the
+   only safe default when most of a page carries this class. */
+.reveal-on .reveal { opacity: 0; transform: translateY(22px); }
+.reveal-on .reveal.is-visible {
   opacity: 1;
   transform: none;
   transition: opacity .7s var(--ease), transform .7s var(--ease);
@@ -1468,7 +1472,7 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
     scroll-behavior: auto !important;
   }
   .hero__scroll { transform: translateX(-50%); }
-  .js .reveal { opacity: 1; transform: none; }
+  .reveal-on .reveal { opacity: 1; transform: none; }
   .review:hover { transform: none; }
 }
 
