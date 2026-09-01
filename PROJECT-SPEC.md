@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 5 — portable paths, deployment fix)
+Last updated: 2026-09-01 (pass 6 — turf, fencing, impact windows & doors)
 
 ---
 
@@ -157,6 +157,9 @@ the tooling must not become a repository dependency.
   services/patios/index.html                 ← live
   services/driveways/index.html              ← live
   services/pool-decks/index.html             ← live
+  services/turf/index.html                   ← live
+  services/fence/index.html                  ← live
+  services/impact-windows-doors/index.html   ← live
 
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
@@ -242,14 +245,14 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 4 (7 URLs):** `/`, `/services/`, and the five service pages
+**Live as of pass 6 (10 URLs):** `/`, `/services/`, and the eight service pages
 `outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
-`pool-decks`. Everything else is linked from the global nav or footer and
-returns 404 until its page is built — a deliberate, approved state, not a
-defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
+`pool-decks`, `turf`, `fence`, `impact-windows-doors`. Everything else is
+linked from the global nav or footer and returns 404 until its page is built —
+a deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
+resolve; add each entry as it ships.
 
-**Five service pages remain:** outdoor kitchens, pergolas, tiki huts, turf,
-fencing, impact windows & doors.
+**Three service pages remain:** outdoor kitchens, pergolas, tiki huts.
 
 ### 8.3 Navigation model
 
@@ -577,13 +580,21 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `card-complete-remodeling` | house at dusk with lawn | hub feature card |
 | `hero-patios` | covered terrace and lawn at dusk | `/services/patios/` banner |
 | `hero-driveways` | garage and paved approach | `/services/driveways/` banner |
-| `hero-pool-decks` | pool, surround and loungers | `/services/pool-decks/` banner |
+| `hero-pool-decks` | pool, surround and loungers | `/services/pool-decks/` banner, `/services/fence/` pool section |
+| `hero-turf` | ground-level turf lawn, screening behind | `/services/turf/` banner |
+| `hero-fence` | low white boundary wall dividing lawn from path | `/services/fence/` banner |
+| `hero-impact-windows-doors` | dark-framed sliding doors onto a pool terrace | `/services/impact-windows-doors/` banner |
 
-**The nine source photographs are now carrying eight pages.** Pass 4 exhausted
-the usable material: `hero-driveways` and `card-fencing` are different crops of
-the same building, and `hero-pool-decks` is only 700px wide because its source
-is. Real project photography is now the binding constraint on further pages —
-see §12 item 7.
+**The nine source photographs are now carrying eleven pages.** Pass 4 believed
+the usable material was exhausted; pass 6 found three more frames by going back
+to the original JPEGs rather than re-cropping the shipped WebP files. The
+manifest in the pass-1 bundle (`git show ae67717:index.html`, §17) still holds
+all nine at full resolution, and every crop since has come from there. That is
+now the standing method: recover the source, crop, re-encode to WebP, never
+introduce a new third-party URL. It is also nearly spent — `hero-turf` is only
+900px wide because its source is, and every remaining frame has been used at
+least once. Real project photography is still the binding constraint — see §12
+item 7.
 
 Each new crop was reviewed against the service it illustrates. A pool photograph
 originally cropped for the fencing card was rejected and re-sourced, because a
@@ -663,7 +674,7 @@ of them may be repeated on any new page until verified.
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 31 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` correctly lists only `/`. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 22 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 10 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -861,6 +872,91 @@ Two test suites asserted on root-absolute selectors and were updated to match
 on href suffix, which is deployment-agnostic. That was a test defect, not a
 site defect.
 
+### 13.9 Pass 6 — turf, fencing, impact windows & doors
+
+Shipped `/services/turf/`, `/services/fence/` and
+`/services/impact-windows-doors/`. Word counts 3,271 / 3,313 / 3,778 (body
+copy inside `<main>`, chrome excluded). Three service pages remain: outdoor
+kitchens, pergolas, tiki huts.
+
+**Each page is organised around a different question**, per the §13.7 rule that
+siblings must not be one template with the nouns swapped.
+
+| | Organising question | Signature section | Layout it introduces |
+|---|---|---|---|
+| Turf | Does this ground actually suit turf? | side-by-side *strong candidates* vs *think harder about* | two-column `.prose` inside one `.split` |
+| Fencing | What is the fence **for**? | pool-area section that refuses a compliance claim | purpose grid before any material table |
+| Impact windows | Which document answers this? | *Ask for the document, not the adjective* | the previously unused `.with-rail` + `.rail__card` sticky rail |
+
+Overlap re-measured after writing: **zero shared sentences** at ≥45 characters
+between any of the three and any other page, chrome excluded. The licence
+sentence had to be reworded three ways to reach zero — `pool-decks` and
+`patios` had already fixed two phrasings of it, and it is the one sentence
+every service page is tempted to repeat.
+
+**Claims deliberately not made.**
+
+- *Turf — water savings.* No percentage, no gallons, no comparison figure. A
+  `.note` on the page says why: the honest number depends on the property's
+  irrigation, soil, rainfall, rates and prior lawn care, so a single figure
+  quoted to everyone is a marketing number. Do not add one without a cited
+  source.
+- *Turf — heat.* The page states plainly that synthetic fibre gets hotter than
+  living grass in direct sun, and gives the physical reason. It offers shade,
+  rinsing and lighter infill as mitigations and explicitly declines to quote a
+  temperature reduction for any product sold as cooling.
+- *Fencing — pool barriers.* The page says, as its own section and again in the
+  first FAQ, that **a fence is not automatically a pool barrier**. It does not
+  reproduce any barrier requirement, height, gate rule or code reference.
+  Requirements are described as property-specific and confirmed with the
+  authority having jurisdiction before anything is built. It also states that a
+  barrier is one layer of protection and never a substitute for supervision.
+  Never soften this into "our fences meet pool code".
+- *Fencing — permits and HOAs.* Municipal, county and association approval are
+  described as three separate, property-specific tracks. No height limit,
+  setback, fee or turnaround is named anywhere, and the page says outright why
+  it does not name them.
+- *Impact windows — the whole class of numbers.* No product approvals, no
+  approval numbers, no brand names, no wind ratings, no energy-savings
+  percentage, no insurance discount, no warranty term, no service life. The
+  page turns that into its argument: performance figures belong to a specific
+  product in a specific configuration, so the reader is told which document to
+  ask for instead. A dark `.rail__card` lists the refusals explicitly. Every
+  occurrence of "percentage", "wind rating", "insurance discount" and
+  "warranty" on that page is a negation or a reference to the manufacturer's
+  own paperwork — check that this is still true before editing it.
+- *Impact windows — energy and comfort.* Discussed only in comparative terms
+  ("glazing and frames differ measurably, and manufacturers publish the data
+  per product"), never as an outcome Arco promises. Insurance is routed to the
+  carrier.
+- *Impact windows — permitting.* Stated at the general level the brief allows:
+  the work is regulated, permitting and inspection are normally part of it, and
+  the specifics are confirmed per address. No code, fee or review time.
+
+**This page is not landscape work, and says so.** The impact-windows page opens
+by naming itself the exception on a site otherwise about outdoor living — it
+changes the building envelope rather than the yard — and closes the loop by
+explaining when it is sensibly coordinated with a deck or patio project and
+when it simply runs on its own.
+
+**Imagery.** Three new hero crops, all derived from the original pass-1 JPEGs
+recovered from `ae67717` rather than from the shipped WebP files, so no new
+third-party URL was introduced: `hero-turf` (900×346, its source is only 900
+wide), `hero-fence` (1100×423) and `hero-impact-windows-doors` (1100×423), each
+with a 700w variant, encoded at q72–80 to land in the same 30–80 KB band as the
+existing heroes. Supporting images are existing files, re-alt-texted for what
+is actually in the frame at the crop shown. Pillow was installed locally for the
+crop and encode; it is an authoring chore, not a repository dependency (§7).
+
+**Verified.** `sync-partials.py --check` and `check-links.py` both exit 0. All
+three pages at 390 / 768 / 1440: HTTP 200, zero console errors, zero failed
+requests, no horizontal overflow, hero decoded. Scroll-reveal returns every
+element to full opacity, and with `main.js` blocked nothing is hidden (§13.6
+regression). Mobile drawer opens on tap and closes on `Escape`. Renders with
+JavaScript disabled. Served correctly from both a root mount and
+`/arcooutdoors/`. FAQ JSON-LD compared programmatically against the visible
+`<details>` text on all three pages — exact match, 6 entries each.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1011,8 +1107,12 @@ repository root is enough to serve it.
 - [ ] Interior pages follow the §8.5 skeleton and alternate section grounds
 - [ ] JSON-LD matches the §8.5 table; FAQ answers match the visible text
 - [ ] Any new image crop actually depicts the thing it illustrates
-- [ ] Zero shared sentences with sibling pages (see §13.7); H2 spine is its own
+- [ ] Zero shared sentences with sibling pages (see §13.7, re-measured §13.9);
+      H2 spine is its own
 - [ ] No "slip-proof"/"non-slip" as a material property, no value percentages,
       no service claimed that §5 does not list
+- [ ] No water-savings figure on turf content, no blanket pool-code compliance
+      claim on fencing content, and none of the impact-window number classes
+      listed in §13.9 unless verified documentation is in this repository
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
