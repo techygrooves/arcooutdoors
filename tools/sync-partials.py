@@ -1,26 +1,37 @@
 #!/usr/bin/env python3
-"""Sync the canonical header/footer partials into every page.
+"""Sync the canonical header/footer partials into every page, and rewrite
+internal links so the site works wherever it is mounted.
 
 This is an AUTHORING helper, not a build step. The committed HTML is complete
 and static; the site deploys by copying the repository to any host, with this
-script never running. Its only job is to stop twelve hand-maintained copies of
-the navigation from drifting apart.
+script never running. It does two jobs:
+
+1. **Partials.** `assets/partials/<name>.html` is the source of truth. Every
+   page carries:
+
+       <!-- @partial:header -->
+       ...generated markup...
+       <!-- @endpartial:header -->
+
+   Everything between the markers is replaced by the partial's body and
+   re-indented to match the opening marker.
+
+2. **Portable paths.** Internal URLs are *authored* root-absolute (`/assets/…`,
+   `/services/…`) because that is easy to write and easy to grep. This script
+   rewrites them to depth-correct relative URLs (`../../assets/…`) so the site
+   renders identically at a domain root (`https://www.arcooutdoors.com/`) and
+   under a subpath (`https://user.github.io/arcooutdoors/`). Without this a
+   project-page deployment loads no CSS, no JS and no images.
+
+   The rewrite is idempotent: it only matches URLs with a leading slash, and a
+   relative URL never has one. Absolute `https://` URLs, `#fragments`, `tel:`
+   and `mailto:` are left alone, as are the canonical, Open Graph and JSON-LD
+   URLs, which must keep pointing at the production domain.
 
 Usage
 -----
     python3 tools/sync-partials.py            # rewrite pages in place
     python3 tools/sync-partials.py --check    # exit 1 if any page is stale
-
-How it works
-------------
-`assets/partials/<name>.html` is the source of truth. Every page carries:
-
-    <!-- @partial:header -->
-    ...generated markup...
-    <!-- @endpartial:header -->
-
-Everything between the markers is replaced by the partial's body (its leading
-HTML comment is stripped) and re-indented to match the opening marker.
 
 Per-page differences never live in the markup. Use `<body data-page="...">` to
 drive the current-page state; main.js reads it.
@@ -42,6 +53,10 @@ SKIP_DIRS = {".git", "assets", "tools", "node_modules"}
 
 LEADING_COMMENT = re.compile(r"\A\s*<!--.*?-->\s*", re.DOTALL)
 
+# Attributes holding a single URL, and attributes holding a srcset-style list.
+URL_ATTRS = ("href", "src", "action", "poster")
+SET_ATTRS = ("srcset", "imagesrcset")
+
 
 def load_partial(name: str) -> str:
     """Return a partial's body with its explanatory header comment removed."""
@@ -58,8 +73,50 @@ def iter_pages():
         yield path
 
 
-def apply_partial(html: str, name: str, body: str) -> tuple[str, bool]:
-    """Replace the marked region for `name`. Returns (html, changed)."""
+def prefix_for(page: Path) -> str:
+    """Relative hop back to the site root from a page: '', '../', '../../'."""
+    depth = len(page.relative_to(ROOT).parts) - 1
+    return "../" * depth
+
+
+def relativise(html: str, prefix: str) -> str:
+    """Turn root-absolute internal URLs into ones relative to this page.
+
+    Only `="/…"` is touched. Protocol-relative `//host/…` is skipped, since a
+    leading double slash is an absolute URL, not a site-root path.
+    """
+
+    def one(url: str) -> str:
+        if not url.startswith("/") or url.startswith("//"):
+            return url
+        out = prefix + url[1:]
+        # The site root from a root-level page would otherwise be an empty href.
+        return out or "./"
+
+    def sub_url(m):
+        return f'{m.group(1)}="{one(m.group(2))}"'
+
+    def sub_set(m):
+        parts = []
+        for candidate in m.group(2).split(","):
+            bits = candidate.strip().split()
+            if not bits:
+                continue
+            bits[0] = one(bits[0])
+            parts.append(" ".join(bits))
+        return f'{m.group(1)}="{", ".join(parts)}"'
+
+    html = re.sub(
+        r'\b(%s)="(/[^"]*)"' % "|".join(URL_ATTRS), sub_url, html
+    )
+    html = re.sub(
+        r'\b(%s)="([^"]*)"' % "|".join(SET_ATTRS), sub_set, html
+    )
+    return html
+
+
+def apply_partial(html: str, name: str, body: str) -> str:
+    """Replace the marked region for `name`, indented to match the marker."""
     pattern = re.compile(
         r"([ \t]*)(<!--\s*@partial:%s\s*-->)(.*?)([ \t]*<!--\s*@endpartial:%s\s*-->)"
         % (re.escape(name), re.escape(name)),
@@ -67,15 +124,25 @@ def apply_partial(html: str, name: str, body: str) -> tuple[str, bool]:
     )
     match = pattern.search(html)
     if not match:
-        return html, False
+        return html
 
     indent = match.group(1)
     indented = "\n".join(
         (indent + line if line.strip() else "") for line in body.split("\n")
     )
-    replacement = f"{indent}{match.group(2)}\n{indented}\n{indent}<!-- @endpartial:{name} -->"
-    updated = html[: match.start()] + replacement + html[match.end():]
-    return updated, updated != html
+    replacement = (
+        f"{indent}{match.group(2)}\n{indented}\n"
+        f"{indent}<!-- @endpartial:{name} -->"
+    )
+    return html[: match.start()] + replacement + html[match.end():]
+
+
+def render(page: Path, partials: dict) -> str:
+    """The canonical content of a page: partials inserted, paths relativised."""
+    html = page.read_text(encoding="utf-8")
+    for name, body in partials.items():
+        html = apply_partial(html, name, body)
+    return relativise(html, prefix_for(page))
 
 
 def main() -> int:
@@ -94,22 +161,16 @@ def main() -> int:
 
     for page in iter_pages():
         original = page.read_text(encoding="utf-8")
-        html = original
-        found_any = False
-
-        for name, body in partials.items():
-            html, _ = apply_partial(html, name, body)
-            if f"@partial:{name}" in original:
-                found_any = True
-
+        updated = render(page, partials)
         rel = page.relative_to(ROOT)
-        if not found_any:
+
+        if not any(f"@partial:{n}" in original for n in partials):
             unmarked.append(rel)
-        elif html != original:
+        elif updated != original:
             if check_only:
                 stale.append(rel)
             else:
-                page.write_text(html, encoding="utf-8")
+                page.write_text(updated, encoding="utf-8")
                 written.append(rel)
 
     for rel in unmarked:
@@ -121,12 +182,13 @@ def main() -> int:
         if stale:
             print(f"\n{len(stale)} page(s) out of sync. Run: python3 tools/sync-partials.py")
             return 1
-        print("All pages are in sync with assets/partials/.")
+        print("All pages are in sync with assets/partials/, and paths are relative.")
         return 0
 
     for rel in written:
         print(f"  updated: {rel}")
-    print(f"\n{len(written)} page(s) updated, {len(list(iter_pages())) - len(unmarked)} carry markers.")
+    total = len(list(iter_pages())) - len(unmarked)
+    print(f"\n{len(written)} page(s) updated, {total} carry markers.")
     return 0
 
 
