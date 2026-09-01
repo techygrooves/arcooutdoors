@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-08-31 (pass 4 — patios, driveways, pool decks)
+Last updated: 2026-09-01 (pass 5 — portable paths, deployment fix)
 
 ---
 
@@ -17,7 +17,21 @@ Last updated: 2026-08-31 (pass 4 — patios, driveways, pool decks)
 `https://www.arcooutdoors.com/`
 
 Canonical form: `https://` + `www.` + trailing slash on directory URLs.
-Every canonical, sitemap entry, Open Graph URL and JSON-LD `@id` must use it.
+Every canonical, sitemap entry, Open Graph URL and JSON-LD `@id` must use it —
+**including when the site is previewed somewhere else.** Those URLs identify the
+production page and must not be rewritten for a preview host.
+
+### 2.1 Where the site can be served
+
+The site is mount-point independent: it renders identically at a domain root
+(`https://www.arcooutdoors.com/`) and under a subpath
+(`https://techygrooves.github.io/arcooutdoors/`). That is not automatic — see
+§8.6. Verify both before shipping.
+
+If GitHub Pages is to serve the production domain, add a `CNAME` file
+containing `www.arcooutdoors.com` at the repository root and point DNS at
+Pages. Until then the project-page URL is the working preview, and the
+canonical tags correctly continue to name the production domain.
 
 ## 3. VERIFIED CONTACT INFORMATION
 
@@ -120,6 +134,11 @@ JavaScript (ES2018, no transpiling), self-hosted WOFF2 fonts, WebP images.
 requirement, bundlers, server-side rendering, WordPress, jQuery, CSS frameworks,
 any client-side router.
 
+**Internal URLs are authored root-absolute and shipped relative.** Write
+`/assets/…` and `/services/…`; `tools/sync-partials.py` rewrites them to
+depth-correct relative URLs on save (§8.6). Never hand-write `../../` — the
+tool computes it, and `tools/check-links.py` proves the arithmetic.
+
 There is no build step and there must never be one. `assets/` is served as-is.
 Image conversion and similar one-off authoring chores may use local tooling, but
 the tooling must not become a repository dependency.
@@ -147,7 +166,9 @@ the tooling must not become a repository dependency.
     partials/header.html        ← canonical header markup (source of truth)
     partials/footer.html        ← canonical footer markup (source of truth)
 
-  tools/sync-partials.py        ← authoring helper, never a deploy step
+  tools/sync-partials.py        ← inserts partials + relativises paths
+  tools/check-links.py          ← resolves every link/asset against the disk
+  .nojekyll                     ← stops GitHub Pages running Jekyll
 ```
 
 ### 8.1 The partial system — how to build every future page
@@ -317,6 +338,50 @@ centred `.section-head` is reserved for the homepage.
 (`…/#business`, `…/#website`) rather than redeclaring the business. Every FAQ
 answer in JSON-LD must match the visible `<details>` text. Still **no**
 `aggregateRating` or `Review` anywhere (§12).
+
+### 8.6 Portable paths — why links are relative
+
+The site must render correctly whether it is served from a domain root or from
+a subpath. A GitHub Pages *project* site serves at `/<repo>/`, so a page asking
+for `/assets/css/style.css` gets `techygrooves.github.io/assets/css/style.css`,
+which does not exist. The symptom is total: no CSS, no JavaScript, no images,
+every internal link 404. It looks like the site is broken; nothing is wrong
+with it except where it was pointed.
+
+**The rule.** Author internal URLs root-absolute — `/assets/…`, `/services/…` —
+because that is easy to write and easy to grep. Then run
+`python3 tools/sync-partials.py`, which rewrites them to depth-correct relative
+URLs as it saves:
+
+| Page | `/assets/css/style.css` becomes | `/` becomes |
+|---|---|---|
+| `index.html` | `assets/css/style.css` | `./` |
+| `services/index.html` | `../assets/css/style.css` | `../` |
+| `services/patios/index.html` | `../../assets/css/style.css` | `../../` |
+
+It covers `href`, `src`, `action`, `poster`, and every candidate inside
+`srcset` and `imagesrcset`. It is idempotent, because a relative URL has no
+leading slash for the next run to match.
+
+**What is deliberately not rewritten:** `https://` URLs, `#fragments`, `tel:`
+and `mailto:`, and therefore the canonical, Open Graph, sitemap and JSON-LD
+URLs. Those name the production page and must stay absolute wherever the site
+is previewed.
+
+**Verification.** `python3 tools/check-links.py` resolves every relative URL
+against the file system from the page that contains it, so wrong `../`
+arithmetic is caught here rather than by a visitor. It also fails on any
+leftover root-absolute internal URL, any `href="#"`, any fragment without a
+matching id, and any canonical or `og:url` not pointing at the production
+domain. Links to routes on the map that are not built yet are counted and
+reported, not treated as errors.
+
+**Known limitation.** `404.html` uses depth-0 relative paths, so it is styled
+for a miss at the site root. A miss at a deeper path (`/services/nope/`)
+renders the 404 page unstyled, because its relative paths resolve against the
+requested URL rather than the file's own location. That is inherent to a static
+404 with relative paths and affects both deployment shapes. It is a deliberate
+trade for having the rest of the site work everywhere.
 
 ## 9. DESIGN SYSTEM
 
@@ -764,6 +829,38 @@ the word reads as warranty language on a contractor site even when it is not
 doing that job. One sentence duplicated verbatim across two pages was rewritten
 so each answers its own question in its own words.
 
+### 13.8 Pass 5 — the site was mounted at a subpath
+
+**Symptom.** The deployed site at `techygrooves.github.io/arcooutdoors/`
+rendered as unstyled HTML: default serif, blue underlined links, bullet lists,
+alt text where photographs should be.
+
+**Cause.** Not a defect in the markup. Every internal URL was root-absolute, so
+on a GitHub Pages *project* site each one resolved above the mount point —
+`/assets/css/style.css` became `techygrooves.github.io/assets/css/style.css`.
+Reproduced locally by serving the repository under `/arcooutdoors/`: the page
+returned 200 and the stylesheet returned 404.
+
+**Fix.** Internal URLs are now relative and depth-correct, generated by
+`tools/sync-partials.py` so the partials stay a single source of truth. Full
+rationale and the authoring rule are in §8.6.
+
+**Verified on both mount points.** Seven pages × two deployments: stylesheet
+applied (page ground, display face and nav bar all correct), `main.js` running,
+hero image loaded, zero 4xx. Plus real navigation on the subpath deployment —
+dropdown to a service page, breadcrumb home, footer link, logo home — all
+landing on the right URL and styled.
+
+**Also.** Added `tools/check-links.py`, which resolves every relative URL from
+its containing page and fails on wrong `../` depth, leftover root-absolute
+URLs, bare `href="#"`, dangling fragments, and canonicals not naming the
+production domain. Verified it catches both failure modes by introducing them
+deliberately. Added `.nojekyll` so GitHub Pages serves the files as-is.
+
+Two test suites asserted on root-absolute selectors and were updated to match
+on href suffix, which is deployment-agnostic. That was a test defect, not a
+site defect.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -904,6 +1001,8 @@ repository root is enough to serve it.
 - [ ] `prefers-reduced-motion: reduce` leaves all content visible and still
 - [ ] New URL added to `sitemap.xml`
 - [ ] `python3 tools/sync-partials.py --check` exits 0
+- [ ] `python3 tools/check-links.py` exits 0
+- [ ] Page renders correctly served from a subpath, not only from a root
 - [ ] `<body data-page="…">` set, and the right nav item shows as current
 - [ ] Both stylesheets loaded, `style.css` before `pages.css`
 - [ ] Dropdowns open on hover, click and `Enter`; `Escape` returns focus
