@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 6 — outdoor kitchens, pergolas, tiki huts)
+Last updated: 2026-09-01 (pass 8 — outdoor kitchens, pergolas, tiki huts)
 
 ---
 
@@ -160,6 +160,15 @@ the tooling must not become a repository dependency.
   services/outdoor-kitchens/index.html       ← live
   services/pergolas/index.html               ← live
   services/tiki-huts/index.html              ← live
+  services/turf/index.html                   ← live
+  services/fence/index.html                  ← live
+  services/impact-windows-doors/index.html   ← live
+
+  service-areas/index.html                   ← live (hub)
+  service-areas/parkland-fl/index.html       ← live
+  service-areas/davie-fl/index.html          ← live
+  service-areas/weston-fl/index.html         ← live
+  service-areas/plantation-fl/index.html     ← live
 
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
@@ -245,16 +254,18 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 6 (10 URLs):** `/`, `/services/`, and the eight service pages
+**Live as of pass 8 (18 URLs):** `/`, `/services/`, all eleven service pages
 `outdoor-remodeling`, `paver-installation`, `patios`, `driveways`,
-`pool-decks`, `outdoor-kitchens`, `pergolas`, `tiki-huts`. Everything else is
-linked from the global nav or footer and returns 404 until its page is built —
-a deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
-resolve; add each entry as it ships.
+`pool-decks`, `outdoor-kitchens`, `pergolas`, `tiki-huts`, `turf`, `fence`,
+`impact-windows-doors`, plus `/service-areas/` and the four city pages
+`parkland-fl`, `davie-fl`, `weston-fl`, `plantation-fl`. Everything else is linked from the global nav or footer and
+returns 404 until its page is built — a deliberate, approved state, not a
+defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
 
-**Three service pages remain:** artificial turf (`/services/turf/`), fencing
-(`/services/fence/`), impact windows & doors
-(`/services/impact-windows-doors/`).
+**The service tier is complete** — all eleven §5 services have a page.
+**Four location pages remain:** Fort Lauderdale, Pembroke Pines, Coral
+Springs, Boca Raton — all four linked from the `/service-areas/` hub, which
+says plainly which pages are written and which are still coming.
 
 ### 8.3 Navigation model
 
@@ -338,6 +349,14 @@ centred `.section-head` is reserved for the homepage.
 |---|---|
 | Hub | `BreadcrumbList` + `CollectionPage` (with `ItemList`) + `FAQPage` |
 | Service | `BreadcrumbList` + `Service` + `WebPage` + `FAQPage` |
+| Location | `BreadcrumbList` + `Service` (`areaServed` = that `City`) + `WebPage` + `FAQPage` |
+
+**Location pages must never emit `LocalBusiness`, `GeneralContractor`, or any
+`address` / `PostalAddress` node.** Doing so implies a branch office in that
+city. The business is declared once, on the homepage, at the one verified
+address (§3); every location page references it as
+`provider: { "@id": "…/#business" }` and expresses the city through
+`Service.areaServed` only.
 
 `Service.provider` and `WebPage.isPartOf` reference the homepage `@id`s
 (`…/#business`, `…/#website`) rather than redeclaring the business. Every FAQ
@@ -582,21 +601,39 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `card-complete-remodeling` | house at dusk with lawn | hub feature card |
 | `hero-patios` | covered terrace and lawn at dusk | `/services/patios/` banner |
 | `hero-driveways` | garage and paved approach | `/services/driveways/` banner |
-| `hero-pool-decks` | pool, surround and loungers | `/services/pool-decks/` banner |
+| `hero-pool-decks` | pool, surround and loungers | `/services/pool-decks/` banner, `/services/fence/` pool section |
+| `hero-turf` | ground-level turf lawn, screening behind | `/services/turf/` banner |
+| `hero-fence` | low white boundary wall dividing lawn from path | `/services/fence/` banner |
+| `hero-impact-windows-doors` | dark-framed sliding doors onto a pool terrace | `/services/impact-windows-doors/` banner |
+| `hero-service-areas` | draped cabanas beside a lit pool at sunset | `/service-areas/` banner |
+| `hero-parkland-fl` | lit rear elevation over a level lawn at dusk | `/service-areas/parkland-fl/` banner |
+| `hero-davie-fl` | paved path to a white house entrance, lawn alongside | `/service-areas/davie-fl/` banner |
+| `hero-weston-fl` | white rear elevation, covered terrace, pool foreground | `/service-areas/weston-fl/` banner |
+| `hero-plantation-fl` | dappled tree shadow across a paved terrace | `/service-areas/plantation-fl/` banner |
 | `hero-outdoor-kitchens` | covered terrace, dining and a built-in cooking unit | `/services/outdoor-kitchens/` banner |
 | `hero-pergolas` | timber post-and-beam frame with drapes | `/services/pergolas/` banner |
 | `hero-tiki-huts` | thatched roof among palms beside a pool | `/services/tiki-huts/` banner |
 
-**The nine source photographs are now carrying eleven pages.** Pass 6 took the
-last usable framings: `hero-pergolas` and `hero-tiki-huts` are different crops
-of the same photograph, chosen because that image happens to contain both a
-draped timber structure and a thatched roof. `hero-outdoor-kitchens` is a crop
-of the same house as `hero-patios`. There is nothing left to re-crop for the
-three remaining service pages — **real project photography is now a blocker,
-not a nice-to-have.** Pass 4 had already exhausted the obvious material: `hero-driveways` and `card-fencing` are different crops of
-the same building, and `hero-pool-decks` is only 700px wide because its source
-is. Real project photography is now the binding constraint on further pages —
-see §12 item 7.
+**The nine source photographs are now carrying eleven pages.** Pass 4 believed
+the usable material was exhausted; pass 6 found three more frames by going back
+to the original JPEGs rather than re-cropping the shipped WebP files. The
+manifest in the pass-1 bundle (`git show ae67717:index.html`, §17) still holds
+all nine at full resolution, and every crop since has come from there. That is
+now the standing method: recover the source, crop, re-encode to WebP, never
+introduce a new third-party URL. It is also nearly spent — `hero-turf` is only
+900px wide because its source is, and every remaining frame has been used at
+least once. Real project photography is still the binding constraint — see §12
+item 7.
+
+**Two passes have now declared this material exhausted and been wrong.** Pass 4
+said pass 4 had spent it; pass 8 said the same and called real photography a
+blocker; passes 6 and 7 nonetheless found eight further usable framings by
+going back to the recovered originals. The honest statement is the one above:
+every source frame is now used at least once, several are used two or three
+times in different bands, and the next page that needs a genuinely new subject
+— rather than another crop of a subject already on the site — cannot be served
+from this material. That is the real blocker, and it arrives with the first
+page whose subject is not already photographed.
 
 Each new crop was reviewed against the service it illustrates. A pool photograph
 originally cropped for the fencing card was rejected and re-sourced, because a
@@ -676,7 +713,7 @@ of them may be repeated on any new page until verified.
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 31 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` correctly lists only `/`. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 14 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 18 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -874,10 +911,178 @@ Two test suites asserted on root-absolute selectors and were updated to match
 on href suffix, which is deployment-agnostic. That was a test defect, not a
 site defect.
 
-### 13.9 Pass 6 — outdoor kitchens, pergolas, tiki huts
+### 13.9 Pass 6 — turf, fencing, impact windows & doors
+
+Shipped `/services/turf/`, `/services/fence/` and
+`/services/impact-windows-doors/`. Word counts 3,271 / 3,313 / 3,778 (body
+copy inside `<main>`, chrome excluded). Three service pages remain: outdoor
+kitchens, pergolas, tiki huts.
+
+**Each page is organised around a different question**, per the §13.7 rule that
+siblings must not be one template with the nouns swapped.
+
+| | Organising question | Signature section | Layout it introduces |
+|---|---|---|---|
+| Turf | Does this ground actually suit turf? | side-by-side *strong candidates* vs *think harder about* | two-column `.prose` inside one `.split` |
+| Fencing | What is the fence **for**? | pool-area section that refuses a compliance claim | purpose grid before any material table |
+| Impact windows | Which document answers this? | *Ask for the document, not the adjective* | the previously unused `.with-rail` + `.rail__card` sticky rail |
+
+Overlap re-measured after writing: **zero shared sentences** at ≥45 characters
+between any of the three and any other page, chrome excluded. The licence
+sentence had to be reworded three ways to reach zero — `pool-decks` and
+`patios` had already fixed two phrasings of it, and it is the one sentence
+every service page is tempted to repeat.
+
+**Claims deliberately not made.**
+
+- *Turf — water savings.* No percentage, no gallons, no comparison figure. A
+  `.note` on the page says why: the honest number depends on the property's
+  irrigation, soil, rainfall, rates and prior lawn care, so a single figure
+  quoted to everyone is a marketing number. Do not add one without a cited
+  source.
+- *Turf — heat.* The page states plainly that synthetic fibre gets hotter than
+  living grass in direct sun, and gives the physical reason. It offers shade,
+  rinsing and lighter infill as mitigations and explicitly declines to quote a
+  temperature reduction for any product sold as cooling.
+- *Fencing — pool barriers.* The page says, as its own section and again in the
+  first FAQ, that **a fence is not automatically a pool barrier**. It does not
+  reproduce any barrier requirement, height, gate rule or code reference.
+  Requirements are described as property-specific and confirmed with the
+  authority having jurisdiction before anything is built. It also states that a
+  barrier is one layer of protection and never a substitute for supervision.
+  Never soften this into "our fences meet pool code".
+- *Fencing — permits and HOAs.* Municipal, county and association approval are
+  described as three separate, property-specific tracks. No height limit,
+  setback, fee or turnaround is named anywhere, and the page says outright why
+  it does not name them.
+- *Impact windows — the whole class of numbers.* No product approvals, no
+  approval numbers, no brand names, no wind ratings, no energy-savings
+  percentage, no insurance discount, no warranty term, no service life. The
+  page turns that into its argument: performance figures belong to a specific
+  product in a specific configuration, so the reader is told which document to
+  ask for instead. A dark `.rail__card` lists the refusals explicitly. Every
+  occurrence of "percentage", "wind rating", "insurance discount" and
+  "warranty" on that page is a negation or a reference to the manufacturer's
+  own paperwork — check that this is still true before editing it.
+- *Impact windows — energy and comfort.* Discussed only in comparative terms
+  ("glazing and frames differ measurably, and manufacturers publish the data
+  per product"), never as an outcome Arco promises. Insurance is routed to the
+  carrier.
+- *Impact windows — permitting.* Stated at the general level the brief allows:
+  the work is regulated, permitting and inspection are normally part of it, and
+  the specifics are confirmed per address. No code, fee or review time.
+
+**This page is not landscape work, and says so.** The impact-windows page opens
+by naming itself the exception on a site otherwise about outdoor living — it
+changes the building envelope rather than the yard — and closes the loop by
+explaining when it is sensibly coordinated with a deck or patio project and
+when it simply runs on its own.
+
+**Imagery.** Three new hero crops, all derived from the original pass-1 JPEGs
+recovered from `ae67717` rather than from the shipped WebP files, so no new
+third-party URL was introduced: `hero-turf` (900×346, its source is only 900
+wide), `hero-fence` (1100×423) and `hero-impact-windows-doors` (1100×423), each
+with a 700w variant, encoded at q72–80 to land in the same 30–80 KB band as the
+existing heroes. Supporting images are existing files, re-alt-texted for what
+is actually in the frame at the crop shown. Pillow was installed locally for the
+crop and encode; it is an authoring chore, not a repository dependency (§7).
+
+**Verified.** `sync-partials.py --check` and `check-links.py` both exit 0. All
+three pages at 390 / 768 / 1440: HTTP 200, zero console errors, zero failed
+requests, no horizontal overflow, hero decoded. Scroll-reveal returns every
+element to full opacity, and with `main.js` blocked nothing is hidden (§13.6
+regression). Mobile drawer opens on tap and closes on `Escape`. Renders with
+JavaScript disabled. Served correctly from both a root mount and
+`/arcooutdoors/`. FAQ JSON-LD compared programmatically against the visible
+`<details>` text on all three pages — exact match, 6 entries each.
+
+### 13.10 Pass 7 — local SEO architecture
+
+Shipped `/service-areas/` and the first four city pages: `parkland-fl`,
+`davie-fl`, `weston-fl`, `plantation-fl`. Word counts (body inside `<main>`,
+chrome excluded): hub 1,897; Parkland 2,308; Davie 2,466; Weston 2,492;
+Plantation 2,420.
+
+**The anti-doorway rule was the whole brief, and it is measurable.** Overlap
+re-measured across all 16 pages on the site: **zero shared sentences** at ≥45
+characters. Each city page is organised around a different question and leads
+with a different section, so the section order itself differs, not only the
+nouns:
+
+| Page | Organising question | Leads with | Distinct spine element |
+|---|---|---|---|
+| Parkland | What do you do with a yard this big? | the seven services, as breadth | zoning-and-phasing section; buried work before later phases |
+| Davie | Which of four property types are you on? | what proximity does and does not change | four-lot-type analysis (acreage / ranch / subdivision / zero-lot) |
+| Weston | What will the community allow? | the approvals track, before any material | screened-enclosure scope boundary; two parallel approvals |
+| Plantation | Why did the existing surface fail? | reading what is already in the ground | mature-canopy and root section; survey-first process |
+
+**What each page refuses to claim.**
+
+- *No project is asserted in any city.* Every location page carries an
+  "About these photographs" note stating the images illustrate the type of
+  work described, are not presented as completed projects, and are not
+  claimed to have been taken in that city — including on the Davie page, the
+  town of the published address. Parkland's sixth FAQ answers the "have you
+  worked here" question by saying to ask, and the hub's second FAQ says the
+  same at the coverage level. §12 item 7 records that the photography appears
+  to be stock, so it is never described as Arco's work either.
+- *No invented local rules.* No height, setback, permit rule, fee, review
+  time, barrier requirement or HOA guideline appears on any of the five
+  pages. Weston states outright that it will not quote a rule from memory or
+  from another community and that the association is the authority on its own
+  guidelines. Every page routes requirements to "confirmed for your address as
+  part of the project".
+- *No demographics.* No income, price, population or "affluent"-class
+  language. City character is described only through property-stock
+  observations — housing age, lot size and shape, exposure, canopy, water,
+  whether associations are typically involved.
+- *No branch offices.* See §8.5: location pages emit no `LocalBusiness` and no
+  address node. Davie says "our published business address is in Davie" and
+  explicitly adds that we do not maintain premises elsewhere, rather than
+  implying local presence in each market.
+- *No service radius in miles.* The hub says why: a radius sounds precise and
+  decides nothing, when scope, access and schedule are what actually
+  determine fit. §3 forbids inventing one in any case.
+
+**Hub.** H1 is `Outdoor Remodeling Service Areas in South Florida`, as briefed.
+It links all eight priority markets with a substantive character note each
+(`.spec-grid`, not a bare list), states the three-county coverage, and includes
+a "what actually changes from one city to the next" section that doubles as the
+justification for the location-page architecture. It deliberately does not list
+the 33 municipalities the homepage names — that list is a coverage statement in
+its own context and would be keyword padding here. A `.note` says plainly which
+four city pages are written and which four are still coming, so the four links
+that 404 today are disclosed on the page rather than discovered.
+
+**Imagery.** Five new hero crops, again cut from the original pass-1 JPEGs
+recovered from `ae67717` (§9.11 method), no new third-party URLs:
+`hero-service-areas`, `hero-parkland-fl`, `hero-davie-fl`, `hero-weston-fl`,
+`hero-plantation-fl`. `hero-weston-fl` is only 700px wide because its source
+is, and `hero-plantation-fl` is a different band of the same photograph that
+`hero-impact-windows-doors` crops — the shaded-paving foreground rather than
+the glazed elevation. Section and gallery images are existing files, re-alt-
+texted for what is in the frame, and the gallery captions describe the frame
+rather than naming a client or a place (§12 item 6 is the failure mode being
+avoided).
+
+**Verified.** `sync-partials.py --check` and `check-links.py` both exit 0. All
+five pages at 390 / 768 / 1440: HTTP 200, zero console errors, zero failed
+requests, no horizontal overflow, hero decoded, `Service Areas` showing as the
+current nav item. Scroll-reveal returns every element to full opacity; with
+`main.js` blocked nothing is hidden. Mobile drawer opens and closes on
+`Escape`. Renders with JavaScript disabled. Titles, descriptions and canonicals
+are unique across all 16 pages, with descriptions trimmed to 151–161
+characters. FAQ JSON-LD compared programmatically against the visible
+`<details>` text — exact match, six entries per page — and each location
+page's `@graph` asserted to contain no `LocalBusiness` and no address node.
+
+### 13.11 Pass 8 — outdoor kitchens, pergolas, tiki huts
 
 Shipped `/services/outdoor-kitchens/`, `/services/pergolas/` and
-`/services/tiki-huts/`. Word counts 2,527 / 2,565 / 2,700.
+`/services/tiki-huts/`, completing the eleven-service tier. Word counts
+2,527 / 2,565 / 2,700. Written in parallel with passes 6 and 7 on a separate
+branch and merged afterwards; the pass numbering here reflects merge order,
+not the order the work was done.
 
 Each page is organised around a different question, as §13.7 established:
 
@@ -887,54 +1092,54 @@ Each page is organised around a different question, as §13.7 established:
 | Pergolas | Which hours do you want back? | sun path and orientation; attached vs freestanding | footings before paving |
 | Tiki huts | What is the destination in the yard? | placement; seating and bar layouts | position fixed first, planning raised early |
 
-### Three claims deliberately not made
+**Claims deliberately not made.**
 
-- **No appliance or product brands.** The outdoor kitchen page plans by
-  appliance *type and cut-out dimension*, and says so explicitly. Scanned all
-  nine service pages against a brand list — zero mentions.
-- **No wind or structural ratings.** The pergolas page refuses one in a callout
-  and in its FAQ: performance figures belong to a specific product or engineered
-  design and come from the manufacturer or the engineering for that design, not
-  from a marketing page. Zero rating figures anywhere.
-- **No blanket permit statements.** Never that a structure does or does not
-  require a permit. The mandated wording is used instead — see below.
+- *No appliance or product brands.* The outdoor kitchen page plans by appliance
+  type and cut-out dimension, and says so explicitly. All eleven service pages
+  scanned against a brand list — zero mentions.
+- *No wind or structural ratings.* The pergolas page refuses one in a callout
+  and in its FAQ: performance figures belong to a specific product or
+  engineered design and come from the manufacturer or that engineering, not
+  from a marketing page. Zero rating figures anywhere. This is the same
+  position §13.9 takes on impact windows, reached independently.
+- *No blanket permit statements.* Never that a structure does or does not
+  require a permit.
+- *No thatch service life in years, and no claim about which thatch Arco
+  supplies.* The tiki huts page presents natural and synthetic thatch as the
+  two families that exist and what each trades, with the choice settled at
+  consultation rather than declared in advance. Apply the same pattern to any
+  material question where Arco's actual offering is unconfirmed.
 
-### The permitting wording is fixed text
-
-Use this verbatim wherever permitting comes up:
+**Two accepted forms of the permitting caution.** These three pages use one
+sentence pair verbatim wherever permitting comes up:
 
 > Requirements can vary by jurisdiction and project scope. Arco can discuss
 > planning considerations for your specific project.
 
-It appears three times on each of the three pages. The tiki huts page adds a
-callout explaining *why* the answer is not given on a web page: it depends on
-location, scope, size, siting and use, and the consequences of a wrong blanket
-claim land on the homeowner.
+It appears three times on each of them, and the tiki huts page adds a callout
+explaining why the answer is not given on a web page. **Do not paraphrase it on
+those pages** — a legal caution phrased differently every time is worse than
+one phrased identically.
 
-**Do not paraphrase it.** A safety or legal caution phrased differently on every
-page is worse than one phrased identically — consistency is the point.
+The pages from passes 6 and 7 answer the same question in their own words,
+routing it to "confirmed for your address as part of the project" and, on the
+location pages, naming the authority having jurisdiction. Both forms say the
+same thing and neither states a requirement. Either is acceptable on a new
+page; mixing them within one page is not.
 
-### Exception to the zero-overlap rule
+**Exception to the zero-overlap rule.** §13.7 requires zero shared sentences
+between sibling pages. These three share exactly two sentence-pairs with each
+other, and both are deliberate:
 
-§13.7 requires zero shared sentences between sibling pages. These three share
-exactly two sentence-pairs with each other, and all are deliberate:
-
-1. the two mandated permitting sentences above;
+1. the mandated permitting sentences above;
 2. *"Which elements are performed directly and which are coordinated is set out
    in your written proposal."* — the scope-boundary statement from §13.6, which
    should read identically wherever it appears.
 
-Everything else is zero. When the overlap check reports a hit, confirm it is one
-of these before treating it as templated filler.
-
-### Thatch and other unverified offerings
-
-The tiki huts page presents natural and synthetic thatch as the two families
-that exist and what each trades, with the choice "settled for your project at
-consultation rather than declared in advance". It does **not** claim which Arco
-supplies, because that is not verified. It also declines to publish a service
-life in years, and says why. Apply the same pattern to any future material
-question where Arco's actual offering is unconfirmed.
+Everything else is zero, including against all thirteen pages these three were
+merged alongside — re-measured after the merge, not assumed. When the overlap
+check reports a hit, confirm it is one of these two before treating it as
+templated filler.
 
 ## 14. FORMS
 
@@ -1086,13 +1291,23 @@ repository root is enough to serve it.
 - [ ] Interior pages follow the §8.5 skeleton and alternate section grounds
 - [ ] JSON-LD matches the §8.5 table; FAQ answers match the visible text
 - [ ] Any new image crop actually depicts the thing it illustrates
-- [ ] Zero shared sentences with sibling pages (see §13.7), except the fixed
-      safety and scope wording listed in §13.9; H2 spine is its own
-- [ ] Permitting, if mentioned, uses the §13.9 wording verbatim — never a
-      blanket claim either way
-- [ ] No product or appliance brands, no wind or structural ratings, no service
-      life in years, unless verified for the specific product or design
+- [ ] Zero shared sentences with sibling pages (see §13.7, re-measured §13.9);
+      H2 spine is its own
 - [ ] No "slip-proof"/"non-slip" as a material property, no value percentages,
       no service claimed that §5 does not list
+- [ ] No water-savings figure on turf content, no blanket pool-code compliance
+      claim on fencing content, and none of the impact-window number classes
+      listed in §13.9 unless verified documentation is in this repository
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
+
+Additionally, for a location page:
+
+- [ ] No completed project asserted in that city, and the photography note is
+      present wherever images appear
+- [ ] No local code, permit, fee, timeline, barrier requirement or HOA rule
+      stated — requirements are routed to "confirmed for your address"
+- [ ] No demographic, income or property-value characterisation of the city
+- [ ] `@graph` carries no `LocalBusiness`, `GeneralContractor` or address
+      node; the city appears only as `Service.areaServed` (§8.5)
+- [ ] Section order, not just wording, differs from every sibling city page
