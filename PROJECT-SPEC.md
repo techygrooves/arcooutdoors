@@ -258,21 +258,31 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 10 (23 URLs):** `/`, `/services/`, all eleven service pages,
-`/projects/`, `/service-areas/`, and all eight city pages — `parkland-fl`,
-`davie-fl`, `weston-fl`, `plantation-fl`, `fort-lauderdale-fl`,
-`pembroke-pines-fl`, `coral-springs-fl`, `boca-raton-fl`. Everything else is
-linked from the global nav or footer and returns 404 until its page is built — a
-deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
-resolve; add each entry as it ships.
+**Live as of pass 11 (26 URLs):** `/`, `/services/`, all eleven service pages,
+`/projects/`, `/gallery/`, `/reviews/`, `/about-us/`, `/service-areas/`, and all
+eight city pages — `parkland-fl`, `davie-fl`, `weston-fl`, `plantation-fl`,
+`fort-lauderdale-fl`, `pembroke-pines-fl`, `coral-springs-fl`, `boca-raton-fl`.
+Everything else is linked from the global nav or footer and returns 404 until
+its page is built — a deliberate, approved state, not a defect. `sitemap.xml`
+lists only URLs that resolve; add each entry as it ships.
 
-**The service and location tiers are both complete** — all eleven §5 services
-and all eight §6 priority markets have a page — and `/projects/` now anchors the
-evidence tier.
+**Three tiers are now complete** — all eleven §5 services, all eight §6 priority
+markets, and the whole evidence tier (`/projects/`, `/gallery/`, `/reviews/`)
+plus `/about-us/`.
 
-**What remains** is `/about-us/`, `/contact-us/`, `/get-a-quote/`, `/gallery/`,
-`/reviews/`, `/blog/`, `/privacy-policy/`, `/cookie-policy/` and
-`/accessibility/`.
+**What remains** is `/contact-us/`, `/get-a-quote/`, `/blog/`,
+`/privacy-policy/`, `/cookie-policy/` and `/accessibility/`. Two of those —
+`/get-a-quote/` and `/contact-us/` — are the highest-value gap left, because
+every page on this site ends by pointing at them.
+
+**The three evidence routes are deliberately different from one another and must
+not converge.**
+
+| Route | Purpose | Failure mode to avoid |
+|---|---|---|
+| `/gallery/` | Visual browsing. Photographs, minimal text, fast to skim. | Becoming a portfolio — captioning stock imagery as completed work. |
+| `/projects/` | Written records of specific work, held to §11.1. | Becoming a gallery — leading with photographs instead of documentation. |
+| `/reviews/` | Third-party word about the work, held to §11.2. | Becoming a testimonial wall — unattributed quotes and a rating with nothing behind it. |
 
 `/projects/` and `/gallery/` are **not** two views of the same content, and must
 never converge. Gallery is visual browsing: photography, minimal text, fast to
@@ -632,6 +642,10 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-coral-springs-fl` | single-storey house, deep overhang, terrace | `/service-areas/coral-springs-fl/` banner |
 | `hero-boca-raton-fl` | white rendered volumes against a clear sky | `/service-areas/boca-raton-fl/` banner |
 | `hero-projects` | white rendered volumes over a paved path and lawn | `/projects/` banner |
+| `hero-gallery` | house, sliding glazing, paved terrace and pool | `/gallery/` banner |
+| `hero-reviews` | white rendered volumes against clear sky | `/reviews/` banner |
+| `hero-about-us` | dark-clad elevation lit at dusk over a lawn | `/about-us/` banner |
+| `gal-*` (14 crops × 3 widths) | see §9.13 | `/gallery/` grid, `/about-us/` proof band |
 
 **The nine source photographs are now carrying eleven pages.** Pass 4 believed
 the usable material was exhausted; pass 6 found three more frames by going back
@@ -681,6 +695,42 @@ page. `initFilter()` is driven entirely by `data-filter-root`, `data-filter` and
 The live region (`[data-filter-status]`) is left **empty on load** and populated
 only after a visitor filters something, so a screen reader is not read a count
 nobody asked for on arrival.
+
+### 9.13 Gallery and review components (pages.css §16, §17)
+
+| Class | What it is |
+|---|---|
+| `.photo-grid` / `.photo` | Uniform 4:3 gallery cards. Captions sit **below** the image, not overlaid on it. |
+| `.photo__tag` | Build-type chip on a gallery card. |
+| `.review-card` | Built, documented, and **rendered nowhere** — see §11.2. |
+| `.claim-table` | A practice beside a plain *Yes* or *Never*. Carries its own dark header ground because the shared `.table-wrap thead th` colour is `--sand-100`, which vanishes inside a `.section--sand` band. |
+
+**Why gallery captions are not overlaid.** The homepage `.gallery-item`
+overlays them, which looks better and reads worse: white text over an arbitrary
+photograph has no guaranteed contrast ratio. On `/gallery/` the caption is the
+element making a factual claim about what you are looking at, so it is the one
+part of the page that has to be legible.
+
+**The gallery reuses `initFilter()` unchanged.** It was written generically in
+pass 10 for `/projects/`, driven entirely by `data-filter-root`, `data-filter`
+and `data-tags`. `/gallery/` added no JavaScript at all — which is the test of
+whether that component was actually generic.
+
+**Image ladder and the descriptor that pays for it.** Each of the 14 crops ships
+at 400w, 600w and 800w (or the source's native width where that is under 800 —
+never upscaled), 4:3, WebP. The 400w variant is encoded at quality 80 because it
+renders near 1:1 on desktop; 600w and 800w are encoded at 72 because only
+high-DPR screens select them and those downscale on the way in. Measured
+identical at 800×600 and 25% smaller.
+
+`sizes` is `(max-width: 640px) 92vw, (max-width: 1024px) 46vw, **380px**`. The
+final term is a pixel value, not a `vw` value, and that matters: the grid slot
+is capped by `.container` at roughly 381px on any desktop width, so a `30vw`
+descriptor over-states it on a 1366px viewport (410px), pushes past the 400w
+candidate, and makes every browser download the 800w file. That bug shipped in
+this pass's first draft and cost 411KB per desktop page view against a true
+cost of 96KB. **When a grid's column width is capped by a container, describe
+it in pixels.**
 
 ## 10. SEO RULES
 
@@ -793,6 +843,62 @@ route stays unbuilt until gate 3 is satisfied for a real job.
 the principle that a standard which only exists internally is one that quietly
 relaxes. Publishing it while there is nothing to bend it for is the point.
 
+### 11.2 Review publication standard — the standard for `/reviews/`
+
+**Status: no review has ever met this standard, so none is published.** Pass 11
+audited the repository before writing the page and found nothing usable:
+
+```
+review or testimonial data files ever committed?   none
+Google Business Profile URL anywhere in history?   none — the only google.com
+                                                   URL in the entire repo is
+                                                   fonts.googleapis.com
+review deep-links (g.page, maps.app, place_id)?    none
+```
+
+The three testimonials and the "5.0 / 180+ verified" figures on the homepage are
+**§12 items 1 and 2** — unverified, flagged as the highest-risk item in this
+project, and explicitly barred from reuse. They are therefore **not** reproduced
+on `/reviews/`. Copying an unverified testimonial from one page to another does
+not make it more true; it doubles the exposure and makes it harder to retract.
+
+**Six gates. All six, or the review does not go up.**
+
+| # | Requirement | Never |
+|---|---|---|
+| 1 | The customer's own words, unedited | Tightened, trimmed of hesitation, or rewritten into a stronger claim than the person made. A cut for length is marked. |
+| 2 | Real attribution — first name and last initial, used with permission | Composites, invented names, or "a homeowner in Weston". |
+| 3 | City at the level the customer agreed to, or omitted | Street address, or a date that identifies a household. |
+| 4 | The build type the review is about | Filing a driveway review where it reads as evidence about an outdoor kitchen. |
+| 5 | The source platform, linked where a link exists | A quote we transcribed with no way to read it at source. |
+| 6 | Critical and mixed reviews published as written | Filtering, burying, or answering a critical review combatively. |
+
+**The rating is derived, never asserted.** An average is an arithmetic claim
+about a body of reviews. It gets published only when there is a body of reviews
+on the page to average, is calculated from exactly those, and moves when they
+do. A score above an empty page summarises nothing.
+
+**Structured data is gated on the same condition.** `/reviews/` emits
+`BreadcrumbList` + `WebPage` + `FAQPage` and **no `Review` and no
+`aggregateRating` node**, and must not until real reviews are visible on the
+page. Google requires review markup to describe reviews the visitor can
+actually see; emitting it otherwise is both a structured-data violation and, in
+the United States, a deceptive-advertising exposure under the FTC's endorsement
+rules. The same prohibition already stands site-wide in §8.5.
+
+**How we may ask, which is also published on the page.** Ask once, after the
+work is finished. Never offer a discount, rebate or gift in exchange — the FTC
+treats an undisclosed incentive as deceptive and the platforms remove such
+reviews. Never make a review a condition of anything. Never draft it for the
+customer. Let them decline with no consequence, set how much identifies them,
+or withdraw later.
+
+**When real reviews arrive:** the `.review-card` component (pages.css §17) is
+already built and styled. Render the cards, then — and only then — add the
+`Review` nodes and an `aggregateRating` computed from exactly the reviews shown.
+Remove §12 items 1 and 2 by resolving the homepage section at the same time, so
+the two pages cannot disagree.
+
 ## 12. OPEN ITEMS — unverified content currently live
 
 These predate this pass. They are preserved so the homepage design is unchanged,
@@ -801,20 +907,22 @@ of them may be repeated on any new page until verified.
 
 | # | Location | Claim | Risk |
 |---|---|---|---|
-| 1 | Reviews section | Three named testimonials — "Danielle R., Parkland FL", "Marcus T., Coral Springs FL", "Sofia & Luis G., Boca Raton FL" | If not real Google reviews, this is deceptive advertising (FTC endorsement rules). Highest risk item. |
-| 2 | Reviews section | "5.0" and "Based on **180+ verified** Google reviews" | Specific, checkable, and reproduced in no source material. |
+| 1 | Homepage reviews section | Three named testimonials — "Danielle R., Parkland FL", "Marcus T., Coral Springs FL", "Sofia & Luis G., Boca Raton FL" | If not real Google reviews, this is deceptive advertising (FTC endorsement rules). **Still the highest-risk item.** Pass 11 confirmed no review data has ever been committed; `/reviews/` refuses to reproduce these and says on-page that they are unverified. Resolve the homepage section or the two pages contradict each other. |
+| 2 | Homepage reviews section | "5.0" and "Based on **180+ verified** Google reviews" | Specific, checkable, and reproduced in no source material. `/reviews/` publishes neither and explains why (§11.2). No `aggregateRating` markup exists anywhere on the site. |
 | 3 | About / trust strip | "750+ Projects Completed", "20 yrs In South Florida", "20+ Years of Craftsmanship" | Explicitly on the forbidden-claims list in §4. |
 | 4 | Trust strip / Why Arco / consultation | "Transparent, Fixed Pricing", "Fixed, itemized pricing — no surprises" | A pricing guarantee. |
 | 5 | Consultation section | "On-site visit within 48 hours" | A service-level guarantee. |
-| 6 | Gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco stairway; "Patio detail" labels an interior lounge | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. |
+| 6 | Homepage gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco house with no pool; "Patio detail" labels an interior lounge; **and pass 11 found a third — "Paver driveway & walkway" labels a pool and terrace with no driveway in frame.** | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. The new `/gallery/` does not repeat any of the three; fixing the homepage is a copy edit to three `<figcaption>`s. |
 | 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". **Pass 10 confirmed no image carries EXIF date, GPS or author.** `/projects/` now states on-page that all site photography is reference imagery; the homepage heading still says "our" and is the remaining exposure. |
-| 8 | Services + journal cards | 9 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. |
+| 8 | Homepage + `/services/` cards | 9 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. Unchanged: 7 on `/services/`, 2 on `/`, plus a `preconnect` on each. No pass has added a new one. |
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 9 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 23 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 6 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 26 URLs that resolve. `/get-a-quote/` and `/contact-us/` are the urgent two — every page ends by linking to them. Do not submit the sitemap or launch until the routes resolve. |
 | 13 | `/projects/` | The page exists but holds **zero project records** — see §11.1 | Not a defect; it is the audited state. It becomes one only if a record is ever published without meeting all three §11.1 gates. |
 | 14 | `/projects/` hero, and every other banner | `hero-projects` is a new crop of an existing stock frame, like every other banner on the site | Consistent with items 7 and 8. Owner decision needed: supply real project photography, or accept reference imagery site-wide and keep it labelled as such. |
+| 15 | `/reviews/` | The page exists but holds **zero reviews** — see §11.2 | Not a defect; it is the audited state. It becomes one only if a review is published without meeting all six §11.2 gates, or if `Review`/`aggregateRating` markup is added before real reviews are visible. |
+| 16 | `/gallery/` | Only 7 of the 11 §5 build types have a filter; driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page, with links to those three service pages. Resolves the moment real project photography is supplied. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -1448,6 +1556,109 @@ site cannot be described as Arco's project work on the evidence available, so
 completed Arco jobs, say so and the framing changes across the site — and item
 6's mismatched gallery captions become fixable rather than merely flagged.
 
+### 13.14 Pass 11 — gallery, reviews, about
+
+Three pages, and one of them could not be built as briefed. The gallery and the
+about page are straightforward; the reviews page ran into the same wall
+`/projects/` hit in pass 10, and for a sharper reason.
+
+**The audit, again first.**
+
+```
+review or testimonial data files ever committed?   none
+Google Business Profile URL anywhere in history?   none — the only google.com
+                                                   URL in the whole repo is
+                                                   fonts.googleapis.com
+review deep-links (g.page / maps.app / place_id)?  none
+```
+
+The brief said *"reuse only actual reviews that are already supported by the
+existing site/repository."* The three homepage testimonials are the only
+candidates, and §12 items 1 and 2 already record them as unverified, as the
+highest-risk item in this project, and as barred from reuse on any new page.
+So the honest count of reusable reviews is **zero**, and `/reviews/` publishes
+none. The standard it publishes instead is §11.2.
+
+**`/gallery/` — what the photography can and cannot support.**
+
+Every one of the nine source frames was re-examined before a single caption was
+written, and the result reshaped the page:
+
+| Filter shipped | Photographs | Why it is honest |
+|---|---|---|
+| Pool Decks | 5 | Pools with paved surrounds, actually in frame |
+| Patios & Terraces | 5 | Paved terraces, decks, loggias |
+| Pavers & Hardscape | 4 | Paths, surrounds, kerbs |
+| Turf & Lawn | 3 | Ground-level lawn, level lawns |
+| Pergolas & Shade | 3 | Draped timber cabana frames |
+| Fencing & Screening | 2 | A slatted screen and a low rendered wall |
+| Indoor–Outdoor | 5 | Full-height glazing, sliding doors |
+
+**Three of the brief's suggested categories were refused, and the page says so:**
+*Driveways* (no frame contains a driveway — the homepage's "Paver driveway &
+walkway" caption is on a pool terrace, which is §12 item 6's third instance,
+found this pass), *Outdoor Kitchens* (the one kitchen visible is indoors,
+through glass), and *Tiki Huts* (the shade structures are draped timber, not
+thatch — filing them under tiki huts would misrepresent a material). Each of
+the three links to its service page instead.
+
+No photograph carries a city, a date or any geotag, and every caption describes
+what is in the frame. That is 14 captions written against the photograph rather
+than against the category.
+
+**`/about-us/` — every section the brief asked for, and four claims refused.**
+About / What We Build / Complete Outdoor Transformation / How We Approach
+Projects (Planning · Design considerations · Preparation · Construction ·
+Finishing) / Licence CBC1269393 / South Florida / Contact / proof / CTA. What is
+*not* there: founding year, team count, years of experience, awards, founder
+story, certifications — none is in §3 or anywhere else in this repository. The
+page states that absence rather than hiding it, under *"What we do not claim"*.
+Only the verified §3 facts appear, and `jonah@arcooutdoors.com` is used as a
+contact address, never as the seed of a biography.
+
+**Two real defects found by extending the suites, both fixed:**
+
+1. **The current-page marking in dropdowns had been dead since pass 5.**
+   `initCurrentPage()` compared `a.getAttribute('href')` against
+   `location.pathname`, but pass 5 made every href relative — so
+   `"../../services/patios/"` never equalled `"/services/patios/"` and no
+   dropdown or footer link had been marked `aria-current` on any page for six
+   passes. Now resolved through `new URL(href, location.href).pathname`, which
+   is also correct under a subpath deployment. Verified at both mount points.
+2. **The gallery `sizes` descriptor over-stated the grid slot,** so every
+   viewport downloaded the 800w candidate: 411KB per desktop page view against
+   a true need of 96KB. The slot is capped by `.container`, not by the
+   viewport, so the final term is now `380px` rather than `30vw`. See §9.13 —
+   the general rule is worth keeping.
+
+**Image work.** 14 crops recovered from the pass-1 bundle sources, each at
+400/600/800w (or native where smaller — never upscaled), 4:3, WebP, tiered
+quality. Three new page banners. All lazy-loaded below the fold with explicit
+dimensions, so nothing shifts. Measured: **96KB** for the whole gallery at 1x
+desktop, 257KB at 2x tablet, 661KB at 2x phone if you scroll every image into
+view. No new third-party URL was introduced.
+
+**Verification.** 587 assertions across eight suites, all passing: 89 new for
+these three pages — every gallery filter counted, alt text and lazy-loading and
+srcset checked per image, a 200KB transfer budget enforced, no city name in any
+caption or alt, the four unverified testimonial names asserted absent from
+`/reviews/`, no star widget, no invented Google link, no `Review` or
+`aggregateRating` node, every About section present and nine classes of
+fabricated claim asserted absent — plus 323 whole-page checks now covering all
+17 interior pages.
+
+**One test artifact, diagnosed not patched:** the first run reported images with
+`naturalWidth === 0`, which was lazy loading working correctly on images below
+the fold. Probing `currentSrc` instead is what exposed the real `sizes` bug
+underneath — the assertion that looked wrong was measuring the wrong property,
+and fixing the measurement found a genuine defect.
+
+**Still with the owner.** §12 items 1 and 2 remain the launch blocker: the
+homepage testimonials and rating are unverified and `/reviews/` now says so in
+public. Either confirm them against real reviews or remove the homepage
+section — as it stands the two pages contradict each other, and the reviews
+page is the accurate one.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1531,6 +1742,21 @@ Budget and standing rules:
 Current homepage payload (self-hosted, uncompressed, first view):
 HTML 57 KB · CSS 25 KB · JS 10 KB · fonts 200 KB · images ~1.7 MB across the
 whole page, of which only the hero (~196 KB) is eager.
+
+**Measured image budgets (pass 11).** `/gallery/` is the heaviest page on the
+site and the one worth holding a line on:
+
+| Context | Candidate chosen | Whole-page image transfer |
+|---|---|---|
+| 1366px desktop @1x | 400w | **96 KB** |
+| 820px tablet @2x | 800w | 257 KB |
+| 390px phone @2x | 800w | 661 KB |
+
+Phone and tablet select the large candidate because a full-width 4:3 image on a
+2x screen genuinely needs ~718 device pixels; that is correct, and lazy loading
+means a visitor pays only for what they scroll past. The desktop figure is the
+one that regressed once already (411 KB — see §13.14) and the suite now asserts
+a 200 KB budget on it.
 
 ## 17. WHY THE ORIGINAL index.html WAS 4.7 MB
 
@@ -1623,6 +1849,35 @@ Additionally, for a location page:
       matching alone is not sufficient
 - [ ] Service pages carry the `.areas-grid areas-grid--compact` *Areas we
       serve* block, with city-name-only anchor text
+
+Additionally, for `/gallery/`:
+
+- [ ] Every caption describes what is in the photograph, not what the category
+      is selling — checked against the image, not against the filename
+- [ ] No city, date or geotag on any photograph, in caption or `alt`
+- [ ] A filter exists only where a photograph actually depicts that build type;
+      categories with no photograph are named and linked, not padded
+- [ ] Every image: `alt`, `width`, `height`, `loading="lazy"`, and a `srcset`
+      whose candidates all exist on disk
+- [ ] `sizes` describes the real slot — in **px** where a container caps the
+      column width (§9.13), and the 1x desktop transfer is under 200 KB
+- [ ] No image upscaled beyond its source width
+
+Additionally, for `/reviews/`:
+
+- [ ] No `Review` and no `aggregateRating` node anywhere in the `@graph`
+- [ ] No star widget, no rating figure, no review count
+- [ ] No quoted customer who does not clear all six §11.2 gates, and none of the
+      §12 item 1 names reproduced
+- [ ] No Google profile link unless a verified URL exists in this repository
+
+Additionally, for `/about-us/`:
+
+- [ ] No founding year, team count, years of experience, award, certification
+      or staff biography — none is verified (§3, §4)
+- [ ] Only §3 contact facts, verbatim
+- [ ] JSON-LD carries no `foundingDate`, `numberOfEmployees`, `award` or
+      `aggregateRating`, and references `#business` rather than redeclaring it
 
 Additionally, for anything touching `/projects/`:
 

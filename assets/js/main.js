@@ -218,13 +218,23 @@
     }
 
     // Mark the exact destination inside dropdown panels and the footer.
+    // Hrefs are authored root-absolute but ship relative (`../../services/…`)
+    // so the site works at any mount point, so a string comparison against
+    // location.pathname never matches. Resolve each href against the document
+    // first — that also keeps this correct under a subpath deployment.
     var here = window.location.pathname.replace(/index\.html$/, '');
-    if (here !== '/') {
-      var links = document.querySelectorAll('.nav__panelList a, .footer-links a');
-      Array.prototype.forEach.call(links, function (a) {
-        if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-      });
-    }
+    var links = document.querySelectorAll('.nav__panelList a, .footer-links a');
+    Array.prototype.forEach.call(links, function (a) {
+      var href = a.getAttribute('href');
+      if (!href || /^(https?:|mailto:|tel:|#)/.test(href)) return;
+      var path;
+      try {
+        path = new URL(href, window.location.href).pathname.replace(/index\.html$/, '');
+      } catch (e) {
+        return;
+      }
+      if (path === here) a.setAttribute('aria-current', 'page');
+    });
   }
 
   /* ---------------------------------------------------------------------------

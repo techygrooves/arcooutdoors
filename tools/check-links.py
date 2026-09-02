@@ -30,7 +30,6 @@ PROD = "https://www.arcooutdoors.com"
 
 # Routes that are linked from the global nav/footer but not yet built.
 PLANNED = {
-    "about-us/", "gallery/", "reviews/",
     "blog/", "contact-us/", "get-a-quote/",
     "privacy-policy/", "cookie-policy/", "accessibility/",
 }
