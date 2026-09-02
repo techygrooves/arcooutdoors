@@ -319,7 +319,7 @@
         <h1 class="h1" id="hero-heading">Outdoor remodeling, elevated to an <em>art form.</em></h1>
         <p class="hero__lead">Licensed &amp; insured South Florida contractors delivering complete outdoor transformations — patios, pool decks, driveways, outdoor kitchens, pergolas, turf &amp; fencing, coordinated by one accountable team.</p>
         <div class="hero__actions">
-          <a class="btn btn--gold" href="#consult">Get a Free Quote</a>
+          <a class="btn btn--gold" href="get-a-quote/">Get a Free Quote</a>
           <a class="btn btn--ghostLight" href="#services">View Our Services</a>
         </div>
       </div>
@@ -838,27 +838,34 @@
              exists. Until then main.js falls back to a pre-filled email draft so
              an enquiry is never silently dropped. See PROJECT-SPEC.md. -->
         <form id="quote-form" class="quote-form" method="post" action="" novalidate
-              data-endpoint="" data-fallback-email="jonah@arcooutdoors.com">
+              data-arco-form
+              data-endpoint=""
+              data-fallback-email="jonah@arcooutdoors.com"
+              data-subject="Consultation request — Arco Outdoors"
+              data-success="#form-success"
+              data-status="#form-status">
           <p class="form-flag"><span class="mark" aria-hidden="true">✦</span> 100% free · No obligation</p>
           <h3>Request your free quote</h3>
           <p class="form-note" id="required-note">Fields marked with * are required.</p>
 
           <div class="hp" aria-hidden="true">
             <label for="qf-company">Company (leave blank)</label>
-            <input type="text" id="qf-company" name="company" tabindex="-1" autocomplete="off">
+            <input type="text" id="qf-company" name="company" tabindex="-1" autocomplete="off" data-honeypot>
           </div>
 
           <div class="field-row">
             <div class="field">
               <label for="qf-name">Full name *</label>
               <input type="text" id="qf-name" name="name" placeholder="Jane Doe" required
-                     autocomplete="name" aria-describedby="qf-name-error">
+                     autocomplete="name" aria-describedby="qf-name-error"
+                     data-validate="name" data-label="Name">
               <span class="field-error" id="qf-name-error"></span>
             </div>
             <div class="field">
               <label for="qf-phone">Phone *</label>
               <input type="tel" id="qf-phone" name="phone" placeholder="(305) 555-0100" required
-                     autocomplete="tel" aria-describedby="qf-phone-error">
+                     autocomplete="tel" aria-describedby="qf-phone-error"
+                     data-validate="phone" data-label="Phone">
               <span class="field-error" id="qf-phone-error"></span>
             </div>
           </div>
@@ -866,13 +873,14 @@
           <div class="field">
             <label for="qf-email">Email *</label>
             <input type="email" id="qf-email" name="email" placeholder="jane@email.com" required
-                   autocomplete="email" aria-describedby="qf-email-error">
+                   autocomplete="email" aria-describedby="qf-email-error"
+                   data-validate="email" data-label="Email">
             <span class="field-error" id="qf-email-error"></span>
           </div>
 
           <div class="field">
             <label for="qf-service">Service of interest</label>
-            <select id="qf-service" name="service">
+            <select id="qf-service" name="service" data-label="Service of interest">
               <option>Complete Outdoor Remodeling</option>
               <option>Paver Installation</option>
               <option>Patios</option>
@@ -890,7 +898,7 @@
 
           <div class="field" style="margin-bottom:24px;">
             <label for="qf-details">Project details</label>
-            <textarea id="qf-details" name="details" rows="3" placeholder="Tell us a little about your outdoor space and goals…"></textarea>
+            <textarea id="qf-details" name="details" rows="3" data-label="Project details" placeholder="Tell us a little about your outdoor space and goals…"></textarea>
           </div>
 
           <button class="btn btn--gold btn--block" type="submit">Request Free Consultation</button>
@@ -901,9 +909,9 @@
           <div class="form-success__icon" aria-hidden="true">
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#241d15" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5L20 6"></path></svg>
           </div>
-          <h3 tabindex="-1" id="form-success-heading">Thank you!</h3>
+          <h3 tabindex="-1" id="form-success-heading" data-form-success-heading>Thank you!</h3>
           <p>Your consultation request has been sent. A member of our team will reach out shortly to confirm your appointment.</p>
-          <button class="btn btn--ghostDark" type="button" id="form-reset">Submit Another</button>
+          <button class="btn btn--ghostDark" type="button" id="form-reset" data-form-reset>Submit Another</button>
         </div>
       </div>
     </div>
@@ -919,7 +927,7 @@
       <p>Tell us about your backyard and we'll bring your ideas to reality with quality craftsmanship and attention to detail.</p>
       <div class="cta__actions">
         <a class="btn btn--gold" href="tel:+13059518862">Call 305-951-8862</a>
-        <a class="btn btn--ghostLight" href="#consult">Request a Quote</a>
+        <a class="btn btn--ghostLight" href="get-a-quote/">Request a Quote</a>
       </div>
     </div>
   </section>
