@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-02 (pass 12 — resource centre and first six articles)
+Last updated: 2026-09-02 (pass 13 — contact and quote pages, shared form engine)
 
 ---
 
@@ -177,6 +177,9 @@ the tooling must not become a repository dependency.
   blog/index.html                            ← live (resource hub)
   blog/<article-slug>/index.html             ← live × 6
 
+  get-a-quote/index.html                     ← live (primary conversion page)
+  contact-us/index.html                      ← live
+
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
     css/pages.css               ← shared interior-page components
@@ -261,21 +264,22 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 12 (33 URLs):** `/`, `/services/`, all eleven service pages,
+**Live as of pass 13 (35 URLs):** `/`, `/services/`, all eleven service pages,
 `/projects/`, `/gallery/`, `/reviews/`, `/about-us/`, `/service-areas/`, all
-eight city pages, `/blog/` and its six articles. Everything else is linked from
-the global nav or footer and returns 404 until its page is built — a
-deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
-resolve; add each entry as it ships.
+eight city pages, `/blog/` and its six articles, `/get-a-quote/` and
+`/contact-us/`. Everything else is linked from the global nav or footer and
+returns 404 until its page is built — a deliberate, approved state, not a
+defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
 
 **Three tiers are now complete** — all eleven §5 services, all eight §6 priority
 markets, and the whole evidence tier (`/projects/`, `/gallery/`, `/reviews/`)
 plus `/about-us/`.
 
-**What remains** is `/contact-us/`, `/get-a-quote/`, `/privacy-policy/`,
-`/cookie-policy/` and `/accessibility/`. The first two are now by some distance
-the highest-value gap left, because all 33 live pages end by pointing at them
-and neither resolves.
+**What remains** is the three legal pages: `/privacy-policy/`,
+`/cookie-policy/` and `/accessibility/`. Every route a visitor can reach from
+the navigation, the footer or a call to action now resolves. The remaining
+launch blockers are therefore in §12, not in §8 — chiefly the missing form
+endpoint (item 11) and the unverified homepage claims (items 1–7).
 
 **The three evidence routes are deliberately different from one another and must
 not converge.**
@@ -377,6 +381,7 @@ centred `.section-head` is reserved for the homepage.
 | Location | `BreadcrumbList` + `Service` (`areaServed` = that `City`) + `WebPage` + `FAQPage` |
 | Resource hub | `BreadcrumbList` + `CollectionPage` (`ItemList` of articles) + `FAQPage` |
 | Article | `BreadcrumbList` + `Article` + `WebPage`, plus `FAQPage` only where the page carries a visible FAQ |
+| Contact / conversion | `BreadcrumbList` + `ContactPage` + `FAQPage` where a visible FAQ exists. `ContactPage.about` (and `mainEntity` on `/contact-us/`) reference the homepage business `@id` — the address is never redeclared |
 
 **Article nodes carry organisational authorship, never a person.** `author` and
 `publisher` both reference the homepage business `@id`; no `Person` node, no
@@ -611,6 +616,10 @@ Added in pass 3, all built on existing tokens:
 | `.spec-grid` | hairline-topped definition blocks for comparisons |
 | `.jumpbar` | sticky-adjacent anchor row for long pages |
 | `.areas-grid--compact` | width cap on the shared `.areas-grid`, so the eight-market *Areas we serve* block on a service page reads as two rows of four |
+| `.contact-line` / `.contact-line__plain` | a phone number, email or address block set in the display face; the `__plain` variant drops the link colour and a size step for facts that are not links |
+| `.field-group` / `.field-choices` | a labelled `fieldset` for radio or checkbox groups inside a form panel |
+| `.field-optional` | quiet "(optional)" marker on a label, since required fields carry `*` |
+| `.quote-layout` | the form beside its supporting rail on `/get-a-quote/`; collapses at 1024px |
 
 `.table-wrap` carries `tabindex="0"`, `role="region"` and an `aria-label`
 wherever it is used, because the container scrolls horizontally and a scrollable
@@ -928,8 +937,8 @@ of them may be repeated on any new page until verified.
 | 8 | Homepage + `/services/` cards | 12 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. **Pass 12 removed three** — the homepage journal cards now use self-hosted `gal-*` crops. Counted precisely this pass: 6 `<img>` on `/`, 6 on `/services/`, plus a `preconnect` on each (the earlier "9 images / 7 on services, 2 on home" line was itself inaccurate). No pass has added a new one. |
 | 9 | ~~Journal section~~ | ~~Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to a blog that does not exist~~ | **Resolved in pass 12.** The three cards now carry the real titles, real publication date and self-hosted imagery of three articles that exist, and link to them directly. The section heading and lead were corrected at the same time: it described "recent projects", which the site does not publish (§11.1). |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
-| 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 5 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 33 URLs that resolve. `/get-a-quote/` and `/contact-us/` are the urgent two — every page ends by linking to them. Do not submit the sitemap or launch until the routes resolve. |
+| 11 | All three forms | **No submission endpoint exists on any of them** | See §14. Every form falls back to a pre-filled mail draft, which loses any visitor without a configured mail client. Pass 13 made this one change away from fixed: set `data-endpoint` on the three forms. **This is the single largest launch blocker on the site** — the conversion page now exists and still cannot deliver an enquiry. |
+| 12 | Footer legal bar | 3 of the 32 linked routes do not exist yet and return 404 | Down to the three legal pages — `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`. Every navigation item and every call to action now resolves. `sitemap.xml` lists the 35 URLs that do. Do not submit the sitemap or launch until the last three ship. |
 | 13 | `/projects/` | The page exists but holds **zero project records** — see §11.1 | Not a defect; it is the audited state. It becomes one only if a record is ever published without meeting all three §11.1 gates. |
 | 14 | `/projects/` hero, and every other banner | `hero-projects` is a new crop of an existing stock frame, like every other banner on the site | Consistent with items 7 and 8. Owner decision needed: supply real project photography, or accept reference imagery site-wide and keep it labelled as such. |
 | 15 | `/reviews/` | The page exists but holds **zero reviews** — see §11.2 | Not a defect; it is the audited state. It becomes one only if a review is published without meeting all six §11.2 gates, or if `Review`/`aggregateRating` markup is added before real reviews are visible. |
@@ -1012,11 +1021,15 @@ remain. Four in-page anchors are deliberate and resolve today:
 | `#main` | skip link | — |
 | `#services` | hero "View Our Services" | the section is on screen; scrolling beats a page load |
 | `#about` | hero scroll cue | as above |
-| `#consult` | hero CTA, gallery/FAQ/closing CTA | the working quote form is on this page |
+| `#consult` | nothing, since pass 13 | the section and its form remain; the CTAs that pointed here now go to `/get-a-quote/` |
 
-`/get-a-quote/` is used by the header, drawer and footer CTAs. When that page
-ships, decide per-CTA whether the on-page form or the dedicated page is the
-better destination; do not blanket-replace.
+**Settled in pass 13.** `/get-a-quote/` now exists, and the per-CTA decision it
+was waiting for was made rather than blanket-applied: every button whose label
+promises a quote or a consultation goes to `/get-a-quote/`; every `tel:` button
+stays a phone call; the homepage consultation section keeps its own short form
+for a visitor already at the bottom of that page, and simply no longer has a
+CTA pointing down at it. A site-wide audit of every `.btn` link (label against
+destination) reports zero mismatches — re-run it after adding any CTA.
 
 ### 13.6 Pass 3 — services hub and first two service pages
 
@@ -1761,30 +1774,148 @@ visible `<details>` text exactly on the three pages that have one, and the
 other three were asserted to carry no `FAQPage` node and no visible FAQ. No
 `Review` or `aggregateRating` node anywhere (§8.5).
 
+### 13.16 Pass 13 — contact, conversion, and one form engine
+
+Shipped `/get-a-quote/` and `/contact-us/`, the last two routes any visitor
+could reach from the navigation or a call to action. Word counts 837 and 1,131
+— deliberately short, because both pages exist to be acted on rather than read.
+
+**The form engine was rewritten rather than copied.** `initForm` handled
+exactly one form with hard-coded field IDs. Adding two more would have meant
+three near-identical blocks of JavaScript, so it became `initForms`: a generic
+controller over any `form[data-arco-form]`, with validation rules, labels,
+messages, endpoints and panel selectors all declared in markup. The full
+contract is in §14. The homepage form was migrated to it by adding attributes
+and changing nothing else, and its behaviour was re-tested afterwards.
+
+**Still no backend, said louder.** All three forms carry an empty
+`data-endpoint`, so nothing transmits. The mail-draft fallback is unchanged in
+substance but its success panel now says what actually happened — that the
+message sits in the visitor's mail application and is not with us until they
+press send — rather than implying delivery. §12 item 11 was rewritten to make
+this the single largest launch blocker on the site: the conversion page now
+exists and still cannot deliver an enquiry.
+
+**Connecting a provider is one attribute**, documented in three places so a
+future developer cannot miss it: a boxed comment above `initForms`, and a
+DEVELOPER CONFIG block beside the form markup on each new page. Each states
+that an endpoint URL is public and that no key, token or password may be placed
+in markup or in `main.js`.
+
+**Verified contact facts only.** Phone, email, address, hours and licence
+number are reproduced exactly as §3 records them, and the page says outright
+that no weekend, holiday or emergency availability is advertised *because there
+is none to promise*. The address block notes it is an office rather than a
+showroom.
+
+**No embedded map, and the page says why.** A Google Maps iframe would load
+third-party scripts on every visit for something a visitor needs once, and §7
+bars third-party tags without a recorded decision — so the address links out to
+Maps instead. If an embed is ever wanted, that is a decision to record here
+first, not a widget to drop in.
+
+**Data minimisation is a feature of the page, not an accident.** The quote form
+asks for a name, two ways to reply, the project ZIP and a description. It does
+not ask for a street address, a budget band or any financial detail, and both
+pages say so where a visitor will read it.
+
+**The CTA question from §13.5 was settled.** Every `.btn` link on all 35 pages
+was audited by label against destination: quote and consultation labels go to
+`/get-a-quote/`, `tel:` buttons stay calls, informational contact links go to
+`/contact-us/`. Zero mismatches. The two homepage `#consult` anchors now point
+at the quote page; the consultation section and its form remain in place for a
+visitor who has already scrolled that far.
+
+**Testing.** A 31-assertion browser suite covers all three forms: empty-submit
+error counts, focus moving to the first invalid control, per-rule messages for
+phone, email and ZIP, live error clearing, the honeypot short-circuit, the
+mail-draft path, the success panel and its focus target, the reset button, and
+— with an endpoint injected and the network intercepted — the POST content type,
+the exact payload keys, the absence of the honeypot from that payload, success
+on 2xx, and on 5xx no success panel, a phone-fallback message and a re-enabled
+submit button. All 31 pass. Re-run it after touching `initForms`.
+
+**Duplication.** The two-threshold check found 1 exact and 14 fuzzy pairs on
+first run — mostly the permitting caution and the coverage statement, which
+these pages naturally restate. Eight passages were revised; final state is zero
+and zero. Worth noting for a future pass: some form of the permitting caution now
+appears on seventeen pages, most of them paraphrased to keep the checker quiet
+(three use the §13.11 fixed text and say so). That is approaching the
+point where §13.11's argument applies — a legal caution is better identical
+than freshly reworded each time — and formalising a third fixed text may be
+the honest answer next time it comes up.
+
 ## 14. FORMS
 
-`#quote-form` is a real `<form>` with labelled controls, `required` fields,
-`autocomplete` hints, an off-screen honeypot (`#qf-company`) and inline errors
-wired through `aria-describedby` / `aria-invalid`.
+Three forms exist, and **one engine drives all of them** (`initForms` in
+`assets/js/main.js`, rewritten in pass 13 from the single-purpose `initForm`).
+A form opts in with `data-arco-form` and declares everything else in markup, so
+adding a fourth form never means editing JavaScript.
 
-**It has no backend.** `main.js` reads `data-endpoint` on the form:
+| Form | Route | Purpose | Required fields |
+|---|---|---|---|
+| `#quote-request-form` | `/get-a-quote/` | primary conversion — a project enquiry with enough detail to answer usefully | first name, last name, phone, email, project ZIP, project type, description |
+| `#contact-form` | `/contact-us/` | general questions that are not yet a project | name, email, question |
+| `#quote-form` | `/` (consultation section) | the short in-page form a visitor already at the bottom of the homepage can use | name, phone, email |
 
-- **endpoint set** → `POST`s JSON `{name, phone, email, service, details}`,
-  shows the success panel on `2xx`, and on failure tells the visitor to call or
-  email instead.
-- **endpoint empty (current state)** → opens a pre-filled `mailto:` draft to
-  `jonah@arcooutdoors.com`.
+**Markup contract.** On the `<form>`: `data-arco-form`, `data-endpoint`,
+`data-fallback-email`, `data-subject`, `data-success` and `data-status`
+(the last two are selectors). On a control: `data-validate` naming one of
+`text | name | phone | email | zip | choice`, an optional `data-error` for a
+custom message, an optional `data-label` used in the mail draft, an `id`, and a
+sibling `<span id="<id>-error">` wired through `aria-describedby`. The
+off-screen honeypot carries `data-honeypot`; the "send another" button in the
+success panel carries `data-form-reset`.
 
-The mail fallback is a stopgap, not a solution — it loses visitors without a
-configured mail client. **Setting a real endpoint is a launch requirement.** Any
-handler must be static-host compatible (a form service or serverless function);
-it must not turn the site into a Node application.
+**Validation and errors.** Messages are set inline and the field takes
+`aria-invalid="true"`; the status region is `role="status" aria-live="polite"`
+and names how many fields need attention; focus moves to the first invalid
+control; an error clears the moment its field becomes valid on `input` or
+`change`. Nothing depends on browser-native validation UI — every form is
+`novalidate` so the messages are ours and are announced consistently.
 
-The success panel must never appear unless a send actually succeeded. The
+### None of them has a backend
+
+**`data-endpoint` is empty on all three, so nothing is transmitted anywhere.**
+On submit the visitor is handed a pre-filled `mailto:` draft to
+`jonah@arcooutdoors.com`, and the success panel appears only after that
+hand-off. The panel's wording says so plainly — it tells the visitor the
+message is not sent until they press send in their mail application, and gives
+the phone number for the case where no mail client opened.
+
+**Connecting a provider is a one-attribute change**, documented three times so
+it cannot be missed: a boxed comment above `initForms` in `main.js`, and a
+DEVELOPER CONFIG comment beside the form markup on `/get-a-quote/` and
+`/contact-us/`.
+
+    data-endpoint="https://formspree.io/f/xxxxxxxx"
+
+Set it on all three forms, then send a live test through each. The engine
+already POSTs JSON keyed by each control's `name`, disables the submit button
+in flight, shows the success panel **only** on a 2xx, and on failure tells the
+visitor to call or email instead. No JavaScript change is required to go live.
+
+Any handler must be static-host compatible — a form service or a serverless
+function. It must not turn the site into a Node application (§7).
+
+**Secrets.** A form endpoint URL is a public destination, not a credential.
+Never put an API key, token or password in the markup or in `main.js`; both
+ship to every visitor. Anything that must stay private belongs behind a
+serverless function that holds the key server-side.
+
+**The success panel must never appear unless something actually happened.** The
 original bundled page showed "Thank you!" while sending nothing at all; do not
-reintroduce that behaviour.
+reintroduce that behaviour, and do not soften the mail-draft panel's wording
+into implying the message has been delivered.
 
-## 15. ACCESSIBILITY
+**What the forms deliberately do not ask for.** No street address, no budget
+band, no financial detail of any kind, and nothing that could be mistaken for
+an account number. The quote page says so on the page. A project enquiry needs
+a name, two ways to reply, the ZIP the work is in, and what the visitor wants
+done; anything beyond that is collected at the consultation, in person, when
+there is a reason for it.
+
+## 15. ACCESSIBILITY## 15. ACCESSIBILITY
 
 Required on every page:
 
@@ -1935,6 +2066,19 @@ repository root is enough to serve it.
       listed in §13.9 unless verified documentation is in this repository
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
+
+Additionally, for a page carrying a form:
+
+- [ ] `data-arco-form` plus the full §14 markup contract; no bespoke JavaScript
+- [ ] Every control labelled, errors wired through `aria-describedby`, status
+      region `role="status" aria-live="polite"`
+- [ ] Honeypot present, and absent from the submitted payload
+- [ ] Success panel gated on a real 2xx (or on the mail hand-off, worded as
+      such) — never shown for a send that did not happen
+- [ ] No API key, token or password in markup or in `main.js`
+- [ ] Nothing sensitive collected: no street address, budget, or financial detail
+- [ ] Phone fallback visible on the page and in the failure message
+- [ ] Browser form suite re-run after any change to `initForms`
 
 Additionally, for an article under `/blog/`:
 

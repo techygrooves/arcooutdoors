@@ -842,3 +842,83 @@
 /* Both pass 4.5:1 on the cream and sand grounds this table sits on. */
 .claim-yes { color: #2f6b3d; }
 .claim-no  { color: #8c3a2b; }
+
+/* --------------------------------------------------------------------------
+   18. Contact and quote pages (added for /contact-us/ and /get-a-quote/)
+   -------------------------------------------------------------------------- */
+
+/* A phone number, email address or address block given the display face, so
+   the details people came for read as the largest thing in their block.
+   `.spec-grid p` sets 14.5px with a higher specificity than a bare class, so
+   the grid context is named explicitly rather than fought with !important. */
+.contact-line,
+.spec-grid p.contact-line {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--gold-link);
+  margin: 0 0 10px;
+}
+a.contact-line:hover, a.contact-line:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+/* Address and hours are facts rather than links, so they lose the link colour
+   and drop a step in size — three lines at the full size would out-shout the
+   phone number, which is the thing most visitors came for. */
+.contact-line__plain {
+  display: block;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+/* Marks an optional control without shouting; the required ones carry *. */
+.field-optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+/* Radio and checkbox groups inside a form panel. A fieldset is used so the
+   group has a programmatic name; the legend is styled to match a field label. */
+.field-group { border: 0; margin: 0 0 16px; padding: 0; }
+.field-group legend {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--body-2);
+  margin-bottom: 10px;
+  padding: 0;
+}
+.field-choices { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.field-choices label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  color: var(--body-2);
+  cursor: pointer;
+}
+.field-choices input { accent-color: var(--gold-deep); }
+
+/* The quote page runs the form beside a supporting column rather than inside
+   a narrow card, so the panel is allowed more room than the homepage one. */
+.quote-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  gap: 56px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .quote-layout { grid-template-columns: 1fr; gap: 44px; }
+}
+@media (max-width: 860px) {
+  .contact-line { font-size: 22px; }
+}

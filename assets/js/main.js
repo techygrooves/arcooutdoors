@@ -266,31 +266,89 @@
   }
 
   /* ---------------------------------------------------------------------------
-     4. Quote form
-     Validates in place, then submits to `data-endpoint` when one is configured.
-     With no endpoint the enquiry is handed to the visitor's mail client rather
-     than being silently discarded.
-     ------------------------------------------------------------------------- */
-  function initForm() {
-    var form = document.getElementById('quote-form');
-    var success = document.getElementById('form-success');
-    var status = document.getElementById('form-status');
-    if (!form || !success || !status) return;
+     4. Forms
+     One controller for every form on the site. A form opts in with
+     `data-arco-form` and declares its own wiring in markup, so adding a form
+     never means editing this file.
 
-    var RULES = {
-      'qf-name': {
-        test: function (v) { return v.trim().length >= 2; },
-        message: 'Please enter your name.'
-      },
-      'qf-phone': {
-        test: function (v) { return (v.replace(/\D/g, '').length >= 10); },
-        message: 'Please enter a phone number with at least 10 digits.'
-      },
-      'qf-email': {
-        test: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); },
-        message: 'Please enter a valid email address.'
-      }
-    };
+     ┌── CONFIGURING A REAL BACKEND ─────────────────────────────────────────┐
+     │ Every form here posts JSON to whatever URL sits in `data-endpoint`.    │
+     │ That attribute is EMPTY on all three forms today, so nothing is sent   │
+     │ anywhere — the visitor is handed a pre-filled mail draft instead.      │
+     │                                                                        │
+     │ To connect a provider (Formspree, Basin, Netlify Forms, a serverless   │
+     │ function — anything that accepts a JSON POST and answers 2xx):         │
+     │                                                                        │
+     │   1. Create the endpoint with the provider.                            │
+     │   2. Put its URL in `data-endpoint` on the form element:                │
+     │        data-endpoint="https://formspree.io/f/xxxxxxxx"                  │
+     │      Forms live at: /get-a-quote/, /contact-us/, and the homepage       │
+     │      consultation section (#quote-form).                               │
+     │   3. Nothing else changes. This file already POSTs, handles failure,    │
+     │      and only shows the success panel on a 2xx response.                │
+     │                                                                        │
+     │ A form endpoint URL is a public destination, not a secret. Never put    │
+     │ an API key, token or password in the markup or in this file — anything  │
+     │ that must stay private belongs behind a serverless function.            │
+     └───────────────────────────────────────────────────────────────────────┘
+
+     Markup contract:
+       form[data-arco-form]      the form itself
+         data-endpoint           POST target; empty = mail-draft fallback
+         data-fallback-email     address used by the fallback
+         data-subject            subject line for the fallback draft
+         data-success            selector for the success panel (starts hidden)
+         data-status             selector for the polite status region
+       field[data-validate=…]    one of: text | name | phone | email | zip | choice
+         data-error              optional custom message
+         id + <span id="<id>-error"> for the inline message
+       [data-honeypot]           off-screen field a human never fills
+       [data-form-reset]         optional "send another" button in the panel
+     ------------------------------------------------------------------------- */
+  var VALIDATORS = {
+    text: {
+      test: function (v) { return v.trim().length > 0; },
+      message: 'This field is required.'
+    },
+    name: {
+      test: function (v) { return v.trim().length >= 2; },
+      message: 'Please enter your name.'
+    },
+    phone: {
+      test: function (v) { return v.replace(/\D/g, '').length >= 10; },
+      message: 'Please enter a phone number with at least 10 digits.'
+    },
+    email: {
+      test: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); },
+      message: 'Please enter a valid email address.'
+    },
+    zip: {
+      test: function (v) { return /^\d{5}(-\d{4})?$/.test(v.trim()); },
+      message: 'Please enter a 5-digit ZIP code.'
+    },
+    choice: {
+      test: function (v) { return v.trim().length > 0; },
+      message: 'Please choose an option.'
+    }
+  };
+
+  function initForms() {
+    var forms = Array.prototype.slice.call(document.querySelectorAll('form[data-arco-form]'));
+    forms.forEach(setUpForm);
+  }
+
+  function setUpForm(form) {
+    var success = document.querySelector(form.getAttribute('data-success') || '');
+    var status = document.querySelector(form.getAttribute('data-status') || '');
+    if (!success || !status) return;
+
+    var fields = Array.prototype.slice.call(form.querySelectorAll('[data-validate]'));
+    var honeypot = form.querySelector('[data-honeypot]');
+    var button = form.querySelector('button[type="submit"]');
+
+    function ruleFor(field) {
+      return VALIDATORS[field.getAttribute('data-validate')] || VALIDATORS.text;
+    }
 
     function setError(field, message) {
       var err = document.getElementById(field.id + '-error');
@@ -305,88 +363,97 @@
 
     function validate() {
       var firstBad = null;
-      Object.keys(RULES).forEach(function (id) {
-        var field = document.getElementById(id);
-        if (!field) return;
-        var ok = RULES[id].test(field.value);
-        setError(field, ok ? '' : RULES[id].message);
-        if (!ok && !firstBad) firstBad = field;
+      var count = 0;
+      fields.forEach(function (field) {
+        var ok = ruleFor(field).test(field.value);
+        setError(field, ok ? '' : (field.getAttribute('data-error') || ruleFor(field).message));
+        if (!ok) { count++; if (!firstBad) firstBad = field; }
       });
-      return firstBad;
+      return { first: firstBad, count: count };
     }
 
-    // Clear a field's error as soon as it becomes valid again.
-    Object.keys(RULES).forEach(function (id) {
-      var field = document.getElementById(id);
-      if (!field) return;
-      field.addEventListener('input', function () {
-        if (field.getAttribute('aria-invalid') === 'true' && RULES[id].test(field.value)) {
+    // Clear a field's error the moment it becomes valid again.
+    fields.forEach(function (field) {
+      var clear = function () {
+        if (field.getAttribute('aria-invalid') === 'true' && ruleFor(field).test(field.value)) {
           setError(field, '');
         }
-      });
+      };
+      field.addEventListener('input', clear);
+      field.addEventListener('change', clear);
     });
 
     function showSuccess() {
       form.hidden = true;
       success.hidden = false;
-      var heading = document.getElementById('form-success-heading');
-      if (heading) heading.focus();
+      var heading = success.querySelector('[data-form-success-heading]') || success.querySelector('h2, h3');
+      if (heading) {
+        if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1');
+        heading.focus();
+      }
     }
 
-    function mailtoFallback(data) {
-      var subject = 'Consultation request — ' + (data.service || 'Arco Outdoors');
-      var body = [
-        'Name: ' + data.name,
-        'Phone: ' + data.phone,
-        'Email: ' + data.email,
-        'Service of interest: ' + data.service,
-        '',
-        'Project details:',
-        data.details || '(none provided)'
-      ].join('\n');
+    // Every named control except the honeypot, in document order.
+    function collect() {
+      var out = [];
+      Array.prototype.slice.call(form.elements).forEach(function (el) {
+        if (!el.name || el.disabled) return;
+        if (honeypot && el === honeypot) return;
+        if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
+        var label = el.getAttribute('data-label') || el.name;
+        out.push({ key: el.name, label: label, value: el.value });
+      });
+      return out;
+    }
 
-      status.textContent = 'Opening your email app so you can send this request…';
-      window.location.href = form.getAttribute('data-fallback-email')
-        ? 'mailto:' + form.getAttribute('data-fallback-email') +
-          '?subject=' + encodeURIComponent(subject) +
-          '&body=' + encodeURIComponent(body)
-        : '#';
+    function payload(pairs) {
+      var obj = {};
+      pairs.forEach(function (p) { obj[p.key] = p.value; });
+      return obj;
+    }
+
+    function mailtoFallback(pairs) {
+      var address = form.getAttribute('data-fallback-email');
+      if (!address) {
+        status.textContent =
+          'This form is not connected yet. Please call 305-951-8862 or email ' +
+          'jonah@arcooutdoors.com and we will pick it up right away.';
+        return;
+      }
+      var body = pairs.map(function (p) { return p.label + ': ' + (p.value || '(not given)'); }).join('\n');
+      status.textContent = 'Opening your email app so you can send this…';
+      window.location.href = 'mailto:' + address +
+        '?subject=' + encodeURIComponent(form.getAttribute('data-subject') || 'Website enquiry') +
+        '&body=' + encodeURIComponent(body);
       window.setTimeout(showSuccess, 900);
     }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // Honeypot: a real visitor never fills a field they cannot see.
-      var hp = document.getElementById('qf-company');
-      if (hp && hp.value) { showSuccess(); return; }
+      // A real visitor never fills a field they cannot see.
+      if (honeypot && honeypot.value) { showSuccess(); return; }
 
-      var firstBad = validate();
-      if (firstBad) {
-        status.textContent = 'Please correct the highlighted fields.';
-        firstBad.focus();
+      var result = validate();
+      if (result.first) {
+        status.textContent = result.count === 1
+          ? 'One field needs attention — see the highlighted message below.'
+          : 'Please correct the ' + result.count + ' highlighted fields.';
+        result.first.focus();
         return;
       }
 
-      var data = {
-        name: (document.getElementById('qf-name') || {}).value || '',
-        phone: (document.getElementById('qf-phone') || {}).value || '',
-        email: (document.getElementById('qf-email') || {}).value || '',
-        service: (document.getElementById('qf-service') || {}).value || '',
-        details: (document.getElementById('qf-details') || {}).value || ''
-      };
-
+      var pairs = collect();
       var endpoint = form.getAttribute('data-endpoint');
-      if (!endpoint) { mailtoFallback(data); return; }
+      if (!endpoint) { mailtoFallback(pairs); return; }
 
-      var button = form.querySelector('button[type="submit"]');
-      if (button) { button.disabled = true; }
-      status.textContent = 'Sending your request…';
+      if (button) button.disabled = true;
+      status.textContent = 'Sending…';
 
       fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload(pairs))
       }).then(function (res) {
         if (!res.ok) throw new Error('Request failed with status ' + res.status);
         status.textContent = '';
@@ -399,20 +466,16 @@
       });
     });
 
-    var resetBtn = document.getElementById('form-reset');
+    var resetBtn = success.querySelector('[data-form-reset]');
     if (resetBtn) {
       resetBtn.addEventListener('click', function () {
         form.reset();
-        Object.keys(RULES).forEach(function (id) {
-          var field = document.getElementById(id);
-          if (field) setError(field, '');
-        });
-        var button = form.querySelector('button[type="submit"]');
+        fields.forEach(function (field) { setError(field, ''); });
         if (button) button.disabled = false;
         status.textContent = '';
         success.hidden = true;
         form.hidden = false;
-        var first = document.getElementById('qf-name');
+        var first = form.querySelector('[data-validate]');
         if (first) first.focus();
       });
     }
@@ -509,7 +572,7 @@
     initNav();
     initCurrentPage();
     initReveal();
-    initForm();
+    initForms();
     initFilter();
     initYear();
   }
