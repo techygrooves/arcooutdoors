@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-02 (pass 13 — contact and quote pages, shared form engine)
+Last updated: 2026-09-02 (pass 14 — legal pages, 404, and every route now resolving)
 
 ---
 
@@ -179,6 +179,9 @@ the tooling must not become a repository dependency.
 
   get-a-quote/index.html                     ← live (primary conversion page)
   contact-us/index.html                      ← live
+  privacy-policy/index.html                  ← live
+  cookie-policy/index.html                   ← live
+  accessibility/index.html                   ← live
 
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
@@ -264,22 +267,24 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 13 (35 URLs):** `/`, `/services/`, all eleven service pages,
-`/projects/`, `/gallery/`, `/reviews/`, `/about-us/`, `/service-areas/`, all
-eight city pages, `/blog/` and its six articles, `/get-a-quote/` and
-`/contact-us/`. Everything else is linked from the global nav or footer and
-returns 404 until its page is built — a deliberate, approved state, not a
-defect. `sitemap.xml` lists only URLs that resolve; add each entry as it ships.
+**Live as of pass 14 — the route map is complete (38 URLs).** Every route in
+§8.2 now exists: `/`, `/services/` and all eleven service pages, `/projects/`,
+`/gallery/`, `/reviews/`, `/about-us/`, `/service-areas/` and all eight city
+pages, `/blog/` and its six articles, `/get-a-quote/`, `/contact-us/`,
+`/privacy-policy/`, `/cookie-policy/` and `/accessibility/`, plus `404.html`.
+
+`tools/check-links.py` reports **zero links to planned-but-unbuilt routes** for
+the first time in the project's history, and `sitemap.xml`'s 38 entries were
+diffed against the file system — they match exactly. There is no longer any
+"expected 404" state to explain: a link that does not resolve is now a defect.
 
 **Three tiers are now complete** — all eleven §5 services, all eight §6 priority
 markets, and the whole evidence tier (`/projects/`, `/gallery/`, `/reviews/`)
 plus `/about-us/`.
 
-**What remains** is the three legal pages: `/privacy-policy/`,
-`/cookie-policy/` and `/accessibility/`. Every route a visitor can reach from
-the navigation, the footer or a call to action now resolves. The remaining
-launch blockers are therefore in §12, not in §8 — chiefly the missing form
-endpoint (item 11) and the unverified homepage claims (items 1–7).
+**Nothing remains in §8.** Every remaining launch blocker is in §12 — chiefly
+the missing form endpoint (item 11) and the unverified homepage claims
+(items 1–7). Those are owner decisions and configuration, not pages to build.
 
 **The three evidence routes are deliberately different from one another and must
 not converge.**
@@ -382,6 +387,8 @@ centred `.section-head` is reserved for the homepage.
 | Resource hub | `BreadcrumbList` + `CollectionPage` (`ItemList` of articles) + `FAQPage` |
 | Article | `BreadcrumbList` + `Article` + `WebPage`, plus `FAQPage` only where the page carries a visible FAQ |
 | Contact / conversion | `BreadcrumbList` + `ContactPage` + `FAQPage` where a visible FAQ exists. `ContactPage.about` (and `mainEntity` on `/contact-us/`) reference the homepage business `@id` — the address is never redeclared |
+| Legal | `BreadcrumbList` + `WebPage` with `datePublished` / `dateModified`. No `FAQPage` — these pages answer in prose, not disclosures |
+| `404.html` | **None.** An error page is not a document to index; it carries `noindex, follow` and no structured data |
 
 **Article nodes carry organisational authorship, never a person.** `author` and
 `publisher` both reference the homepage business `@id`; no `Person` node, no
@@ -438,12 +445,18 @@ matching id, and any canonical or `og:url` not pointing at the production
 domain. Links to routes on the map that are not built yet are counted and
 reported, not treated as errors.
 
-**Known limitation.** `404.html` uses depth-0 relative paths, so it is styled
-for a miss at the site root. A miss at a deeper path (`/services/nope/`)
-renders the 404 page unstyled, because its relative paths resolve against the
-requested URL rather than the file's own location. That is inherent to a static
-404 with relative paths and affects both deployment shapes. It is a deliberate
-trade for having the rest of the site work everywhere.
+**Known limitation, now mitigated.** `404.html` uses depth-0 relative paths, so
+a miss at a deeper path (`/services/nope/`) resolves them against the requested
+URL and the external stylesheets 404. That is inherent to a static error page
+with relative paths and affects both deployment shapes.
+
+Pass 14 stopped it rendering as raw unstyled HTML: `404.html` now carries a
+small inline `<style>` block — ground colour, display face for the `h1`, body
+type and link colour — declared **before** the two stylesheet links, so the real
+stylesheets override it whenever they do resolve. Verified by loading the page
+with both stylesheets blocked: sand ground, serif heading, gold links, every
+destination readable and clickable. It is a deliberate, documented exception to
+the "no inline styles" habit, and the only one on the site.
 
 ## 9. DESIGN SYSTEM
 
@@ -934,7 +947,7 @@ of them may be repeated on any new page until verified.
 | 5 | Consultation section | "On-site visit within 48 hours" | A service-level guarantee. |
 | 6 | Homepage gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco house with no pool; "Patio detail" labels an interior lounge; **and pass 11 found a third — "Paver driveway & walkway" labels a pool and terrace with no driveway in frame.** | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. The new `/gallery/` does not repeat any of the three; fixing the homepage is a copy edit to three `<figcaption>`s. |
 | 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". **Pass 10 confirmed no image carries EXIF date, GPS or author.** `/projects/` now states on-page that all site photography is reference imagery; the homepage heading still says "our" and is the remaining exposure. |
-| 8 | Homepage + `/services/` cards | 12 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. **Pass 12 removed three** — the homepage journal cards now use self-hosted `gal-*` crops. Counted precisely this pass: 6 `<img>` on `/`, 6 on `/services/`, plus a `preconnect` on each (the earlier "9 images / 7 on services, 2 on home" line was itself inaccurate). No pass has added a new one. |
+| 8 | Homepage + `/services/` cards | 12 images hot-linked from `images.unsplash.com` — **now disclosed publicly** | Third-party dependency, licensing exposure, and they are the only images not self-hosted. **Pass 12 removed three** — the homepage journal cards now use self-hosted `gal-*` crops. Counted precisely: 6 `<img>` on `/`, 6 on `/services/`, plus a `preconnect` on each. No pass has added a new one. **Pass 14 raised the stakes:** `/privacy-policy/` and `/cookie-policy/` now tell visitors this is the site's only automatic third-party request and that it is being removed. Finishing that work is now a promise on a published page, not just a to-do. |
 | 9 | ~~Journal section~~ | ~~Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to a blog that does not exist~~ | **Resolved in pass 12.** The three cards now carry the real titles, real publication date and self-hosted imagery of three articles that exist, and link to them directly. The section heading and lead were corrected at the same time: it described "recent projects", which the site does not publish (§11.1). |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | All three forms | **No submission endpoint exists on any of them** | See §14. Every form falls back to a pre-filled mail draft, which loses any visitor without a configured mail client. Pass 13 made this one change away from fixed: set `data-endpoint` on the three forms. **This is the single largest launch blocker on the site** — the conversion page now exists and still cannot deliver an enquiry. |
@@ -1845,6 +1858,86 @@ point where §13.11's argument applies — a legal caution is better identical
 than freshly reworded each time — and formalising a third fixed text may be
 the honest answer next time it comes up.
 
+### 13.17 Pass 14 — the legal pages, the 404, and a complete route map
+
+Shipped `/privacy-policy/`, `/cookie-policy/`, `/accessibility/` and a rebuilt
+`404.html`. Word counts 1,638 / 637 / 1,325 / 145. **Every route in §8.2 now
+resolves** — `check-links.py` reports zero links to unbuilt routes for the first
+time, and `sitemap.xml` was diffed against the file system and matches exactly.
+
+**The policies were written from an audit, not a template.** Before a word was
+drafted, the source of every page, the stylesheet and the script were searched
+for: cookies, `localStorage` / `sessionStorage` / IndexedDB, analytics and tag
+managers, advertising and social pixels, social embeds, iframes, video and audio
+players, third-party fonts, third-party JavaScript, login or payment paths, and
+every external host referenced anywhere. The findings are the content:
+
+| Checked for | Result |
+|---|---|
+| Cookies, any browser storage | none — nothing is written to the browser |
+| Analytics, tag managers | none |
+| Advertising / social / conversion pixels | none |
+| Social embeds, video, audio, iframes | none anywhere on the site |
+| Third-party fonts | none — six self-hosted WOFF2 files |
+| Third-party JavaScript | none — one file, from this domain |
+| Accounts, logins, payments | none |
+| Third-party image requests | **12 images from `images.unsplash.com`, on 2 pages** |
+| Outbound map link | a plain link on `/contact-us/`, nothing embedded |
+| Form submissions | 3 forms, all with an empty endpoint — nothing transmits |
+
+That audit was re-run mechanically after the pages were written, as a
+regression check on the claims themselves. **Re-run it before editing either
+policy**: every sentence in them is a factual claim about the codebase, and a
+future pass that adds a script or an embed makes the published page false.
+
+**What the policies deliberately do not do.** No claim of compliance with any
+named statute. No list of statutory rights we would be asserting apply. No
+consent banner, and the cookie policy explains that a banner asking permission
+for cookies that do not exist would be theatre. The privacy page instead says:
+write to us and we will tell you what we hold, correct it or delete it, no law
+needs citing. Both pages name the two changes most likely to make them out of
+date — connecting a form endpoint, and removing the last third-party images —
+so a reader can see them coming.
+
+**The Unsplash images are now a public commitment.** §12 item 8 has been an
+internal to-do since pass 1. Both policies now tell visitors it is the site's
+only automatic third-party request, what that necessarily reveals to the
+provider, and that it is being removed. Finishing it is no longer optional
+housekeeping.
+
+**The accessibility statement claims nothing it cannot show.** It states WCAG
+2.1 AA as the *working standard being designed against*, and says explicitly
+that it is not claiming "100% ADA compliant", "WCAG certified" or "fully
+accessible", that no independent audit has been carried out, and that no
+screen-reader user panel has tested it. Twelve built-in measures are listed —
+each one testable — alongside four **known shortfalls published on the page**:
+the §15 contrast debt in three brand tokens, the absence of an external audit,
+the deep-404 styling limitation, and the §12 item 6 caption mismatches. It also
+states that no accessibility overlay is installed, and why. A statement that
+lists only strengths is marketing.
+
+**The 404 gained the six destinations and lost a limitation.** It now offers
+Services, Projects, Service Areas, Get a Quote, Resources and Contact, plus the
+homepage and the phone number, and asks anyone who arrived from an internal
+link to report it. Its old "completed outdoor spaces" gallery description was
+removed — it contradicted §12 item 7. And the §8.6 unstyled-deep-404 problem is
+mitigated by a small inline `<style>` block ahead of the stylesheet links: see
+§8.6 for the verification.
+
+**Footer.** No change was needed — the legal bar has linked all three routes
+since pass 2. They simply resolve now, and `main.js` marks the current one with
+`aria-current`, which was confirmed in the browser.
+
+**Verified.** Both tools exit 0. The four pages at 390 / 768 / 1440: HTTP 200,
+zero console errors, zero failed requests, no horizontal overflow. Skip link is
+the first tab stop and visible when focused. Renders with JavaScript disabled.
+`404.html` re-tested with both stylesheets blocked. Duplication review found 2
+fuzzy pairs, both revised, ending at zero and zero. Titles, descriptions and
+canonicals unique across all 38 indexable pages.
+
+**Also fixed.** The pass-13 rewrite of §14 had left a duplicated
+`## 15. ACCESSIBILITY## 15. ACCESSIBILITY` heading in this file. Corrected.
+
 ## 14. FORMS
 
 Three forms exist, and **one engine drives all of them** (`initForms` in
@@ -1915,7 +2008,7 @@ a name, two ways to reply, the ZIP the work is in, and what the visitor wants
 done; anything beyond that is collected at the consultation, in person, when
 there is a reason for it.
 
-## 15. ACCESSIBILITY## 15. ACCESSIBILITY
+## 15. ACCESSIBILITY
 
 Required on every page:
 
@@ -2066,6 +2159,11 @@ repository root is enough to serve it.
       listed in §13.9 unless verified documentation is in this repository
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
+- [ ] If the change adds a script, embed, font, cookie, storage call or external
+      request of any kind: `/privacy-policy/` and `/cookie-policy/` are updated
+      in the same commit. Every sentence on those pages is a factual claim about
+      this codebase (§13.17), and adding a third-party anything makes a
+      published page false
 
 Additionally, for a page carrying a form:
 
