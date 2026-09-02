@@ -922,3 +922,37 @@ a.contact-line:hover, a.contact-line:focus-visible {
 @media (max-width: 860px) {
   .contact-line { font-size: 22px; }
 }
+
+/* --------------------------------------------------------------------------
+   19. Legal pages (added for /privacy-policy/, /cookie-policy/, /accessibility/)
+   -------------------------------------------------------------------------- */
+
+/* `kbd` and `code` appear only in the accessibility statement, where naming a
+   key or an element precisely is clearer than describing it. Styled so they
+   read as part of the page rather than as browser-default monospace. */
+.prose kbd,
+.spec-grid kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .85em;
+  padding: 2px 7px;
+  border: 1px solid var(--hairline-2);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.prose code,
+.spec-grid code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em;
+  color: var(--ink);
+  background: rgba(36, 29, 21, .05);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* The legal pages open on a plain banner rather than photography — there is no
+   image that honestly illustrates a privacy notice — so the eyebrow and lead
+   carry the page on their own and want a little more breathing room. */
+.page-hero--plain .page-hero__lead { max-width: 62ch; }

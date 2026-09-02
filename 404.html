@@ -12,6 +12,19 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- A miss at a deep address (/services/nope/) resolves these relative asset
+     paths against the requested URL, so the stylesheets can 404. This inline
+     block is a deliberate exception to the "no inline styles" habit: it keeps
+     the page branded and readable in that case, and is harmless when the real
+     stylesheets do load, because they come after it. See PROJECT-SPEC §8.6. -->
+<style>
+  :root { --sand-50:#f6f1e8; --ink:#241d15; --body:#5f5544; --gold:#e0a94e; --gold-link:#b5843a; }
+  body { margin:0; background:#f6f1e8; color:#5f5544;
+         font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif; line-height:1.7; }
+  h1 { color:#241d15; font-family:'Cormorant Garamond',Georgia,serif; font-weight:600;
+       font-size:clamp(34px,6vw,58px); line-height:1.08; margin:0 0 18px; }
+  a { color:#b5843a; }
+</style>
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/pages.css">
 <script>document.documentElement.classList.add('js');</script>
@@ -136,25 +149,38 @@
 <!-- @endpartial:header -->
 
 <main id="main">
-  <section class="page-hero page-hero--plain">
+  <section class="page-hero page-hero--plain" aria-labelledby="page-heading">
     <div class="container page-hero__inner">
       <p class="eyebrow">Error 404</p>
-      <h1>That page has moved, or never existed.</h1>
-      <p class="page-hero__lead">The link you followed doesn't lead anywhere on this site. Head back to the homepage, or call us and we'll point you in the right direction.</p>
+      <h1 id="page-heading">That page has moved, or never existed</h1>
+      <p class="page-hero__lead">The link you followed does not lead anywhere on this site. Everything below does — or call and we will tell you where to look.</p>
       <div class="page-hero__actions">
-        <a class="btn btn--gold" href="./">Back to Homepage</a>
+        <a class="btn btn--gold" href="./">Back to the homepage</a>
         <a class="btn btn--ghostDark" href="tel:+13059518862">Call 305-951-8862</a>
       </div>
     </div>
   </section>
 
   <section class="container section" aria-labelledby="popular-heading">
-    <h2 class="h2 h2--sm" id="popular-heading">Where you might be headed</h2>
-    <div class="link-index" style="margin-top:36px;">
-      <a href="services/">Our Services <span>Patios, driveways, pool decks, outdoor kitchens and more</span></a>
-      <a href="gallery/">Gallery <span>A look at completed outdoor spaces</span></a>
+    <div class="section-head section-head--left">
+      <p class="eyebrow">Try one of these</p>
+      <h2 class="h2 h2--sm" id="popular-heading">Where you were probably headed</h2>
+    </div>
+
+    <div class="link-index">
+      <a href="services/">Services <span>All eleven build types, from pavers to impact windows</span></a>
+      <a href="projects/">Projects <span>The scopes of work we take on, and how records get published</span></a>
       <a href="service-areas/">Service Areas <span>Broward, Miami-Dade and Palm Beach counties</span></a>
-      <a href="get-a-quote/">Get a Quote <span>Book a free on-site design consultation</span></a>
+      <a href="get-a-quote/">Get a Quote <span>A free on-site visit and a written scope</span></a>
+      <a href="blog/">Resources <span>Planning and material guides for homeowners</span></a>
+      <a href="contact-us/">Contact <span>Phone, email, address and hours</span></a>
+    </div>
+  </section>
+
+  <section class="container section" aria-labelledby="help-heading" style="padding-top:0;">
+    <div class="note">
+      <h2 class="h2 h2--sm" id="help-heading" style="margin-top:0;">Arrived from a link that should work?</h2>
+      <p>If a page on this site sent you here, that is our mistake rather than yours — tell us the address you came from on <a href="tel:+13059518862">305-951-8862</a> or at <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a> and it will be fixed.</p>
     </div>
   </section>
 </main>
