@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-01 (pass 9 — remaining location pages, Areas We Serve)
+Last updated: 2026-09-02 (pass 12 — resource centre and first six articles)
 
 ---
 
@@ -174,6 +174,9 @@ the tooling must not become a repository dependency.
   service-areas/coral-springs-fl/index.html    ← live
   service-areas/boca-raton-fl/index.html       ← live
 
+  blog/index.html                            ← live (resource hub)
+  blog/<article-slug>/index.html             ← live × 6
+
   assets/
     css/style.css               ← tokens, global nav, footer, homepage components
     css/pages.css               ← shared interior-page components
@@ -258,22 +261,21 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 11 (26 URLs):** `/`, `/services/`, all eleven service pages,
-`/projects/`, `/gallery/`, `/reviews/`, `/about-us/`, `/service-areas/`, and all
-eight city pages — `parkland-fl`, `davie-fl`, `weston-fl`, `plantation-fl`,
-`fort-lauderdale-fl`, `pembroke-pines-fl`, `coral-springs-fl`, `boca-raton-fl`.
-Everything else is linked from the global nav or footer and returns 404 until
-its page is built — a deliberate, approved state, not a defect. `sitemap.xml`
-lists only URLs that resolve; add each entry as it ships.
+**Live as of pass 12 (33 URLs):** `/`, `/services/`, all eleven service pages,
+`/projects/`, `/gallery/`, `/reviews/`, `/about-us/`, `/service-areas/`, all
+eight city pages, `/blog/` and its six articles. Everything else is linked from
+the global nav or footer and returns 404 until its page is built — a
+deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
+resolve; add each entry as it ships.
 
 **Three tiers are now complete** — all eleven §5 services, all eight §6 priority
 markets, and the whole evidence tier (`/projects/`, `/gallery/`, `/reviews/`)
 plus `/about-us/`.
 
-**What remains** is `/contact-us/`, `/get-a-quote/`, `/blog/`,
-`/privacy-policy/`, `/cookie-policy/` and `/accessibility/`. Two of those —
-`/get-a-quote/` and `/contact-us/` — are the highest-value gap left, because
-every page on this site ends by pointing at them.
+**What remains** is `/contact-us/`, `/get-a-quote/`, `/privacy-policy/`,
+`/cookie-policy/` and `/accessibility/`. The first two are now by some distance
+the highest-value gap left, because all 33 live pages end by pointing at them
+and neither resolves.
 
 **The three evidence routes are deliberately different from one another and must
 not converge.**
@@ -373,6 +375,14 @@ centred `.section-head` is reserved for the homepage.
 | Hub | `BreadcrumbList` + `CollectionPage` (with `ItemList`) + `FAQPage` |
 | Service | `BreadcrumbList` + `Service` + `WebPage` + `FAQPage` |
 | Location | `BreadcrumbList` + `Service` (`areaServed` = that `City`) + `WebPage` + `FAQPage` |
+| Resource hub | `BreadcrumbList` + `CollectionPage` (`ItemList` of articles) + `FAQPage` |
+| Article | `BreadcrumbList` + `Article` + `WebPage`, plus `FAQPage` only where the page carries a visible FAQ |
+
+**Article nodes carry organisational authorship, never a person.** `author` and
+`publisher` both reference the homepage business `@id`; no `Person` node, no
+invented byline, no fabricated credentials (§13.15). `datePublished` and
+`dateModified` are the real dates the file was written and last revised —
+never back-dated to look established, and never bumped to look fresh.
 
 **Location pages must never emit `LocalBusiness`, `GeneralContractor`, or any
 `address` / `PostalAddress` node.** Doing so implies a branch office in that
@@ -641,6 +651,7 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-pembroke-pines-fl` | rear lawn to a lit elevation at dusk | `/service-areas/pembroke-pines-fl/` banner |
 | `hero-coral-springs-fl` | single-storey house, deep overhang, terrace | `/service-areas/coral-springs-fl/` banner |
 | `hero-boca-raton-fl` | white rendered volumes against a clear sky | `/service-areas/boca-raton-fl/` banner |
+| `hero-blog` | open-plan interior with doors folded back to a terrace | `/blog/` banner |
 | `hero-projects` | white rendered volumes over a paved path and lawn | `/projects/` banner |
 | `hero-gallery` | house, sliding glazing, paved terrace and pool | `/gallery/` banner |
 | `hero-reviews` | white rendered volumes against clear sky | `/reviews/` banner |
@@ -914,11 +925,11 @@ of them may be repeated on any new page until verified.
 | 5 | Consultation section | "On-site visit within 48 hours" | A service-level guarantee. |
 | 6 | Homepage gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco house with no pool; "Patio detail" labels an interior lounge; **and pass 11 found a third — "Paver driveway & walkway" labels a pool and terrace with no driveway in frame.** | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. The new `/gallery/` does not repeat any of the three; fixing the homepage is a copy edit to three `<figcaption>`s. |
 | 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". **Pass 10 confirmed no image carries EXIF date, GPS or author.** `/projects/` now states on-page that all site photography is reference imagery; the homepage heading still says "our" and is the remaining exposure. |
-| 8 | Homepage + `/services/` cards | 9 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. Unchanged: 7 on `/services/`, 2 on `/`, plus a `preconnect` on each. No pass has added a new one. |
-| 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
+| 8 | Homepage + `/services/` cards | 12 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. **Pass 12 removed three** — the homepage journal cards now use self-hosted `gal-*` crops. Counted precisely this pass: 6 `<img>` on `/`, 6 on `/services/`, plus a `preconnect` on each (the earlier "9 images / 7 on services, 2 on home" line was itself inaccurate). No pass has added a new one. |
+| 9 | ~~Journal section~~ | ~~Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to a blog that does not exist~~ | **Resolved in pass 12.** The three cards now carry the real titles, real publication date and self-hosted imagery of three articles that exist, and link to them directly. The section heading and lead were corrected at the same time: it described "recent projects", which the site does not publish (§11.1). |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 6 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 26 URLs that resolve. `/get-a-quote/` and `/contact-us/` are the urgent two — every page ends by linking to them. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 5 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 33 URLs that resolve. `/get-a-quote/` and `/contact-us/` are the urgent two — every page ends by linking to them. Do not submit the sitemap or launch until the routes resolve. |
 | 13 | `/projects/` | The page exists but holds **zero project records** — see §11.1 | Not a defect; it is the audited state. It becomes one only if a record is ever published without meeting all three §11.1 gates. |
 | 14 | `/projects/` hero, and every other banner | `hero-projects` is a new crop of an existing stock frame, like every other banner on the site | Consistent with items 7 and 8. Owner decision needed: supply real project photography, or accept reference imagery site-wide and keep it labelled as such. |
 | 15 | `/reviews/` | The page exists but holds **zero reviews** — see §11.2 | Not a defect; it is the audited state. It becomes one only if a review is published without meeting all six §11.2 gates, or if `Review`/`aggregateRating` markup is added before real reviews are visible. |
@@ -1659,6 +1670,97 @@ public. Either confirm them against real reviews or remove the homepage
 section — as it stands the two pages contradict each other, and the reviews
 page is the accurate one.
 
+### 13.15 Pass 12 — the resource centre and its first six articles
+
+Shipped `/blog/` and six evergreen guides. Word counts (body inside `<main>`):
+hub 1,323; pavers vs concrete 1,949; pool deck materials 1,727; outdoor kitchen
+checklist 1,596; pergola vs tiki hut 1,177; turf around pools 1,962; complete
+backyard remodel 2,382.
+
+**The publishing standard is on the page, not just in this file.** `/blog/` has
+a *What you will not find in these articles* section listing six refusals —
+costs, timelines, invented statistics, return-on-investment figures, quoted
+codes or permits, product ratings, and an invented author. It follows the same
+principle as §11.1 and §11.2: a rule that lives only internally is one that
+quietly relaxes.
+
+| Article | Category | Layout it uses |
+|---|---|---|
+| Pavers vs Concrete for a South Florida Driveway | Pavers & Hardscaping | bias disclosure, in-page contents list, failure-mode table, six questions as `.steps` |
+| Choosing Pool Deck Materials for South Florida | Pool Areas | five complaints as `.steps`, then a four-material table scored against them |
+| Outdoor Kitchen Planning Checklist | Outdoor Kitchens | `.with-rail` sticky rail carrying a consultation list; body is a numbered ordered checklist |
+| Pergola vs Tiki Hut | Shade Structures | shortest piece; side-by-side split with images, four questions, quick-reference table |
+| Using Artificial Turf Around Pools and Patios | Artificial Turf | problem-led, with a five-junction deep dive on edges and a four-question FAQ |
+| How to Plan a Complete Backyard Remodel | Backyard Design | longest; decide-now-vs-later table, seven-step sequence, five-question FAQ |
+
+Layouts deliberately differ — a contents list on two, a sticky rail on one, a
+table-led argument on two, an FAQ on three and not on the other three. A visible
+FAQ and a `FAQPage` node always appear together or not at all.
+
+**Authorship.** `author` and `publisher` on every `Article` node reference the
+homepage business `@id`. There is no `Person` node anywhere, no byline, no
+stock portrait, no "20 years of experience" claim. The hub's first FAQ says
+this in the open, because inventing a credentialled expert is a common enough
+practice on contractor sites to be worth naming. `datePublished` and
+`dateModified` are 2026-09-02 on all six because that is genuinely when they
+were written — not back-dated to look established.
+
+**Categories without empty shelves.** Six of the seven category names in the
+brief are used; the seventh, *South Florida Outdoor Living*, runs through all of
+them and is not listed separately. Categories link to in-page anchors on the
+hub rather than to `/blog/category/<name>/` routes, because those routes do not
+exist and inventing links that 404 to look like a bigger site is the same
+failure as a doorway page. **When a category route is genuinely built, move the
+anchors to it — do not create the routes to make the list look longer.**
+
+**§12 item 9 resolved, item 8 reduced.** The homepage journal section carried
+three fabricated article headlines with dates and no year, pointing at a blog
+that did not exist. Its three cards now carry the real titles, the real
+publication date and self-hosted `gal-*` imagery, and link to the articles
+themselves. The section heading and lead were corrected at the same time — the
+lead advertised "recent projects", which this site does not publish (§11.1).
+That also removed three of the hot-linked Unsplash images; a precise recount
+for item 8 found the previous figure in this file was wrong, and it is now
+stated exactly.
+
+**Duplication review — where the risk actually was.** Six articles on topics
+that already have service pages is the highest duplication risk this project
+has run. The two-threshold check from §13.12 found **32 fuzzy pairs on the first
+pass**, sixteen of them between the turf article and `/services/turf/`,
+including one identical sentence and several above 0.85. Twenty-four passages
+were rewritten — the whole upkeep block and heat section of the turf article,
+the concrete-paver row of the pool-deck table, three question prompts shared
+between the pavers and remodel guides, four passages shadowing the Coral
+Springs, Parkland, Pembroke Pines and Weston pages, and two homepage card
+texts that had been lifted from article leads.
+
+**Final state: zero exact and zero fuzzy overlaps involving any blog page.**
+Seven exact pairs remain site-wide, all pre-existing and documented — the
+§13.11 fixed permitting text (now also on `/projects/`) and the pass-3
+homepage/services-hub sentence.
+
+**The lesson for the next writer:** an article about a service you already
+describe elsewhere will drift into paraphrasing that page unless it is built
+around a different question. The two that needed least revision were the ones
+with a genuinely different spine — the checklist, which is ordered by sequence,
+and the pool-deck guide, which is organised by complaint rather than by
+material.
+
+**Imagery.** One new crop, `hero-blog`, from the interior frame in the
+recovered originals that had never been used as a banner. Article banners reuse
+the relevant service heroes, and inline imagery uses the `gal-*` crops added in
+pass 11 — no new third-party URLs.
+
+**Verified.** `sync-partials.py --check` and `check-links.py` both exit 0. All
+seven new pages at 390 / 768 / 1440: HTTP 200, zero console errors, zero failed
+requests, no horizontal overflow, hero decoded. Scroll-reveal returns
+everything to full opacity; with `main.js` blocked nothing is hidden. Drawer
+opens and closes on `Escape`. Renders with JavaScript disabled. Titles,
+descriptions and canonicals unique across all 33 pages. FAQ JSON-LD matches the
+visible `<details>` text exactly on the three pages that have one, and the
+other three were asserted to carry no `FAQPage` node and no visible FAQ. No
+`Review` or `aggregateRating` node anywhere (§8.5).
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1834,6 +1936,17 @@ repository root is enough to serve it.
 - [ ] Content still visible with `main.js` blocked (see `.reveal-on`, §13.6)
 - [ ] No claim from §4 or §11 introduced
 
+Additionally, for an article under `/blog/`:
+
+- [ ] No cost, timeline, ROI figure, invented statistic, product rating or
+      quoted code/permit requirement — regulation is described as varying by
+      jurisdiction and scope, and nothing more
+- [ ] `Article` node carries organisational `author` and `publisher` (§8.5),
+      truthful `datePublished` / `dateModified`, and no `Person` node
+- [ ] A `FAQPage` node exists if and only if the page shows a visible FAQ
+- [ ] Category links point at anchors or routes that exist (§13.15)
+- [ ] Layout differs from the sibling articles where variation aids reading
+
 Additionally, for a location page:
 
 - [ ] No completed project asserted in that city, and the photography note is
@@ -1846,7 +1959,8 @@ Additionally, for a location page:
 - [ ] Section order, not just wording, differs from every sibling city page
 - [ ] Duplication reviewed at BOTH thresholds (§13.12): exact shared sentences
       at ≥45 chars, and near-duplicate pairs at token Jaccard ≥ 0.55. Exact
-      matching alone is not sufficient
+      matching alone is not sufficient — see §13.15 for how badly this fails on
+      an article covering a subject a service page already covers
 - [ ] Service pages carry the `.areas-grid areas-grid--compact` *Areas we
       serve* block, with city-name-only anchor text
 

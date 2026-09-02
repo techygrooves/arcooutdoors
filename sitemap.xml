@@ -160,4 +160,46 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/pavers-vs-concrete-driveway-florida/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/best-pool-deck-materials-florida/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/outdoor-kitchen-planning-checklist/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/pergola-vs-tiki-hut/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/artificial-turf-around-pools/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.arcooutdoors.com/blog/planning-complete-backyard-remodel/</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
