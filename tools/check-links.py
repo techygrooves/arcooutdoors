@@ -30,14 +30,10 @@ PROD = "https://www.arcooutdoors.com"
 
 # Routes that are linked from the global nav/footer but not yet built.
 PLANNED = {
-    "services/outdoor-kitchens/", "services/pergolas/", "services/tiki-huts/",
-    "services/turf/", "services/fence/", "services/impact-windows-doors/",
-    "projects/", "service-areas/", "about-us/", "gallery/", "reviews/",
+    "about-us/", "gallery/", "reviews/",
     "blog/", "contact-us/", "get-a-quote/",
     "privacy-policy/", "cookie-policy/", "accessibility/",
-} | {f"service-areas/{c}-fl/" for c in (
-    "parkland", "davie", "weston", "plantation",
-    "fort-lauderdale", "pembroke-pines", "coral-springs", "boca-raton")}
+}
 
 URL_ATTRS = ("href", "src", "action", "poster")
 SET_ATTRS = ("srcset", "imagesrcset")

@@ -258,20 +258,27 @@ Plus: `/`, `/services/`, `/projects/`, `/service-areas/` + the eight `-fl` city
 routes in §6, `/about-us/`, `/gallery/`, `/reviews/`, `/blog/`, `/contact-us/`,
 `/get-a-quote/`, `/privacy-policy/`, `/cookie-policy/`, `/accessibility/`.
 
-**Live as of pass 9 (22 URLs):** `/`, `/services/`, all eleven service pages,
-`/service-areas/`, and all eight city pages — `parkland-fl`, `davie-fl`,
-`weston-fl`, `plantation-fl`, `fort-lauderdale-fl`, `pembroke-pines-fl`,
-`coral-springs-fl`, `boca-raton-fl`. Everything else is linked from the global
-nav or footer and returns 404 until its page is built — a deliberate, approved
-state, not a defect. `sitemap.xml` lists only URLs that resolve; add each entry
-as it ships.
+**Live as of pass 10 (23 URLs):** `/`, `/services/`, all eleven service pages,
+`/projects/`, `/service-areas/`, and all eight city pages — `parkland-fl`,
+`davie-fl`, `weston-fl`, `plantation-fl`, `fort-lauderdale-fl`,
+`pembroke-pines-fl`, `coral-springs-fl`, `boca-raton-fl`. Everything else is
+linked from the global nav or footer and returns 404 until its page is built — a
+deliberate, approved state, not a defect. `sitemap.xml` lists only URLs that
+resolve; add each entry as it ships.
 
 **The service and location tiers are both complete** — all eleven §5 services
-and all eight §6 priority markets have a page.
+and all eight §6 priority markets have a page — and `/projects/` now anchors the
+evidence tier.
 
-**What remains** is the non-service, non-location routes: `/projects/`,
-`/about-us/`, `/contact-us/`, `/get-a-quote/`, `/gallery/`, `/reviews/`,
-`/blog/`, `/privacy-policy/`, `/cookie-policy/` and `/accessibility/`.
+**What remains** is `/about-us/`, `/contact-us/`, `/get-a-quote/`, `/gallery/`,
+`/reviews/`, `/blog/`, `/privacy-policy/`, `/cookie-policy/` and
+`/accessibility/`.
+
+`/projects/` and `/gallery/` are **not** two views of the same content, and must
+never converge. Gallery is visual browsing: photography, minimal text, fast to
+skim. Projects is evidence: written records of specific work, held to the §11.1
+template. A change that makes either look like the other has broken the
+distinction the two routes exist to draw.
 
 ### 8.3 Navigation model
 
@@ -624,6 +631,7 @@ re-derived new crops from them, so no new third-party URLs were introduced.
 | `hero-pembroke-pines-fl` | rear lawn to a lit elevation at dusk | `/service-areas/pembroke-pines-fl/` banner |
 | `hero-coral-springs-fl` | single-storey house, deep overhang, terrace | `/service-areas/coral-springs-fl/` banner |
 | `hero-boca-raton-fl` | white rendered volumes against a clear sky | `/service-areas/boca-raton-fl/` banner |
+| `hero-projects` | white rendered volumes over a paved path and lawn | `/projects/` banner |
 
 **The nine source photographs are now carrying eleven pages.** Pass 4 believed
 the usable material was exhausted; pass 6 found three more frames by going back
@@ -651,6 +659,28 @@ originally cropped for the fencing card was rejected and re-sourced, because a
 card labelled *Fencing* showing a pool is the same category of error as §12
 item 6. Alt text describes what is actually in the frame, never what the card is
 selling.
+
+### 9.12 Project-index components (pages.css §15)
+
+Added for `/projects/`. All three are generic and reusable.
+
+| Class | What it is |
+|---|---|
+| `.section--ink` | Dark band with no texture photograph behind it, for sections that need contrast but have no image to carry it. The `.why` band remains the textured variant. |
+| `.filterbar` / `.filterbar__chip` | Chip row that filters a following grid. Chips are real `<button>`s carrying `aria-pressed`; the group has `role="group"` and a label. |
+| `.work-card` | Text-forward record card — tag row, heading, body, service link. **Deliberately not a photo card**, so `/projects/` cannot be mistaken for `/gallery/`. |
+| `.record-empty` | The zero-state panel. Uses `font-feature-settings: "lnum"` because Cormorant Garamond's default old-style figures render a display "0" at x-height. |
+
+**The filter degrades the same way the reveal animation does.** `.filterbar` is
+`display:none` until `main.js` adds `.filter-on` to `<html>`, immediately before
+it wires the chips — the same gate, for the same reason as §18 of style.css. A
+script that fails to load leaves every card visible and no dead control on the
+page. `initFilter()` is driven entirely by `data-filter-root`, `data-filter` and
+`data-tags`, so any future page gets the behaviour by markup alone.
+
+The live region (`[data-filter-status]`) is left **empty on load** and populated
+only after a visitor filters something, so a screen reader is not read a count
+nobody asked for on arrival.
 
 ## 10. SEO RULES
 
@@ -705,6 +735,64 @@ from things that are true and checkable without client input, e.g.:
 
 Never assert a completed Arco project in that city without verification.
 
+### 11.1 Project record template — the standard for `/projects/`
+
+**Status: no record has ever met this standard, so none is published.** Pass 10
+audited the repository for anything that could support a case study and found
+nothing: no data file of any kind has ever been committed (`git log --all
+--diff-filter=A` returns only `PROJECT-SPEC.md`, `robots.txt` and
+`sitemap.xml`); the nine source photographs recovered from the pass-1 bundle
+carry no EXIF date, GPS or author; and §12 items 6 and 7 already record that the
+photography appears to be stock and that two gallery captions do not match their
+own images. There is therefore no verified city, date, duration, cost, material
+schedule, constraint or homeowner for any individual job anywhere in this
+project. `/projects/` says so on the page rather than filling the gap.
+
+**Three gates. A record is published only when all three are true — not two.**
+
+1. **The work is Arco's.** Built under our own contract, by our crews and
+   subcontractors. Not advised on, not quoted, not watched go elsewhere.
+2. **The photography is Arco's own,** taken at that property, of that work,
+   before and after. A record illustrated with a purchased photograph of
+   somebody else's yard is not a record.
+3. **The homeowner has consented in writing.** Opt-in, never a condition of the
+   contract, revocable, and refusing changes nothing about how the job is run.
+
+**Required sections. A record missing any of these has failed its own test.**
+
+| # | Section | Contains | Never contains |
+|---|---|---|---|
+| 1 | The site before | What was there, what it was doing wrong, ground conditions. Photographs from before work started. | A rendering presented as a "before". |
+| 2 | Constraints | Access, levels, drainage, existing structures, trees, association guidelines, approvals that applied to that property. | Generic municipal rules restated as if they governed this job. |
+| 3 | Scope | Which of the eleven §5 build types were in the contract, in what sequence, and what was explicitly **excluded**. | A scope written only as inclusions. |
+| 4 | Materials | What was specified, what it was judged against (heat, traction, load, exposure), what was rejected. | A named product without documentation to point at. |
+| 5 | What went wrong | The moment every project of any size has, and what was done about it. **Required, not optional.** | A record with no friction in it — that has been edited into fiction. |
+| 6 | Outcome | Arco's own photography of the finished work, including the awkward junctions. | Stock, supplier or manufacturer imagery. |
+| 7 | Location | City-level by default, reduced further on request, omitted entirely if that is what consent requires. | Street address, homeowner name, or a date that identifies a household. |
+
+**Facts that require a source, and are otherwise omitted entirely:** city ·
+project date · duration · cost or budget · crew size · specific materials and
+products · square footage · homeowner name or quote · the constraints
+encountered · the scope delivered. Writing around a missing fact is the §11 rule
+and it applies here without exception; a record that reads well because a gap
+was filled with a plausible invention is the single failure mode this whole
+section exists to prevent.
+
+**Detail-page architecture, reserved for when a record exists.** Route:
+`/projects/<slug>/`, slug derived from the build type and city, never from a
+homeowner's name. Page recipe as §8.5, plus: breadcrumb `Home / Projects /
+<record>`; a `page-hero` using the record's own photography; the seven sections
+above in order; a build-type tag row linking to the governing service pages; a
+link back to `/projects/`; JSON-LD `CreativeWork` inside the standard `@graph`,
+with `about` pointing at the relevant `Service` nodes. `/projects/` gains a
+records grid above the build-type index, and the filter chips then filter
+records rather than scopes. **Do not build any of this speculatively** — the
+route stays unbuilt until gate 3 is satisfied for a real job.
+
+**Until then `/projects/` publishes the standard instead of the records,** on
+the principle that a standard which only exists internally is one that quietly
+relaxes. Publishing it while there is nothing to bend it for is the point.
+
 ## 12. OPEN ITEMS — unverified content currently live
 
 These predate this pass. They are preserved so the homepage design is unchanged,
@@ -719,12 +807,14 @@ of them may be repeated on any new page until verified.
 | 4 | Trust strip / Why Arco / consultation | "Transparent, Fixed Pricing", "Fixed, itemized pricing — no surprises" | A pricing guarantee. |
 | 5 | Consultation section | "On-site visit within 48 hours" | A service-level guarantee. |
 | 6 | Gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco stairway; "Patio detail" labels an interior lounge | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. |
-| 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". |
+| 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". **Pass 10 confirmed no image carries EXIF date, GPS or author.** `/projects/` now states on-page that all site photography is reference imagery; the homepage heading still says "our" and is the remaining exposure. |
 | 8 | Services + journal cards | 9 images hot-linked from `images.unsplash.com` | Third-party dependency, licensing exposure, and they are the only images not self-hosted. |
 | 9 | Journal section | Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to `#journal` | Implies a blog that does not exist. |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | Consultation form | No submission endpoint exists | See §14 — currently falls back to a mail draft. |
-| 12 | Global nav + footer | 10 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 22 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
+| 12 | Global nav + footer | 9 of the 32 linked routes do not exist yet and return 404 | Approved and expected: the pages ship in later passes. `sitemap.xml` lists only the 23 URLs that resolve. Do not submit the sitemap or launch until the routes resolve. |
+| 13 | `/projects/` | The page exists but holds **zero project records** — see §11.1 | Not a defect; it is the audited state. It becomes one only if a record is ever published without meeting all three §11.1 gates. |
+| 14 | `/projects/` hero, and every other banner | `hero-projects` is a new crop of an existing stock frame, like every other banner on the site | Consistent with items 7 and 8. Owner decision needed: supply real project photography, or accept reference imagery site-wide and keep it labelled as such. |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -1257,6 +1347,107 @@ pages. FAQ JSON-LD matches the visible `<details>` text exactly, six per page,
 and each location page's `@graph` was asserted to contain no `LocalBusiness`,
 no `GeneralContractor` and no address node.
 
+### 13.13 Pass 10 — the Projects hub, and an evidence audit that found nothing
+
+**The brief asked for a decision before it asked for a page:** determine whether
+actual project photographs and metadata are available, and if they are not,
+build the hub honestly rather than inventing case studies. The audit ran first.
+
+```
+any project metadata ever committed?   only PROJECT-SPEC.md, robots.txt, sitemap.xml
+EXIF date / GPS / author in any image?  none, in any of the nine source frames
+any committed text naming an address,
+  completion date or client?            none
+```
+
+Combined with §12 items 6 and 7 — captions that do not match their photographs,
+and photography that appears to be stock — that settles it: **zero verified
+project facts exist.** No detail pages were built, and none should be until the
+§11.1 gates are met. That section is the deliverable the brief asked for; this
+one records what was shipped.
+
+**`/projects/` — one page, 594 lines, no fabricated facts.**
+
+| Band | What it does |
+|---|---|
+| Intro | States the Projects/Gallery distinction in the first two sentences: gallery is for looking, projects is for checking. |
+| Published records | The zero-state, stated plainly, plus the three gates from §11.1 and an invitation to audit the claim ("count the specific completed projects this website asserts"). |
+| The work | 26 scopes of work, filtered by the 11 build types. |
+| Record template | The seven required sections, published *before* there is anything to bend them for. |
+| Checking our work | Six things a homeowner can verify without trusting any website, this one included — including the licence number and where to check it. |
+| Areas, FAQ, CTA | The established components. |
+
+**What the filter actually filters, and why not projects.** A filter over zero
+records is a dead control, and a filter over reference photography would have
+rebuilt `/gallery/` under a name that promises evidence. So the 26 items are
+*scopes of work* — each a real piece of work Arco builds, each written from the
+service pages' own verified material, each tagged to one to three build types
+and linking to the service page that governs it. Every category returns between
+2 and 7 results; none returns one, because a filter that always returns a single
+item is a menu wearing a filter's clothes.
+
+**Claims refused on this page, each for a stated reason:**
+
+- **No case studies.** No city, date, duration, cost, materials, constraints,
+  scope or homeowner appears for any individual job, because none is verified.
+- **No portfolio framing of the photography.** The page states that all site
+  imagery is reference imagery. It does not present a single frame as an Arco
+  job at an address.
+- **No addresses.** The page says explicitly that it will not publish a list of
+  completed properties, and why — the people living there did not consent to
+  being advertising.
+- **No slip-proof claim** (only the denial `/services/pool-decks/` already
+  uses), **no wind rating**, **no appliance brands**, **no property-value
+  percentage**, **no pricing or guarantee language**.
+- **Permitting** uses the mandated wording verbatim: *"Requirements can vary by
+  jurisdiction and project scope. Arco can discuss planning considerations for
+  your specific project."*
+
+**Projects links added across the site** — 22 pages, each contextual rather than
+stuffed:
+
+- **Homepage:** a line in the gallery band naming the distinction and linking
+  through, plus a second `Browse Projects` button beside `View All Photos`.
+- **11 service pages + 8 city pages:** a `Browse the Work by Build Type` button
+  closing the existing `#related` band.
+- **`/services/`:** the same button under its areas band.
+- **`/service-areas/`:** the FAQ answer *"Have you completed projects in my city
+  before?"* — the single most natural place on the site to point at `/projects/`
+  — now links to it.
+
+**Also fixed, found by extending the test suite to all 14 interior pages:**
+
+- `/services/fence/` and `/services/impact-windows-doors/` carried 209-character
+  meta descriptions (§10 asks for ~150–160); both would be truncated in results.
+  Rewritten to 146 and 150.
+- `.gallery-cta` had no rule for two adjacent buttons, so the homepage pair sat
+  border-to-border. They now gap at 14px and stack below 520px.
+- `pagetest.js` hardcoded `BUTTON:Services` as the expected current-nav item, so
+  it could only ever test service pages; it now reads the page's own nav key.
+  Its 30-character title floor was arbitrary and failed legitimate hub titles —
+  lowered to 28.
+
+**Verification.** 441 assertions across seven suites, all passing: 57 new
+`/projects/` checks (every category filtered and counted, keyboard operation,
+`aria-pressed` exclusivity, the no-JS degradation, the honesty guards), plus
+266 whole-page checks now covering all 14 interior pages, 47 navigation, 25
+accessibility, 25 subpath-deployment, 11 reveal and 10 form. `check-links.py`
+resolves every URL on 24 pages with no root-absolute leftovers; `PLANNED` lost
+the 15 routes that have since shipped.
+
+**Two test failures were diagnosed as test artifacts, not site bugs,** and both
+were fixed in the test rather than the page: `innerText` skips `[hidden]` cards,
+so a content assertion running while the grid was filtered could not see the
+permit wording; and `fullPage` screenshots re-run layout, which blanks
+`.reveal` blocks that a scrolled viewport shows correctly — confirmed by reading
+computed opacity for all six reveal blocks (all `1`) before touching anything.
+
+**One judgement left with the owner** (§12 items 7 and 14). The imagery on this
+site cannot be described as Arco's project work on the evidence available, so
+`/projects/` labels it reference imagery. If these are in fact photographs of
+completed Arco jobs, say so and the framing changes across the site — and item
+6's mismatched gallery captions become fixable rather than merely flagged.
+
 ## 14. FORMS
 
 `#quote-form` is a real `<form>` with labelled controls, `required` fields,
@@ -1432,3 +1623,17 @@ Additionally, for a location page:
       matching alone is not sufficient
 - [ ] Service pages carry the `.areas-grid areas-grid--compact` *Areas we
       serve* block, with city-name-only anchor text
+
+Additionally, for anything touching `/projects/`:
+
+- [ ] No individual project asserted — no city, date, duration, cost, materials,
+      constraints, scope or homeowner — unless all three §11.1 gates are met
+- [ ] Site photography still described as reference imagery, never as a
+      portfolio of completed Arco work
+- [ ] No list of completed addresses, and no homeowner identified
+- [ ] Every filter category returns at least two entries; a category returning
+      one is a menu, not a filter
+- [ ] With `main.js` blocked: every card visible, filter bar hidden (`.filter-on`)
+- [ ] Filter chips are `<button>`s, exactly one `aria-pressed="true"` at a time,
+      operable by keyboard, and the live region is empty until a filter is used
+- [ ] `/projects/` and `/gallery/` have not converged (§8.2)
