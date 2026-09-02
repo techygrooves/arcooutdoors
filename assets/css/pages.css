@@ -544,3 +544,179 @@
   .note { padding: 22px 22px; }
   .section-head--left { margin-bottom: 32px; }
 }
+
+/* --------------------------------------------------------------------------
+   15. Project index (added for /projects/)
+
+   Three components, all reusable:
+
+     .section--ink   a dark band without the .why texture image, for sections
+                     that need contrast but have no photograph to carry it
+     .filterbar      a chip row that filters a following grid by tag
+     .work-card      a text-forward record card — deliberately not a photo
+                     card, because /projects/ documents work and /gallery/
+                     shows it, and the two must not look interchangeable
+
+   The filter bar is hidden until main.js adds `.filter-on` to <html>. That is
+   the same gate `.reveal-on` uses (§18 of style.css) and it exists for the
+   same reason: if the script fails to load, every card stays visible and the
+   page degrades to a plain list rather than to a dead control.
+   -------------------------------------------------------------------------- */
+
+.section--ink { background: var(--ink); color: var(--cream); }
+.section--ink .section-head--left p.lead,
+.lead--onDark { color: rgba(253, 250, 243, .74); }
+.section--ink a { color: var(--gold-light); }
+.section--ink a:hover, .section--ink a:focus-visible { color: var(--cream); }
+
+.steps--onDark > li { border-top-color: rgba(224, 169, 78, .38); }
+.steps--onDark > li::before { color: var(--gold); }
+.steps--onDark h3 { color: var(--gold-light); }
+.steps--onDark p { color: rgba(253, 250, 243, .74); }
+
+/* --- Filter bar ----------------------------------------------------------- */
+.filterbar { display: none; }
+.filter-on .filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.filterbar__chip {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--body);
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--r-pill);
+  padding: 9px 17px;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+.filterbar__chip:hover { border-color: var(--gold-deep); color: var(--ink); }
+.filterbar__chip[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--sand-50);
+}
+.filterbar__n { opacity: .6; margin-left: 4px; font-variant-numeric: tabular-nums; }
+
+.filter-status {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--body);
+  margin: 0 0 34px;
+  min-height: 1em;
+}
+.filter-empty { font-size: 15.5px; color: var(--body); margin-top: 28px; }
+.linklike {
+  font: inherit;
+  color: var(--gold-link);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.linklike:hover, .linklike:focus-visible { color: var(--ink); }
+
+/* --- Work cards ----------------------------------------------------------- */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 26px;
+}
+.work-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--r-sm);
+  padding: 28px 28px 26px;
+}
+/* `hidden` must beat `display:flex`. */
+.work-card[hidden] { display: none; }
+.work-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 16px;
+}
+.work-card__tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--gold-link);
+  border: 1px solid var(--hairline-2);
+  border-radius: 3px;
+  padding: 4px 8px;
+}
+.work-card h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.work-card > p { font-size: 14.5px; line-height: 1.75; color: var(--body); margin: 0; }
+.work-card__link { margin-top: auto; padding-top: 20px; }
+.work-card__link a {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gold-link);
+}
+.work-card__link a:hover, .work-card__link a:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* --- The empty-record panel ----------------------------------------------- */
+.record-empty {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 34px;
+  align-items: start;
+  background: var(--cream);
+  border: 1px solid var(--hairline-2);
+  border-left: 3px solid var(--gold-deep);
+  padding: 36px 40px;
+  max-width: 900px;
+}
+.record-empty__count {
+  font-family: var(--font-display);
+  font-size: 82px;
+  font-weight: 600;
+  line-height: .9;
+  color: var(--gold-deep);
+  /* Cormorant Garamond defaults to old-style figures, which renders this as an
+     x-height "o" rather than a full-height zero. */
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "lnum" 1;
+}
+.record-empty__body h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 23px;
+  color: var(--ink);
+  margin: 0 0 14px;
+}
+.record-empty__body p { font-size: 15.5px; line-height: 1.8; color: var(--body); margin: 0; }
+.record-empty__body p + p { margin-top: 14px; }
+
+@media (max-width: 640px) {
+  .record-empty { grid-template-columns: 1fr; gap: 14px; padding: 28px 24px; }
+  .record-empty__count { font-size: 58px; }
+  .work-card { padding: 24px 22px; }
+  .filter-on .filterbar { gap: 8px; }
+  .filterbar__chip { font-size: 12px; padding: 8px 14px; }
+}

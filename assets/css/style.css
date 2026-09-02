@@ -1000,6 +1000,14 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
 .gallery-item--xl figcaption .name { font-size: 24px; }
 
 .gallery-cta { text-align: center; margin-top: 48px; }
+/* Two buttons in one .gallery-cta (Gallery / Projects on the homepage) must not
+   sit border-to-border; the inline whitespace between them collapses to nothing
+   at these font settings. */
+.gallery-cta .btn + .btn { margin-left: 14px; }
+@media (max-width: 520px) {
+  .gallery-cta .btn { display: block; }
+  .gallery-cta .btn + .btn { margin-left: 0; margin-top: 12px; }
+}
 
 /* --------------------------------------------------------------------------
    13. Reviews

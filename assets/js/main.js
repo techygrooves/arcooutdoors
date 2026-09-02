@@ -409,7 +409,84 @@
   }
 
   /* ---------------------------------------------------------------------------
-     5. Footer year
+     5. Tag filter
+     Filters a grid of [data-tags] items from a row of [data-filter] buttons.
+     Generic: any page can mark up a [data-filter-root] region and get this.
+
+     Like initReveal, the CSS keeps every item visible until this function has
+     actually run — `.filter-on` is added below, and the filter bar is hidden
+     without it. A script that fails to load therefore leaves a complete,
+     readable list rather than a control that does nothing.
+     ------------------------------------------------------------------------- */
+  function initFilter() {
+    var roots = document.querySelectorAll('[data-filter-root]');
+    if (!roots.length) return;
+
+    Array.prototype.forEach.call(roots, function (root) {
+      var chips = Array.prototype.slice.call(root.querySelectorAll('[data-filter]'));
+      var items = Array.prototype.slice.call(root.querySelectorAll('[data-tags]'));
+      if (!chips.length || !items.length) return;
+
+      var status = root.querySelector('[data-filter-status]');
+      var empty = root.querySelector('[data-filter-empty]');
+      var reset = root.querySelector('[data-filter-reset]');
+      var total = items.length;
+
+      function label(key) {
+        for (var i = 0; i < chips.length; i++) {
+          if (chips[i].getAttribute('data-filter') === key) {
+            return (chips[i].textContent || '').replace(/\s+\d+\s*$/, '').trim();
+          }
+        }
+        return key;
+      }
+
+      function apply(key, announce) {
+        var shown = 0;
+
+        items.forEach(function (item) {
+          var tags = ' ' + (item.getAttribute('data-tags') || '') + ' ';
+          var match = key === 'all' || tags.indexOf(' ' + key + ' ') > -1;
+          item.hidden = !match;
+          if (match) shown += 1;
+        });
+
+        chips.forEach(function (chip) {
+          chip.setAttribute('aria-pressed', chip.getAttribute('data-filter') === key ? 'true' : 'false');
+        });
+
+        if (empty) empty.hidden = shown !== 0;
+
+        // Left empty until the visitor filters something, so the live region
+        // does not announce a count nobody asked for on page load.
+        if (status && announce) {
+          status.textContent = key === 'all'
+            ? 'Showing all ' + total + ' entries'
+            : 'Showing ' + shown + ' of ' + total + ' — ' + label(key);
+        }
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          apply(chip.getAttribute('data-filter'), true);
+        });
+      });
+
+      if (reset) {
+        reset.addEventListener('click', function () {
+          apply('all', true);
+          var first = chips[0];
+          if (first) first.focus();
+        });
+      }
+
+      document.documentElement.classList.add('filter-on');
+      apply('all', false);
+    });
+  }
+
+  /* ---------------------------------------------------------------------------
+     6. Footer year
      ------------------------------------------------------------------------- */
   function initYear() {
     var els = document.querySelectorAll('[data-year]');
@@ -423,6 +500,7 @@
     initCurrentPage();
     initReveal();
     initForm();
+    initFilter();
     initYear();
   }
 
