@@ -1000,6 +1000,10 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
 .gallery-item--xl figcaption .name { font-size: 24px; }
 
 .gallery-cta { text-align: center; margin-top: 48px; }
+/* A second .gallery-cta stacked directly under the first (services hub: "View
+   All Service Areas" then the gallery link) only needs the gap between two
+   buttons, not the full 48px that separates the pair from the section above. */
+.gallery-cta--stacked { margin-top: 14px; }
 /* Two buttons in one .gallery-cta (Gallery / Projects on the homepage) must not
    sit border-to-border; the inline whitespace between them collapses to nothing
    at these font settings. */
