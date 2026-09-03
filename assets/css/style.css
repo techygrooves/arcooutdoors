@@ -336,6 +336,12 @@ summary:focus-visible,
 /* --------------------------------------------------------------------------
    5. Buttons
    -------------------------------------------------------------------------- */
+/* `display` here is an author rule, so it beats the user-agent's
+   `[hidden] { display: none }`. Without this, `hidden` on a button silently
+   does nothing — which is how the Load More control shipped visible to
+   visitors with JavaScript disabled. */
+.btn[hidden] { display: none; }
+
 .btn {
   display: inline-flex;
   align-items: center;

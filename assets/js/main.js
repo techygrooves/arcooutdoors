@@ -24,6 +24,32 @@
     else if (mq.addListener) mq.addListener(fn);
   }
 
+  /* ---------------------------------------------------------------------------
+     Body scroll lock — shared by the mobile drawer and the project lightbox.
+     position:fixed rather than overflow:hidden, because iOS Safari ignores
+     overflow on <body> and scrolls the page behind the overlay anyway.
+     ------------------------------------------------------------------------- */
+  var lockedScrollY = 0;
+
+  function lockScroll() {
+    lockedScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    document.body.style.top = '-' + lockedScrollY + 'px';
+    document.body.classList.add('is-nav-locked');
+  }
+
+  function unlockScroll() {
+    if (!document.body.classList.contains('is-nav-locked')) return;
+    document.body.classList.remove('is-nav-locked');
+    document.body.style.top = '';
+    // `scroll-behavior: smooth` would animate the restore and leave the visitor
+    // watching the page fly back to where they already were.
+    var root = document.documentElement;
+    var previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, lockedScrollY);
+    root.style.scrollBehavior = previous;
+  }
+
   function initNav() {
     var header = document.querySelector('[data-header]');
     var toggle = document.querySelector('[data-nav-toggle]');
@@ -39,7 +65,6 @@
       .filter(Boolean);
 
     var mobile = window.matchMedia(MOBILE);
-    var scrollY = 0;
     var hoverTimer = null;
 
     /* -- the drawer needs to start below the header, whatever height it is -- */
@@ -104,25 +129,9 @@
       });
     });
 
-    /* -- body scroll lock -------------------------------------------------
-       position:fixed rather than overflow:hidden, because iOS Safari ignores
-       overflow on <body> and scrolls the page behind the drawer anyway. */
-    function lockScroll() {
-      scrollY = window.pageYOffset || document.documentElement.scrollTop;
-      document.body.style.top = '-' + scrollY + 'px';
-      document.body.classList.add('is-nav-locked');
-    }
-    function unlockScroll() {
-      document.body.classList.remove('is-nav-locked');
-      document.body.style.top = '';
-      // `scroll-behavior: smooth` would animate the restore and leave the
-      // visitor watching the page fly back to where they already were.
-      var root = document.documentElement;
-      var previous = root.style.scrollBehavior;
-      root.style.scrollBehavior = 'auto';
-      window.scrollTo(0, scrollY);
-      root.style.scrollBehavior = previous;
-    }
+    /* -- body scroll lock --------------------------------------------------
+       Shared with the lightbox; see lockScroll/unlockScroll at the top of this
+       file. Both need the identical iOS workaround, so there is one copy. */
 
     /* -- drawer ------------------------------------------------------------ */
     function drawerOpen() { return toggle.getAttribute('aria-expanded') === 'true'; }
@@ -559,7 +568,197 @@
   }
 
   /* ---------------------------------------------------------------------------
-     6. Footer year
+     6. Project gallery — batched reveal + lightbox
+     Used by /projects/. Both halves are progressive enhancements over markup
+     that already works: every thumbnail is a real <a> to its own full-size
+     photograph, so with no JavaScript the gallery is a complete, browsable,
+     keyboard-reachable list of links. This function only makes it nicer.
+     ------------------------------------------------------------------------- */
+  var GALLERY_STEP_DEFAULT = 15;
+
+  function initProjectGallery() {
+    var grid = document.querySelector('[data-pgallery]');
+    if (!grid) return;
+
+    var items = Array.prototype.slice.call(grid.querySelectorAll('.pgallery__item'));
+    if (!items.length) return;
+
+    var moreBtn = document.querySelector('[data-pgallery-more]');
+    var counter = document.querySelector('[data-pgallery-count]');
+    var step = parseInt(grid.getAttribute('data-step'), 10) || GALLERY_STEP_DEFAULT;
+
+    /* -- release the placeholder box once real proportions are known -------- */
+    items.forEach(function (item) {
+      var img = item.querySelector('img');
+      if (!img) return;
+      if (img.complete && img.naturalWidth > 0) {
+        item.classList.add('is-loaded');
+      } else {
+        img.addEventListener('load', function () { item.classList.add('is-loaded'); });
+        // A photograph that fails to load must not leave a permanent grey box.
+        img.addEventListener('error', function () { item.classList.add('is-loaded'); });
+      }
+    });
+
+    function hiddenItems() {
+      return items.filter(function (i) { return i.hidden; });
+    }
+
+    function report() {
+      var shown = items.length - hiddenItems().length;
+      if (counter) counter.textContent = 'Showing ' + shown + ' of ' + items.length + ' photographs';
+    }
+
+    var remaining = hiddenItems();
+    if (!remaining.length) {
+      // Everything already visible: no button, and no empty status line.
+      if (moreBtn) moreBtn.remove();
+      return;
+    }
+
+    // The button ships hidden so a visitor without JavaScript never meets a
+    // control that cannot do anything.
+    if (moreBtn) {
+      moreBtn.hidden = false;
+      moreBtn.addEventListener('click', function () {
+        var batch = hiddenItems().slice(0, step);
+        batch.forEach(function (item) { item.hidden = false; });
+
+        var left = hiddenItems();
+        if (!left.length) {
+          moreBtn.hidden = true;
+        } else if (left.length <= step) {
+          // Final click reveals whatever is left, however many that is.
+          moreBtn.textContent = 'Load the Last ' + left.length + ' Projects';
+        }
+
+        report();
+
+        // Move focus to the first newly revealed photograph so a keyboard
+        // visitor lands on the new content rather than back at the top.
+        if (batch.length) {
+          var link = batch[0].querySelector('a');
+          if (link) {
+            link.setAttribute('tabindex', '-1');
+            link.focus({ preventScroll: true });
+          }
+        }
+      });
+    }
+
+    report();
+    initLightbox(items);
+  }
+
+  /* ---------------------------------------------------------------------------
+     7. Lightbox
+     Vanilla. Opens on a thumbnail link, traps focus inside the dialog, and
+     hands focus back to the thumbnail that opened it.
+     ------------------------------------------------------------------------- */
+  function initLightbox(items) {
+    var root = document.querySelector('[data-lightbox-root]');
+    if (!root) return;
+
+    var img = root.querySelector('[data-lightbox-img]');
+    var counter = root.querySelector('[data-lightbox-counter]');
+    var prevBtn = root.querySelector('[data-lightbox-prev]');
+    var nextBtn = root.querySelector('[data-lightbox-next]');
+    var closers = root.querySelectorAll('[data-lightbox-close]');
+    if (!img) return;
+
+    var links = items
+      .map(function (item) { return item.querySelector('a[data-lightbox]'); })
+      .filter(Boolean);
+    if (!links.length) return;
+
+    var index = -1;
+    var opener = null;
+
+    function show(i) {
+      index = (i + links.length) % links.length;
+      var link = links[index];
+      var thumb = link.querySelector('img');
+      img.src = link.getAttribute('href');
+      img.alt = thumb ? thumb.getAttribute('alt') : '';
+      if (counter) counter.textContent = (index + 1) + ' of ' + links.length;
+    }
+
+    function open(i, from) {
+      opener = from || null;
+      root.hidden = false;
+      lockScroll();
+      show(i);
+      // Focus the close control: it is the action most people want, and it puts
+      // the visitor inside the dialog for the focus trap below.
+      var closeBtn = root.querySelector('.lightbox__btn--close');
+      if (closeBtn) closeBtn.focus();
+    }
+
+    function close() {
+      if (root.hidden) return;
+      root.hidden = true;
+      // Drop the source so a large photograph is not kept decoded in memory.
+      img.removeAttribute('src');
+      unlockScroll();
+      if (opener) {
+        opener.focus({ preventScroll: true });
+        opener = null;
+      }
+    }
+
+    links.forEach(function (link, i) {
+      link.addEventListener('click', function (e) {
+        // Let modified clicks (new tab, download, middle click) behave normally.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        open(i, link);
+      });
+    });
+
+    Array.prototype.forEach.call(closers, function (el) {
+      el.addEventListener('click', close);
+    });
+    if (prevBtn) prevBtn.addEventListener('click', function () { show(index - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { show(index + 1); });
+
+    document.addEventListener('keydown', function (e) {
+      if (root.hidden) return;
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); return; }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); return; }
+      if (e.key !== 'Tab') return;
+
+      // Focus trap: the dialog's own controls are the only tab stops.
+      var focusable = Array.prototype.slice.call(
+        root.querySelectorAll('button:not([disabled])')
+      ).filter(function (el) { return el.offsetParent !== null; });
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      } else if (focusable.indexOf(document.activeElement) === -1) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    /* -- touch: swipe between photographs ---------------------------------- */
+    var touchX = null;
+    root.addEventListener('touchstart', function (e) {
+      touchX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    root.addEventListener('touchend', function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  /* ---------------------------------------------------------------------------
+     8. Footer year
      ------------------------------------------------------------------------- */
   function initYear() {
     var els = document.querySelectorAll('[data-year]');
@@ -574,6 +773,7 @@
     initReveal();
     initForms();
     initFilter();
+    initProjectGallery();
     initYear();
   }
 

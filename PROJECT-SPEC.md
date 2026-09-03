@@ -842,6 +842,46 @@ this pass's first draft and cost 411KB per desktop page view against a true
 cost of 96KB. **When a grid's column width is capped by a container, describe
 it in pixels.**
 
+### 9.14 Project gallery and lightbox (pages.css §20, §21)
+
+Added in pass 18, when the client supplied their own project photography.
+
+| Class | What it is |
+|---|---|
+| `.pgallery` | CSS **multi-column** masonry — 3 / 2 / 1 columns. Columns, not grid, because the photographs arrive at unknown and mixed proportions and columns let each keep its natural aspect ratio with no cropping at all. |
+| `.pgallery__item[hidden]` | Batched reveal. `hidden` takes items out of flow entirely, so the 27 not yet shown reserve no space. |
+| `.pgallery__link` | The thumbnail is a real `<a>` to its own full-size image. That is what makes the lightbox a progressive enhancement rather than a requirement. |
+| `.lightbox` | Vanilla viewer at `z-index: 200`, above the sticky header (60) and the drawer (70), below only the skip link (999). |
+
+**The first remote image host on this site.** Everything else is self-hosted;
+project photography is served from ImageKit. Consequences worth knowing:
+
+- `<link rel="preconnect">` + `dns-prefetch` for `ik.imagekit.io` sit in the
+  head, because the first gallery image cannot start downloading until that
+  TLS handshake completes.
+- Transformations are **path-form**, inserted between the endpoint and the file
+  path: `…/pkdkzdayg/tr:w-800,q-80,f-auto/arco_outdoors/NAME.JPEG`. Gallery is
+  `w-800,q-80,f-auto`; the lightbox is `w-1600,q-85,f-auto`.
+- The `?updatedAt=…` cache-buster the client's dashboard produced is preserved
+  verbatim, so the exact uploaded revision is what gets served.
+- `tools/check-project-images.py` resolves every one of those URLs at both
+  sizes and reports byte-identical responses as probable duplicate uploads.
+  It exists because the sandbox this page was built in blocks the CDN.
+
+**Why the images carry no `width`/`height`.** Their natural proportions are
+unknown at authoring time and cannot be fetched, and a *guessed* pair of
+attributes is worse than none — it sets a default aspect ratio that the real
+image then overrides on load, guaranteeing the shift it was meant to prevent.
+Space is reserved instead by `.js .pgallery__item:not(.is-loaded) { min-height }`,
+released by the script the moment each photograph's real size is known. The
+rule is gated on `.js` because only the script can release it. This is the one
+documented exception to the site-wide "every image carries dimensions" rule.
+
+**Alt text is deliberately generic.** Four truthful variants rotate across the
+45 photographs. Nothing names a city, a service or a material, because none of
+those is verified for any individual image (§11.1). Guessing "pool deck" from a
+photograph is exactly the error §12 item 6 records on the homepage.
+
 ## 10. SEO RULES
 
 Every indexable page needs, without exception:
@@ -897,16 +937,26 @@ Never assert a completed Arco project in that city without verification.
 
 ### 11.1 Project record template — the standard for `/projects/`
 
-**Status: no record has ever met this standard, so none is published.** Pass 10
-audited the repository for anything that could support a case study and found
-nothing: no data file of any kind has ever been committed (`git log --all
---diff-filter=A` returns only `PROJECT-SPEC.md`, `robots.txt` and
-`sitemap.xml`); the nine source photographs recovered from the pass-1 bundle
-carry no EXIF date, GPS or author; and §12 items 6 and 7 already record that the
-photography appears to be stock and that two gallery captions do not match their
-own images. There is therefore no verified city, date, duration, cost, material
-schedule, constraint or homeowner for any individual job anywhere in this
-project. `/projects/` says so on the page rather than filling the gap.
+**Status as of pass 18: the client has supplied 45 photographs of their own
+completed work, and `/projects/` now publishes them.** That resolves the
+photography half of this standard and nothing else. No *record* has yet met the
+full standard, because the photographs arrived with no accompanying metadata:
+no city, date, duration, cost, material schedule, constraint or homeowner is
+known for any individual job. So the page is a **photographic index, not a set
+of case studies** — and the gates below still govern the moment anyone wants to
+write one.
+
+**What this means in practice.** Photographs may now be presented as Arco's own
+completed client work, because the client supplied them as exactly that. What
+may still never be attached to one is a fact nobody has verified — and a caption
+reading *"Paver driveway, Parkland"* is three unverified facts, not a caption.
+The alt text on `/projects/` rotates four generic truthful variants for this
+reason (§9.14).
+
+Pass 10's original audit still stands as the reason the bar exists: no data file
+of any kind has ever been committed (`git log --all --diff-filter=A` returns
+only `PROJECT-SPEC.md`, `robots.txt` and `sitemap.xml`), and the nine pass-1
+stock photographs carry no EXIF date, GPS or author.
 
 **Three gates. A record is published only when all three are true — not two.**
 
@@ -1028,9 +1078,13 @@ pass 1 is now removed or reworded; the full before/after table is in
 | **11** | **All three forms** | **No submission endpoint. `data-endpoint=""` on all three** | **OPEN — the single launch blocker.** See §14 and `FINAL-AUDIT.md` §6. One attribute per form |
 | 13 | `/projects/` | Holds zero project records | Not a defect; the audited state. `FINAL-AUDIT.md` §10 lists exactly what the client must supply to publish the first one |
 | 15 | `/reviews/` | Holds zero reviews | Not a defect; the audited state. Becomes one only if a review is published without meeting all six §11.2 gates |
-| 16 | `/gallery/` | Driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page. Resolves when real project photography is supplied |
+| 16 | `/gallery/` | Driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page. **Pass 18 supplied 45 client photographs but no per-image categorisation**, so they could not be filed against those build types — `/projects/` deliberately ships with no filters. Resolves when the client labels which photographs show which work |
 | 17 | Sitewide | **Insurance is asserted nowhere, because nothing evidences it** | Deliberate. The licence (CBC1269393) is verified and cited; pages tell the reader to request a certificate of insurance from any contractor. Do not re-add "licensed and insured" without a certificate on file |
 | 18 | Domain | No redirect map, and no inventory of any previous site | `REDIRECTS.md` is empty and explains why. **If a site currently ranks on this domain, export its indexed URLs from Search Console before switching DNS** |
+| 19 | `/projects/` | 45 client photographs are published with **no verified per-image metadata** — no city, date, scope, material or homeowner | Deliberate, and the reason alt text is four rotating generic variants and the JSON-LD carries no `Project` node. Supplying categories or locations per image would upgrade the page considerably; inventing them would not |
+| 20 | `/gallery/`, `/about-us/`, `/` | These still describe site photography as **reference imagery** and state that no case studies exist — true of the stock photography they show, but now contradicted by `/projects/` | **Out of scope for pass 18, which was scoped to `/projects/` only.** Needs a follow-up pass to reconcile the wording across the three pages, or the site argues with itself |
+| 21 | `/projects/` | Photography now depends on a **third-party host** (`ik.imagekit.io`) | The first remote asset dependency on the site. If the ImageKit account lapses or the files move, the page empties. Consider mirroring the 45 originals into the repository |
+| 22 | `/projects/` | The two `AC183F15-D3BC-445B-A6B5-D707FE51C5EB` files (`.jpg` and `-1.jpg`) may be the **same photograph uploaded twice** | Could not be checked — the build sandbox blocks the CDN. `tools/check-project-images.py` reports byte-identical responses; run it once to settle it |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -2235,6 +2289,85 @@ produces "One more step — send it", explains the enquiry was prepared in the
 visitor's mail client, and offers the phone number. No form claims receipt. It is
 still one attribute per form away from working.
 
+### 13.21 Pass 18 — real client photography replaces the Projects page
+
+The client supplied 45 photographs of their own completed work, hosted on
+ImageKit. That retires the argument `/projects/` had been making since pass 10,
+so the page was rewritten around the photography. **Scope was `/projects/` plus
+shared CSS/JS only** — no other page was touched.
+
+**What the page is now.** Hero (Our Work / *Outdoor Projects by Arco Outdoors*)
+→ intro (Our Recent Work / *A Look at Our Projects*) → the gallery → conversion
+band. Everything the old page argued — the zero-record box, the record
+template, the twenty-six scopes of work, the "checking our work" section, the
+six FAQs and the FAQPage schema behind them — is gone, because all of it said
+the opposite of what the page now shows.
+
+**What was deliberately not claimed.** The photographs came with no metadata at
+all: no city, date, scope, material or homeowner for any single image. So there
+are **no filters** (filtering would mean guessing which photograph is a pool
+deck and which a driveway), **no captions**, and alt text is four rotating
+truthful generic variants. The JSON-LD is `CollectionPage` + `ImageGallery` and
+nothing else — no `Project`, `Place`, `Person`, date or material node.
+
+**Load More.** 18 → 33 → 45, the button relabelling itself to *Load the Last 12
+Projects* on the final step and hiding once everything is shown. Hidden items
+carry the `hidden` attribute so they occupy no space, and focus moves to the
+first newly revealed photograph so a keyboard visitor is not thrown back to the
+top.
+
+**Lightbox.** Vanilla, no library: previous/next, close, `Esc`, left/right
+arrows, click-outside, swipe, a focus trap, and focus restored to the thumbnail
+that opened it. Body scroll is locked with the same helper the mobile drawer
+uses — pass 18 hoisted `lockScroll`/`unlockScroll` out of `initNav`'s closure
+rather than writing a second copy with the same iOS workaround.
+
+**Progressive enhancement.** Every thumbnail is a real `<a>` to its own
+full-size photograph. With the script blocked the page is still a complete,
+browsable, keyboard-reachable list of links; the Load More button ships
+`hidden` and only the script reveals it.
+
+**Two real bugs found and fixed:**
+
+1. **`hidden` did nothing on any button, site-wide.** `.btn { display:
+   inline-flex }` is an author rule and beats the user agent's `[hidden] {
+   display: none }`, so the Load More control shipped *visible* to visitors
+   with JavaScript disabled — a dead button. Fixed with `.btn[hidden] {
+   display: none; }` in style.css, which protects every future use.
+2. **An empty `src=""` on the lightbox placeholder** made the browser
+   re-request the current page URL on every load. The attribute is now absent
+   entirely; the script sets it on open.
+
+**The environment could not reach the CDN.** `ik.imagekit.io` is blocked by
+this sandbox's network egress policy (403 on CONNECT, via both `curl` and
+`WebFetch`), so **no supplied URL was actually fetched during the build**. The
+transformation syntax is the path form the client's own worked example
+confirms, and the browser tests ran against a local stub of varied proportions
+so the masonry, batching and lightbox were exercised for real.
+`tools/check-project-images.py` was written to close that gap in one command
+from a machine with normal access — it resolves all 90 URLs (45 gallery + 45
+lightbox) and flags byte-identical responses as probable duplicate uploads.
+
+**Three test rules were relaxed for this page, each scoped and reasoned** rather
+than switched off: remote CDN images are exempt from the "every image carries
+dimensions" rule (a guessed ratio guarantees the shift it is meant to prevent —
+see §9.14); an unpopulated `<img>` with no `src` is neither broken nor missing
+dimensions; and `/projects/` is exempt from the FAQ-count, word-count and
+in-body-link-count rules because it is a photography index whose structure was
+specified explicitly.
+
+**Consequences worth raising, not hidden:** the page now carries ~106 words and
+two in-body internal links, both far below every other page on the site, and
+`/gallery/`, `/about-us/` and the homepage still describe site photography as
+*reference imagery* — true of the stock photographs they show, and now
+contradicted by `/projects/`. §12 items 19–22 record all of it.
+
+**Verification.** 540 assertions across seven suites, all passing — 82 new for
+this page covering the requested copy verbatim, the removal of every outdated
+phrase, both transformation URLs, dedup, exclusions, alt-text discipline, the
+full Load More sequence, the complete lightbox contract, three breakpoints and
+the no-JavaScript path.
+
 ## 14. FORMS
 
 Three forms exist, and **one engine drives all of them** (`initForms` in
@@ -2586,6 +2719,23 @@ repository root is enough to serve it.
       in the same commit. Every sentence on those pages is a factual claim about
       this codebase (§13.17), and adding a third-party anything makes a
       published page false
+
+Additionally, for `/projects/`:
+
+- [ ] Every ImageKit URL resolves at both sizes — `python3 tools/check-project-images.py`
+- [ ] Gallery uses `tr:w-800,q-80,f-auto`; the lightbox uses `tr:w-1600,q-85,f-auto`
+- [ ] No ChatGPT-named file, and no duplicate image URL, appears
+- [ ] Alt text names no city, service or material (§9.14) and rotates 3–5 variants
+- [ ] No caption, filter or schema node asserts anything about an individual
+      photograph — no `Project`, `Place`, `Person`, date or material
+- [ ] Load More runs 18 → 33 → 45 and the button hides at the end
+- [ ] Hidden items reserve no layout space
+- [ ] Lightbox: arrows, `Esc`, click-outside, swipe, focus trap, focus restored,
+      body scroll locked, every control ≥ 44px
+- [ ] With `main.js` blocked: all 45 remain as real links, no dead Load More
+      button, no empty dialog
+- [ ] No wording anywhere on the page says records do not exist or that the
+      photography is reference imagery
 
 Additionally, for a page carrying a form:
 
