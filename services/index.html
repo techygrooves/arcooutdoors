@@ -37,10 +37,6 @@
       imagesrcset="../assets/images/hero-services-outdoor-remodeling-1100.webp 1100w, ../assets/images/hero-services-outdoor-remodeling.webp 1800w"
       imagesizes="100vw" fetchpriority="high">
 
-<!-- Some service card photography is still served from a third-party CDN.
-     See PROJECT-SPEC.md §12 — replace with Arco's own project photography. -->
-<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="../assets/css/pages.css">
 <script>document.documentElement.classList.add('js');</script>
@@ -289,7 +285,7 @@
   <!-- ============================== INTRO ============================== -->
   <section class="container section" aria-labelledby="intro-heading">
     <div class="prose">
-      <h2 id="intro-heading" style="margin-top:0;">Grouped by how they get built, not by how they sell</h2>
+      <h2 class="u-mt-0" id="intro-heading">Grouped by how they get built, not by how they sell</h2>
       <p>Most contractor websites list services alphabetically. That is fine for a directory and useless for planning, because it hides the thing that actually governs your project: the order the work has to happen in.</p>
       <p>So the eleven services below are grouped into four sets. <strong>Hardscape</strong> is everything with an excavated base under it — the layer every other outdoor element eventually sits on or beside. <strong>Outdoor living</strong> covers the structures and fittings that turn a paved area into somewhere you spend evenings, and those have footings and utilities that must be settled before the paving goes down. <strong>Yard and exterior</strong> is the frame: the ground cover, the boundary, and the openings between inside and out. <strong>Complete projects</strong> is what happens when several of the above are done together as one job.</p>
       <p>If you already know which service you need, go straight to it. If you are weighing up two or three, the <a href="#combining">combining services</a> section further down is the part worth reading first.</p>
@@ -323,7 +319,11 @@
 
         <article class="card card--service reveal">
           <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Paver patio with outdoor seating beside a modern home.">
+            <img src="../assets/images/card-patios.webp"
+                 srcset="../assets/images/card-patios-500.webp 500w, ../assets/images/card-patios.webp 720w"
+                 sizes="(max-width: 860px) 100vw, 30vw" width="720" height="480"
+                 loading="lazy" decoding="async"
+                 alt="Covered outdoor dining terrace under a projecting roof, opening onto a lawn at dusk.">
           </div>
           <div class="card__body">
             <h3 class="card__title">Patios</h3>
@@ -334,7 +334,11 @@
 
         <article class="card card--service reveal">
           <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Residential driveway approach with a paved surface and boundary planting.">
+            <img src="../assets/images/card-driveways.webp"
+                 srcset="../assets/images/card-driveways-500.webp 500w, ../assets/images/card-driveways.webp 638w"
+                 sizes="(max-width: 860px) 100vw, 30vw" width="638" height="425"
+                 loading="lazy" decoding="async"
+                 alt="Paved approach and entry path running beside a rendered house wall.">
           </div>
           <div class="card__body">
             <h3 class="card__title">Driveways</h3>
@@ -345,7 +349,11 @@
 
         <article class="card card--service reveal">
           <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Swimming pool bordered by a light stone deck and coping.">
+            <img src="../assets/images/card-pool-decks.webp"
+                 srcset="../assets/images/card-pool-decks-500.webp 500w, ../assets/images/card-pool-decks.webp 660w"
+                 sizes="(max-width: 860px) 100vw, 30vw" width="660" height="440"
+                 loading="lazy" decoding="async"
+                 alt="Pale large-format stone deck running the length of a swimming pool.">
           </div>
           <div class="card__body">
             <h3 class="card__title">Pool Decks</h3>
@@ -368,7 +376,11 @@
     <div class="grid-auto">
       <article class="card card--service reveal">
         <div class="card__media">
-          <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Built-in counter and cabinetry of the kind used in an outdoor kitchen.">
+          <img src="../assets/images/card-outdoor-kitchens.webp"
+                 srcset="../assets/images/card-outdoor-kitchens-500.webp 500w, ../assets/images/card-outdoor-kitchens.webp 580w"
+                 sizes="(max-width: 860px) 100vw, 30vw" width="580" height="387"
+                 loading="lazy" decoding="async"
+                 alt="Built-in counter, cabinetry and bar seating in an open-plan kitchen.">
         </div>
         <div class="card__body">
           <h3 class="card__title">Outdoor Kitchens</h3>
@@ -379,7 +391,11 @@
 
       <article class="card card--service reveal">
         <div class="card__media">
-          <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Timber-framed shade structure over a backyard seating area.">
+          <img src="../assets/images/card-pergolas.webp"
+                 srcset="../assets/images/card-pergolas-500.webp 500w, ../assets/images/card-pergolas.webp 700w"
+                 sizes="(max-width: 860px) 100vw, 30vw" width="700" height="467"
+                 loading="lazy" decoding="async"
+                 alt="Covered outdoor lounge and dining area beside a pool, shaded by the projecting roof of a villa.">
         </div>
         <div class="card__body">
           <h3 class="card__title">Pergolas</h3>
@@ -417,7 +433,11 @@
       <div class="grid-auto">
         <article class="card card--service reveal">
           <div class="card__media">
-            <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&amp;fit=crop&amp;w=800&amp;q=80" width="800" height="533" loading="lazy" decoding="async" alt="Close view of a dense, evenly cut green lawn.">
+            <img src="../assets/images/card-turf.webp"
+                 srcset="../assets/images/card-turf-500.webp 500w, ../assets/images/card-turf.webp 682w"
+                 sizes="(max-width: 860px) 100vw, 30vw" width="682" height="455"
+                 loading="lazy" decoding="async"
+                 alt="Close view of dense, evenly cut artificial turf in a landscaped yard.">
           </div>
           <div class="card__body">
             <h3 class="card__title">Artificial Turf</h3>
@@ -512,7 +532,7 @@
         </div>
       </div>
 
-      <div class="note" style="margin-top:44px;">
+      <div class="note u-mt-44">
         <h3>None of this means you have to do everything at once</h3>
         <p>Phasing is normal, and often sensible. What matters is that the phases are planned against each other, so that phase one does not have to be partially undone to make phase two possible. If you know a pergola is likely in two years, that is worth saying now, even if you are only paving today.</p>
       </div>
@@ -617,7 +637,7 @@
   </section>
 
   <!-- ============================== CTA ============================== -->
-  <section class="container" style="padding-bottom:var(--section-y);" aria-labelledby="cta-heading">
+  <section class="container u-pb-section" aria-labelledby="cta-heading">
     <div class="cta-band">
       <div>
         <h2 id="cta-heading">Start with a conversation about the space</h2>

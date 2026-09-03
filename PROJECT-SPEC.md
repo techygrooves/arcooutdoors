@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-03 (pass 15 — technical SEO: metadata, share cards, link targets)
+Last updated: 2026-09-03 (pass 16 — performance, mobile and accessibility)
 
 ---
 
@@ -757,6 +757,17 @@ card labelled *Fencing* showing a pool is the same category of error as §12
 item 6. Alt text describes what is actually in the frame, never what the card is
 selling.
 
+**Service cards — `assets/images/card-<slug>.webp` + `-500`, 11 pairs.**
+Six were added in pass 16 (`patios`, `driveways`, `pool-decks`, `outdoor-kitchens`,
+`turf`, `pergolas`) to retire the last third-party images (§16.1). Each is a 3:2
+crop of a recovered original, encoded at q=80, never upscaled — which is why they
+are 580–720px rather than a uniform 800px: the card box is ~432 CSS px, so the
+500w candidate is what desktop actually selects.
+
+**Textures — `texture-*.webp` + `-700`.** Shown at `opacity: .14`/`.22`. Encoded at
+q=35, which is invisible at that opacity and saves 334 KB → 140 KB (§16.2). Do not
+'restore quality' here; measure the composite first.
+
 **Share cards — `assets/images/og/og-<slug>.jpg`, 38 files, 1200×630, ~2.5 MB.**
 Added in pass 15 and never referenced by a page's markup: they exist only for
 `og:image` and `twitter:image`, so no visitor downloads one. Each is cut from
@@ -1013,7 +1024,7 @@ of them may be repeated on any new page until verified.
 | 5 | Consultation section | "On-site visit within 48 hours" | A service-level guarantee. |
 | 6 | Homepage gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco house with no pool; "Patio detail" labels an interior lounge; **and pass 11 found a third — "Paver driveway & walkway" labels a pool and terrace with no driveway in frame.** | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. The new `/gallery/` does not repeat any of the three; fixing the homepage is a copy edit to three `<figcaption>`s. |
 | 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". **Pass 10 confirmed no image carries EXIF date, GPS or author.** `/projects/` now states on-page that all site photography is reference imagery; the homepage heading still says "our" and is the remaining exposure. |
-| 8 | Homepage + `/services/` cards | 12 images hot-linked from `images.unsplash.com` — **now disclosed publicly** | Third-party dependency, licensing exposure, and they are the only images not self-hosted. **Pass 12 removed three** — the homepage journal cards now use self-hosted `gal-*` crops. Counted precisely: 6 `<img>` on `/`, 6 on `/services/`, plus a `preconnect` on each. No pass has added a new one. **Pass 14 raised the stakes:** `/privacy-policy/` and `/cookie-policy/` now tell visitors this is the site's only automatic third-party request and that it is being removed. Finishing that work is now a promise on a published page, not just a to-do. |
+| 8 | ~~Homepage + `/services/` cards~~ | ~~12 images hot-linked from `images.unsplash.com`~~ | **Resolved in pass 16.** All twelve are now self-hosted WebP cards with 500w variants, cut by the §9.11 method from the pass-1 originals at `ae67717`. Both `preconnect` hints were removed with them. The site now issues **no automatic third-party request of any kind**, which is what `/privacy-policy/` and `/cookie-policy/` had already been published promising. Note the honesty constraint this ran into: no source photograph depicts a driveway, an outdoor kitchen or a pergola (the same gap as item 16), so those three cards use the nearest real frame and the `alt` says precisely what is in it. See §16.1. |
 | 9 | ~~Journal section~~ | ~~Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to a blog that does not exist~~ | **Resolved in pass 12.** The three cards now carry the real titles, real publication date and self-hosted imagery of three articles that exist, and link to them directly. The section heading and lead were corrected at the same time: it described "recent projects", which the site does not publish (§11.1). |
 | 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
 | 11 | All three forms | **No submission endpoint exists on any of them** | See §14. Every form falls back to a pre-filled mail draft, which loses any visitor without a configured mail client. Pass 13 made this one change away from fixed: set `data-endpoint` on the three forms. **This is the single largest launch blocker on the site** — the conversion page now exists and still cannot deliver an enquiry. |
@@ -2101,6 +2112,73 @@ sandbox's egress proxy refusing the twelve known `images.unsplash.com`
 hot-links (§12 item 8) — re-counted this pass and still 6 on `/` and 6 on
 `/services/`, plus a `preconnect` each.
 
+### 13.19 Pass 16 — performance, mobile and accessibility
+
+No page was redesigned. The homepage was screenshotted before and after at 1440
+and 390 and is the same design: same hero, same type, same grid, same footer,
+identical page height to the pixel (11,622 desktop, 19,885 mobile).
+
+**What the audit found already right**, and did not touch: no data-URI image
+anywhere; every `<img>` already carried `width`, `height`, `alt`, `loading` and
+`decoding`; heroes correctly *not* lazy and preloaded with `imagesrcset`; one
+`defer`ed script sitewide; `IntersectionObserver` rather than a scroll listener;
+a debounced resize handler; **zero** structural accessibility findings across all
+39 pages (landmarks, alt text, SVG labelling, form labels, accessible names,
+duplicate ids, `aria-expanded` on buttons); **zero** horizontal overflow across
+39 pages × 7 widths (360/390/430/768/1024/1280/1440); dropdowns, drawer, scroll
+lock, accordions, filters and form validation all correct under keyboard.
+
+**The last third-party requests are gone** (§16.1). Twelve Unsplash hot-links
+became six self-hosted card pairs; the two `preconnect` hints went with them.
+Open item 8 is closed, and the promise already published on `/privacy-policy/`
+and `/cookie-policy/` is now true.
+
+**334 KB of invisible texture detail** (§16.2). Two decorative textures shown at
+14 % and 22 % opacity were shipping at full resolution to phones. Re-encoded and
+given 700w/1200w variants, judged on the *composite* rather than the file:
+under 1 % of one channel different. Homepage mobile transfer **−26 %**.
+
+**The contrast debt from pass 1 is paid** (§15). Not from the old three-row
+table — that measured each token against one representative ground. Enumerating
+every rendered text node found **44** failing combinations. Fixing them moved
+only HSL lightness, so hue and saturation are untouched and `--gold` on `--ink`
+(7.89:1) never changed, which is why the buttons look identical.
+
+**Three findings only rendering could produce.** A caption eyebrow at 3.14:1
+because the scrim ramp had not started by its row. A card numeral at **1.32:1**
+— invisible over a pale sky, and its `text-shadow` did not save it. And a prose
+link in the dark CTA band inheriting the sand-tuned link colour: a latent bug
+that darkening the token exposed.
+
+**283 inline style attributes became 12 utility classes** (§16.5), verified by
+computed value, 0 mismatches of 283.
+
+**Three things this pass got wrong, and what they cost:**
+
+1. *A regex that ate the heading levels.* `<(?P<tag>[a-z]+)` matched the `h` of
+   `h2` and left the `2` as an attribute, silently turning 94 headings into
+   `<h class="u-mt-0" 2 id=...>`. `audit-seo.py` caught it immediately as "h1
+   jumps to h3" — the guard built in pass 15 paying for itself one pass later.
+2. *A utility layer with no specificity.* First attempt put single-class rules
+   in the middle of `style.css`; component selectors outranked them and every
+   page grew taller. Fixed by loading them last and doubling the selector.
+3. *A screenshot harness that measured nothing.* The pixel diff meant to prove
+   the refactor safe reported 53 of 76 pages changed. The control — same code,
+   two runs — differed by 911,961 pixels, because `.reveal` transitions were
+   still animating. Verification has to be shown to be deterministic before its
+   output means anything.
+
+**One fix was attempted and deliberately reverted.** A `size-adjust` metric-
+matched fallback for the remaining 0.0161 CLS made the shift *worse* here,
+because the fallback font real visitors get (Georgia) is not installed in this
+environment. The diagnosis, the measurement, and the exact way to finish it are
+recorded in §16.3 and beside `--font-display` in `style.css` rather than a guess
+being shipped.
+
+**Verified.** Three guards exit 0. Zero third-party requests, zero overflow at
+seven widths, zero structural a11y findings, all interaction tests passing,
+LCP 156–288 ms, CLS ≤ 0.0161.
+
 ## 14. FORMS
 
 Three forms exist, and **one engine drives all of them** (`initForms` in
@@ -2191,61 +2269,178 @@ Required on every page:
 - form errors announced through `role="status" aria-live="polite"`, with focus
   moved to the first invalid field
 
-### Known contrast debt — decision required
+### Contrast — paid off in pass 16
 
-Four pairs from the original brand palette fail WCAG AA for normal text. They
-were **not** changed, because darkening them would visibly alter every eyebrow,
-link and accent on the site — a change to the visual identity, not a bug fix.
-Compliant values, hue and saturation preserved:
+The four palette pairs that had failed WCAG AA since pass 1 were fixed. The
+decision that had been deferred ("darkening them would visibly alter every
+eyebrow, link and accent") turned out to be answerable: only HSL **lightness**
+moved, hue and saturation were untouched, and the before/after homepage
+comparison shows the same design.
 
-| Token | Current | Worst ratio | AA-passing value | Then |
-|---|---|---|---|---|
-| `--gold-link` | `#b5843a` | 2.68:1 on `--sand-100` | `#86612b` | 4.51:1 |
-| `--muted` | `#8a7a63` | 3.36:1 on `#ffffff` | `#746653` | 4.50:1 |
-| `--foot-dim` | `#7d715c` | 3.79:1 on `--ink-900` | `#8b7d66` | 4.51:1 |
+| Token | Was | Now | Worst real ground | Was | Now |
+|---|---|---|---|---|---|
+| `--gold-link` | `#b5843a` | `#86612b` | `--sand-100` `#efe6d6` | 2.68 | **4.51** |
+| `--muted` | `#8a7a63` | `#746653` | `--sand-100` | 3.36 | **4.50** |
+| `--foot-dim` | `#7d715c` | `#8b7d66` | `--ink-900` | 3.79 | **4.51** |
+| `--gold-figure` (new) | `#c69749` | `#a87d35` | `--sand-100`, large text | 2.14 | **3.00** |
 
-`--gold` `#e0a94e` on `--ink` is **7.89:1 — passes**, so buttons and dark-section
-accents are fine; the debt is only gold-on-sand and the two greys.
-Swapping the three values above in `:root` is the entire fix.
+`--gold` `#e0a94e` on `--ink` was already 7.89:1 and is **unchanged**, which is
+why every button and dark-section accent looks exactly as it did.
+
+**Measure against the worst ground the text actually lands on, not a
+representative one.** The old §15 table quoted `--gold-link` at 2.68:1 on
+`--sand-100`, but the same token also sets type on `--sand-50` and `#fdfaf3`.
+Pass 16 enumerated every rendered text node on ten pages, took each one's real
+computed colour, walked up for its real background, and applied the large-text
+rule (3:1 at ≥24px or ≥18.66px bold) — 44 distinct failing combinations, not 3.
+
+**Two fixes were not palette changes at all**, and neither would have been found
+without rendering the page:
+
+- `.gallery-item figcaption` scrim. The single-stop ramp had barely begun by the
+  row the `.cat` eyebrow sits on: **3.14:1** measured from rendered pixels. Now a
+  three-stop ramp holding near full strength through the text — **6.70:1**, with
+  the caption name at 12.56:1.
+- `.card__num`. The cream numeral over a pale sky measured **1.32:1** — invisible
+  — and its `text-shadow` did not carry it. A `closest-side` radial vignette
+  brings it to **3.52:1** while still reading as a vignette, not a chip.
+
+- `.cta-band a` and `.rail__card--dark a` now take `--gold-light`, matching
+  `.section--ink a`. This was a latent bug: a prose link in a dark band inherited
+  the sand-tuned `--gold-link`. Darkening that token exposed it at 2.98:1.
+
+**Beware a DOM-walking contrast checker over photography.** `tools/`'s approach
+walks ancestors for the first opaque background, so text over an image or a
+semi-transparent scrim is scored against whatever solid colour sits behind the
+photo. That produced three false failures (`.cat`, `.name`, `.card__num` at
+1.03–1.74:1) which measured 6.70, 12.56 and 3.52 once sampled from actual
+rendered pixels. **Sample pixels before changing anything based on a walker.**
+
+### Still required on every page
+
+See the list at the top of §15.
 
 ## 16. PERFORMANCE
 
 Budget and standing rules:
 
 - **No base64 or data-URI images.** Ever. This is what made the original file
-  4.7 MB (§17).
+  4.7 MB (§17). Audited again in pass 16: zero on the site.
+- **No third-party image host.** As of pass 16 the site makes **no automatic
+  request to any third party at all** — see §16.1.
 - Everything below the fold is `loading="lazy" decoding="async"`.
 - The hero image is the LCP element: `fetchpriority="high"`, preloaded with
   `imagesrcset`, never lazy.
 - Every `<img>` carries explicit `width` and `height`, and fixed-height media
   boxes use `object-fit: cover`, so cumulative layout shift stays at zero.
 - Responsive `srcset`/`sizes` on every photograph with more than one useful size.
-- Photographs are WebP. Decorative textures shown at low opacity are compressed
-  hard (q≈52–58) because their detail is not perceivable.
+- **A decorative texture is not a photograph.** See §16.2.
 - Fonts are self-hosted WOFF2, `font-display: swap`, latin + latin-ext only
   (cyrillic, greek and vietnamese subsets were dropped: 334 KB → 200 KB), with
   the two critical faces preloaded.
-- JavaScript is one `defer`ed file. Keep it that way; no third-party tags without
-  an explicit decision recorded here.
+- JavaScript is one `defer`ed file plus a single inline line per page
+  (`documentElement.classList.add('js')`), which must stay inline and
+  synchronous — it runs before first paint so the no-JS fallback never flashes.
+  Reveal animation uses `IntersectionObserver`, never a scroll listener; the one
+  `resize` listener is debounced at 120 ms.
 
-Current homepage payload (self-hosted, uncompressed, first view):
-HTML 57 KB · CSS 25 KB · JS 10 KB · fonts 200 KB · images ~1.7 MB across the
-whole page, of which only the hero (~196 KB) is eager.
+### 16.1 The third-party images are gone (pass 16)
 
-**Measured image budgets (pass 11).** `/gallery/` is the heaviest page on the
-site and the one worth holding a line on:
+Twelve `images.unsplash.com` hot-links — six on `/`, six on `/services/`, plus a
+`preconnect` on each — had been open item 8 since pass 1, and `/privacy-policy/`
+and `/cookie-policy/` had been *published promising visitors they would go*.
+They are now six self-hosted WebP cards with 500w variants, cut by the §9.11
+method from the pass-1 originals recovered at `ae67717`.
 
-| Context | Candidate chosen | Whole-page image transfer |
-|---|---|---|
-| 1366px desktop @1x | 400w | **96 KB** |
-| 820px tablet @2x | 800w | 257 KB |
-| 390px phone @2x | 800w | 661 KB |
+**No new photograph existed for driveways, outdoor kitchens or pergolas** — the
+same gap §12 item 16 already records for the gallery. Rather than imply
+otherwise, each card uses the nearest honest frame and says exactly what is in
+it: the driveways card is a *paved approach and entry path*, the outdoor
+kitchens card is an *open-plan kitchen interior*, the pergolas card is a
+*covered outdoor lounge beside a pool*. Truthful `alt` beats a flattering label.
 
-Phone and tablet select the large candidate because a full-width 4:3 image on a
-2x screen genuinely needs ~718 device pixels; that is correct, and lazy loading
-means a visitor pays only for what they scroll past. The desktop figure is the
-one that regressed once already (411 KB — see §13.14) and the suite now asserts
-a 200 KB budget on it.
+Measured, homepage: **third-party requests 6 → 0.**
+
+### 16.2 A decorative texture is not a photograph (pass 16)
+
+`texture-palms-dusk.webp` was **213 KB** and `texture-modern-home-exterior.webp`
+**121 KB** — 334 KB of full-resolution detail displayed at **`opacity: .14`** and
+**`.22`**, behind a scrim, marked `alt="" aria-hidden="true"`, and served at the
+same 1400px to a 390px phone. §16 already said such textures are "compressed
+hard"; they were not.
+
+The right test is not how the file looks, but how the *composite* looks. Each
+candidate was blended over `--ink` at the real opacity and compared with the
+original composite:
+
+| | Was | Now (1200w) | Now (700w) | Mean composited difference |
+|---|---|---|---|---|
+| `texture-palms-dusk` | 213 KB | 99 KB | 41 KB | 0.63–0.91 / 255 |
+| `texture-modern-home-exterior` | 121 KB | 60 KB | 27 KB | 1.05–1.60 / 255 |
+
+Under 1 % of one channel — invisible. Both now carry a 700w/1200w `srcset`.
+
+**Homepage transfer: mobile 1045 KB → 778 KB (−26 %), desktop 1242 KB → 1068 KB.**
+
+### 16.3 Core Web Vitals
+
+Measured in Chromium over a local server, desktop 1440 and mobile 390:
+
+| | LCP | CLS | Third-party requests |
+|---|---|---|---|
+| `/` | ~200–300 ms | 0.0161 desktop, 0 mobile | 0 |
+| `/services/`, `/gallery/`, `/get-a-quote/` | 130–210 ms | ≤ 0.0002 | 0 |
+
+The LCP element is the hero `<img>` on every page, as intended.
+
+**The residual 0.0161 is font swap, and it is deliberately left alone.** The
+homepage `h1` sets on two lines in Cormorant Garamond and **three** in the
+fallback, so the swap moves the hero by 84px. The standard fix is a
+`size-adjust`ed metric-matched fallback — but the ratio must be measured against
+the font the *visitor* falls back to. Georgia is not installed in this build
+environment; calibrating against the Times-metric serif that is gave 92.4%,
+which measurably made the shift **worse** (527px → 611px) on a machine that
+picked up the much wider DejaVu Serif instead. 0.0161 is already well inside the
+0.1 "good" threshold, so an uncalibrated `size-adjust` can only gamble with it.
+To finish: measure a string in Georgia on macOS or Windows against Cormorant at
+the same size and use that ratio. The reasoning is repeated in `style.css` next
+to `--font-display` so nobody "fixes" it blind.
+
+### 16.4 CSS and JavaScript audit (pass 16)
+
+- **Dead CSS: 11 of 233 class selectors unused, and deliberately kept.**
+  `review-card*` and `pagination` are reserved for states the site is designed
+  to reach (§11.2 — `/reviews/` publishes nothing until a real review exists).
+  Deleting them would save a few hundred bytes of a 73 KB stylesheet and break
+  the next pass that needs them. **Do not purge these.**
+- **No duplicate rule blocks.** `@font-face` ×6 is the six font files; `html` ×3
+  and `.site-footer__grid` ×3 are media-query variants.
+- **No CSS or JS libraries at all**, and none should be added.
+- **283 inline `style` attributes became a 12-class utility layer** (§16.5).
+  Forty-six genuine one-offs remain inline on purpose.
+- One inline `<style>` block exists, in `404.html`, and is documented in §8.6.
+
+### 16.5 The utility layer, and the specificity trap
+
+The utilities sit at the **end of `pages.css`** — the last stylesheet loaded —
+and every selector is **doubled** (`.u-mt-0.u-mt-0`) for specificity (0,2,0).
+
+Both details are load-bearing, and the first attempt at this refactor had
+neither. An inline style beats every selector; a single class does not. So
+`.prose h2 { margin-top: 40px }` (0,1,1) simply swallowed `.u-mt-0` (0,1,0), the
+spacing the inline style had removed came straight back, and **every page grew
+taller**. Doubling buys specificity without `!important`, which this codebase
+avoids.
+
+Verified by asserting the computed value of all **283** applications against the
+declaration each replaced: **0 mismatches**.
+
+**A screenshot comparison is worthless until animation is disabled.** The first
+attempt to verify this refactor by full-page pixel diff reported 53 of 76 pages
+changed. A control — the same code screenshotted twice — differed by 911,961
+pixels, because `.reveal` transitions were still running when the shot was
+taken. Any visual regression check on this site must set `reduced_motion` **and**
+inject `*{transition:none!important;animation:none!important}` before capturing.
 
 ## 17. WHY THE ORIGINAL index.html WAS 4.7 MB
 
@@ -2306,6 +2501,10 @@ repository root is enough to serve it.
 - [ ] `python3 tools/sync-partials.py --check` exits 0
 - [ ] `python3 tools/check-links.py` exits 0
 - [ ] `python3 tools/audit-seo.py` exits 0 (metadata, headings, JSON-LD, sitemap)
+- [ ] No third-party request of any kind (§16.1) — check the network panel, not the markup
+- [ ] Any new decorative texture is judged on its *composite* at its real opacity (§16.2)
+- [ ] Contrast measured from rendered pixels wherever text sits over a photograph (§15)
+- [ ] Visual regression checks disable animation first, or they measure nothing (§16.5)
 - [ ] A new page has a share card: add it to `tools/make-og-cards.py`'s
       `HEROES` list and re-run it, or `audit-seo.py` fails on the missing file
 - [ ] Page renders correctly served from a subpath, not only from a root
