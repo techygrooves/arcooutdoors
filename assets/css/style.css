@@ -68,6 +68,7 @@
     U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+
 /* --------------------------------------------------------------------------
    2. Design tokens
    -------------------------------------------------------------------------- */
@@ -84,12 +85,23 @@
   --ink-900:  #1a150f;   /* footer ground */
   --body:     #5f5544;   /* body copy on sand */
   --body-2:   #443c30;   /* dense list copy */
-  --muted:    #8a7a63;   /* labels, meta */
+  --muted:    #746653;   /* labels, meta - AA on every sand ground (pass 16) */
 
+  /* Gold accents
+     --gold-link, --muted and --foot-dim were darkened (or, on the footer,
+     lightened) in pass 16 to clear WCAG AA 4.5:1 against the WORST ground each
+     one actually lands on -- measured from rendered text nodes, not assumed.
+     Hue and saturation are unchanged; only HSL lightness moved, so the accent
+     still reads as the same colour. --gold (#e0a94e) on --ink is 7.89:1 and was
+     left exactly as it was, which is why buttons and dark-section accents look
+     identical. See PROJECT-SPEC.md §15. */
   /* Gold accents */
   --gold:       #e0a94e; /* primary CTA fill, dark-section accents */
-  --gold-deep:  #c69749; /* hairlines, marks */
-  --gold-link:  #b5843a; /* links + eyebrows on light ground */
+  --gold-deep:  #c69749; /* hairlines, marks - decorative rules, not text */
+  --gold-figure: #a87d35; /* the same gold for large display numerals, dark
+                             enough to clear 3:1 on every sand ground. Kept
+                             separate so hairlines stay as light as they were. */
+  --gold-link:  #86612b; /* links + eyebrows on light ground - AA (pass 16) */
   --gold-light: #e6b661; /* headings + accents on dark ground */
 
   /* On-dark text */
@@ -97,7 +109,7 @@
   --cream-2:    #efe6d6;
   --foot-text:  #cabda6;
   --foot-muted: #9a8d76;
-  --foot-dim:   #7d715c;
+  --foot-dim:   #8b7d66;  /* AA on --ink-900 (pass 16) */
 
   /* Utility */
   --star:     #f5b400;
@@ -106,6 +118,18 @@
   --overlay:  rgba(20, 16, 10, .78);
 
   /* Type */
+  /* Keep this stack as it is. Pass 16 traced the site's residual 0.0161 CLS to
+     the swap of this face: the homepage h1 sets on two lines in Cormorant and
+     three in the fallback, moving the hero 84px. The standard fix is a
+     size-adjust'ed metric-matched fallback -- but the ratio has to be measured
+     against the font the VISITOR falls back to, and Georgia is not installed in
+     this build environment. Calibrating against the Times-metric serif that is
+     installed produced 92.4%, which measurably made the shift WORSE on a box
+     where DejaVu Serif (a far wider face) was picked up instead. So this is left
+     alone deliberately: 0.0161 is already well inside Core Web Vitals' 0.1
+     "good" threshold, and an uncalibrated size-adjust can only gamble with it.
+     To finish the job, measure a string in Georgia on macOS or Windows against
+     Cormorant at the same size, and use that ratio. See PROJECT-SPEC.md §16. */
   --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
@@ -806,7 +830,7 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
   color: var(--ink);
   line-height: 1;
 }
-.stats__value span { color: var(--gold-deep); }
+.stats__value span { color: var(--gold-figure); }
 .stats__label {
   font-size: 12px;
   letter-spacing: .16em;
@@ -869,12 +893,21 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
 }
 .card__num {
   position: absolute;
-  top: 18px; left: 18px;
+  top: 4px; left: -4px;
   font-family: var(--font-display);
   font-size: 34px;
   font-weight: 600;
   color: var(--cream);
-  text-shadow: 0 2px 12px rgba(0, 0, 0, .4);
+  /* Over a pale sky the cream numeral measured 1.32:1 -- effectively invisible,
+     and a text-shadow alone does not carry it. A closest-side radial fades from
+     a dark centre to nothing, so it reads as a soft vignette rather than a chip
+     and the numeral keeps its position and weight. Padding is offset against
+     top/left so the glyph does not move. */
+  padding: 14px 22px 16px;
+  background: radial-gradient(closest-side,
+              rgba(20, 16, 10, .80) 0%, rgba(20, 16, 10, .66) 42%,
+              rgba(20, 16, 10, .28) 74%, rgba(20, 16, 10, 0) 100%);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .55);
 }
 .card__body {
   padding: 30px 30px 34px;
@@ -983,7 +1016,15 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
   position: absolute;
   left: 0; right: 0; bottom: 0;
   padding: 18px;
-  background: linear-gradient(0deg, var(--overlay), transparent);
+  /* Measured from rendered pixels, not from the DOM: the old single-stop ramp
+     left the .cat eyebrow -- the top line of the caption -- sitting at 3.14:1,
+     because the gradient had barely started by the time it reached that row.
+     Holding it near full strength through the text and only then fading keeps
+     both caption lines legible over any photograph, including a pale sky. */
+  background: linear-gradient(0deg,
+              var(--overlay) 0%,
+              rgba(20, 16, 10, .74) 62%,
+              transparent 100%);
   color: var(--cream);
 }
 .gallery-item--xl figcaption { padding: 22px; }
@@ -1075,6 +1116,13 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
   border-top: 1px solid var(--hairline);
   padding-top: 20px;
 }
+/* The three avatar grounds carry white initials, so each is the darkest form of
+   its hue that still clears 4.5:1 against white (pass 16). The initials are
+   aria-hidden -- the reviewer's name sits beside them in real text -- but a
+   sighted reader still has to make them out. */
+.review__avatar--a { background: #966f2f; }
+.review__avatar--b { background: #2170f2; }
+.review__avatar--c { background: #2a8743; }
 .review__avatar {
   width: 46px; height: 46px;
   border-radius: 50%;

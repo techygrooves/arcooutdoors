@@ -354,6 +354,14 @@
 /* --------------------------------------------------------------------------
    9. Inline CTA band — mid-page conversion prompt.
    -------------------------------------------------------------------------- */
+/* A prose link inside the dark band must not inherit --gold-link, which is
+   tuned for sand grounds and drops to 2.98:1 on ink. Same treatment as
+   .section--ink a. Buttons are excluded: they carry their own grounds. */
+.cta-band a:not(.btn) { color: var(--gold-light); }
+.cta-band a:not(.btn):hover,
+.cta-band a:not(.btn):focus-visible { color: var(--cream); }
+.rail__card--dark a:not(.btn) { color: var(--gold-light); }
+
 .cta-band {
   background: var(--ink);
   color: var(--cream);
@@ -703,7 +711,7 @@
   font-size: 82px;
   font-weight: 600;
   line-height: .9;
-  color: var(--gold-deep);
+  color: var(--gold-figure);
   /* Cormorant Garamond defaults to old-style figures, which renders this as an
      x-height "o" rather than a full-height zero. */
   font-variant-numeric: lining-nums;
@@ -956,3 +964,42 @@ a.contact-line:hover, a.contact-line:focus-visible {
    image that honestly illustrates a privacy notice — so the eyebrow and lead
    carry the page on their own and want a little more breathing room. */
 .page-hero--plain .page-hero__lead { max-width: 62ch; }
+
+
+/* --------------------------------------------------------------------------
+   Spacing utilities  (added pass 16)
+
+   These replace 283 inline style attributes that had accumulated across the
+   pages -- almost all one-line spacing tweaks repeated dozens of times
+   (margin-top:0 alone appeared 98 times). A deliberately small, closed set of
+   the patterns that actually recurred, not a general utility framework: a new
+   spacing value belongs in its component's own rule, not here.
+
+   Two things about the form of these selectors, both learned the hard way when
+   the first attempt made every page taller:
+
+   1. They live at the END of pages.css, the last stylesheet the page loads, so
+      they win any specificity tie against a component rule.
+   2. The class is doubled (.u-mt-0.u-mt-0) to raise specificity to (0,2,0).
+      An inline style beats every selector; a single class does not, so
+      .prose h2 { margin-top: 40px } (0,1,1) quietly swallowed the utility and
+      the spacing it was supposed to remove came back. Doubling is the standard
+      way to buy specificity without !important, which this codebase avoids.
+
+   The point is not bytes -- inline styles are small and do not block rendering
+   -- it is that one decision now lives in one place, and that the markup no
+   longer needs 'unsafe-inline' in a style-src Content-Security-Policy. Forty-six
+   genuinely one-off declarations were left inline on purpose.
+   -------------------------------------------------------------------------- */
+.u-mt-0.u-mt-0   { margin-top: 0; }
+.u-mt-32.u-mt-32 { margin-top: 32px; }
+.u-mt-36.u-mt-36 { margin-top: 36px; }
+.u-mt-40.u-mt-40 { margin-top: 40px; }
+.u-mt-44.u-mt-44 { margin-top: 44px; }
+.u-mt-48.u-mt-48 { margin-top: 48px; }
+.u-mt-52.u-mt-52 { margin-top: 52px; }
+.u-mb-0.u-mb-0   { margin-bottom: 0; }
+.u-m-0.u-m-0     { margin: 0; }
+.u-mw-none.u-mw-none       { max-width: none; }
+.u-gap-56.u-gap-56         { gap: 56px; }
+.u-pb-section.u-pb-section { padding-bottom: var(--section-y); }
