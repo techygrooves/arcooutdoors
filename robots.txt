@@ -1,4 +1,13 @@
 # https://www.arcooutdoors.com/robots.txt
+#
+# Everything on this site is meant to be crawled. There are deliberately no
+# Disallow rules: the CSS, JavaScript, fonts and images under /assets/ must stay
+# fetchable or search engines cannot render the pages as visitors see them.
+# Do not add a blanket /assets/ block here.
+#
+# 404.html is excluded from indexing by its own "noindex, follow" meta tag
+# rather than from here, because a blocked URL cannot be read to discover it.
+
 User-agent: *
 Allow: /
 
