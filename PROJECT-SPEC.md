@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-03 (pass 16 — performance, mobile and accessibility)
+Last updated: 2026-09-03 (pass 17 — final pre-launch audit; see FINAL-AUDIT.md)
 
 ---
 
@@ -1009,30 +1009,28 @@ already built and styled. Render the cards, then — and only then — add the
 Remove §12 items 1 and 2 by resolving the homepage section at the same time, so
 the two pages cannot disagree.
 
-## 12. OPEN ITEMS — unverified content currently live
+## 12. OPEN ITEMS — unverified content
 
-These predate this pass. They are preserved so the homepage design is unchanged,
-but each is a **pre-launch blocker** needing owner confirmation or removal. None
-of them may be repeated on any new page until verified.
+**Pass 17 closed items 1–7.** Every unsupported claim that had been live since
+pass 1 is now removed or reworded; the full before/after table is in
+`FINAL-AUDIT.md` §9. What follows is what actually remains.
 
-| # | Location | Claim | Risk |
+| # | Location | Claim / gap | Status |
 |---|---|---|---|
-| 1 | Homepage reviews section | Three named testimonials — "Danielle R., Parkland FL", "Marcus T., Coral Springs FL", "Sofia & Luis G., Boca Raton FL" | If not real Google reviews, this is deceptive advertising (FTC endorsement rules). **Still the highest-risk item.** Pass 11 confirmed no review data has ever been committed; `/reviews/` refuses to reproduce these and says on-page that they are unverified. Resolve the homepage section or the two pages contradict each other. |
-| 2 | Homepage reviews section | "5.0" and "Based on **180+ verified** Google reviews" | Specific, checkable, and reproduced in no source material. `/reviews/` publishes neither and explains why (§11.2). No `aggregateRating` markup exists anywhere on the site. |
-| 3 | About / trust strip | "750+ Projects Completed", "20 yrs In South Florida", "20+ Years of Craftsmanship" | Explicitly on the forbidden-claims list in §4. |
-| 4 | Trust strip / Why Arco / consultation | "Transparent, Fixed Pricing", "Fixed, itemized pricing — no surprises" | A pricing guarantee. |
-| 5 | Consultation section | "On-site visit within 48 hours" | A service-level guarantee. |
-| 6 | Homepage gallery | Captions do not match their photographs — "Travertine pool deck & coping" labels a white stucco house with no pool; "Patio detail" labels an interior lounge; **and pass 11 found a third — "Paver driveway & walkway" labels a pool and terrace with no driveway in frame.** | Misrepresents work as Arco's. The `alt` text describes what is actually shown, so `alt` and caption disagree. The new `/gallery/` does not repeat any of the three; fixing the homepage is a copy edit to three `<figcaption>`s. |
-| 7 | Gallery / About / hero | Photography appears to be stock, not Arco project work | Presented as "our custom outdoor transformations". **Pass 10 confirmed no image carries EXIF date, GPS or author.** `/projects/` now states on-page that all site photography is reference imagery; the homepage heading still says "our" and is the remaining exposure. |
-| 8 | ~~Homepage + `/services/` cards~~ | ~~12 images hot-linked from `images.unsplash.com`~~ | **Resolved in pass 16.** All twelve are now self-hosted WebP cards with 500w variants, cut by the §9.11 method from the pass-1 originals at `ae67717`. Both `preconnect` hints were removed with them. The site now issues **no automatic third-party request of any kind**, which is what `/privacy-policy/` and `/cookie-policy/` had already been published promising. Note the honesty constraint this ran into: no source photograph depicts a driveway, an outdoor kitchen or a pergola (the same gap as item 16), so those three cards use the nearest real frame and the `alt` says precisely what is in it. See §16.1. |
-| 9 | ~~Journal section~~ | ~~Three articles with dates (Jul 22, Jul 08, Jun 24) and no year, linking to a blog that does not exist~~ | **Resolved in pass 12.** The three cards now carry the real titles, real publication date and self-hosted imagery of three articles that exist, and link to them directly. The section heading and lead were corrected at the same time: it described "recent projects", which the site does not publish (§11.1). |
-| 10 | ~~Header + footer~~ | ~~Facebook and Instagram icons link to `href="#"`~~ | **Resolved in pass 2** — the icons were removed rather than pointed somewhere invented. Add them only when real profile URLs are supplied. |
-| 11 | All three forms | **No submission endpoint exists on any of them** | See §14. Every form falls back to a pre-filled mail draft, which loses any visitor without a configured mail client. Pass 13 made this one change away from fixed: set `data-endpoint` on the three forms. **This is the single largest launch blocker on the site** — the conversion page now exists and still cannot deliver an enquiry. |
-| 12 | ~~Footer legal bar~~ | ~~3 of the 32 linked routes do not exist yet and return 404~~ | **Resolved.** The three legal pages shipped, and pass 15 re-verified the whole map: `check-links.py` reports zero unresolved links, and `sitemap.xml`'s 38 URLs were diffed against the file system in both directions with no difference. `audit-seo.py` now fails the build if a sitemap entry loses its page or a page is left out of the sitemap, so this cannot silently regress. |
-| 13 | `/projects/` | The page exists but holds **zero project records** — see §11.1 | Not a defect; it is the audited state. It becomes one only if a record is ever published without meeting all three §11.1 gates. |
-| 14 | `/projects/` hero, and every other banner | `hero-projects` is a new crop of an existing stock frame, like every other banner on the site | Consistent with items 7 and 8. Owner decision needed: supply real project photography, or accept reference imagery site-wide and keep it labelled as such. |
-| 15 | `/reviews/` | The page exists but holds **zero reviews** — see §11.2 | Not a defect; it is the audited state. It becomes one only if a review is published without meeting all six §11.2 gates, or if `Review`/`aggregateRating` markup is added before real reviews are visible. |
-| 16 | `/gallery/` | Only 7 of the 11 §5 build types have a filter; driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page, with links to those three service pages. Resolves the moment real project photography is supplied. |
+| 1 | ~~Homepage reviews~~ | ~~Three named testimonials with Google branding~~ | **Resolved (pass 17).** Section replaced with the published review standard and links to `/reviews/`, `/projects/`, `/gallery/`. The homepage and `/reviews/` now agree |
+| 2 | ~~Homepage reviews~~ | ~~"5.0" and "Based on 180+ verified Google reviews"~~ | **Resolved (pass 17).** Removed with the section |
+| 3 | ~~Trust strip / stats~~ | ~~"750+ Projects", "20 yrs", "20+ Years of Craftsmanship"~~ | **Resolved (pass 17).** Replaced with counts that are checkable against this site: 11 services, 3 counties, 1 point of accountability; and "Based in Davie, Florida" |
+| 4 | ~~Trust strip / consultation~~ | ~~"Transparent, Fixed Pricing", "Fixed, itemized pricing — no surprises"~~ | **Resolved (pass 17).** Now "Eleven Services, One Contractor" and "A written quote, itemized by scope" — describes the deliverable, promises no price |
+| 5 | ~~Consultation~~ | ~~"On-site visit within 48 hours"~~ | **Resolved (pass 17).** Now "An on-site visit, measured on your property" |
+| 6 | ~~Homepage gallery~~ | ~~Three captions describing work the photographs do not show~~ | **Resolved (pass 17).** Captions and category tags now match the frames, and agree with the `alt` text that was always truthful |
+| 7 | ~~Homepage gallery heading~~ | ~~Reference photography presented as "our custom outdoor transformations"~~ | **Resolved (pass 17).** Heading and lead now match what `/gallery/` and `/projects/` publish |
+| 8 | ~~Homepage + `/services/`~~ | ~~12 third-party image hot-links~~ | **Resolved in pass 16.** The site makes no automatic third-party request of any kind |
+| **11** | **All three forms** | **No submission endpoint. `data-endpoint=""` on all three** | **OPEN — the single launch blocker.** See §14 and `FINAL-AUDIT.md` §6. One attribute per form |
+| 13 | `/projects/` | Holds zero project records | Not a defect; the audited state. `FINAL-AUDIT.md` §10 lists exactly what the client must supply to publish the first one |
+| 15 | `/reviews/` | Holds zero reviews | Not a defect; the audited state. Becomes one only if a review is published without meeting all six §11.2 gates |
+| 16 | `/gallery/` | Driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page. Resolves when real project photography is supplied |
+| 17 | Sitewide | **Insurance is asserted nowhere, because nothing evidences it** | Deliberate. The licence (CBC1269393) is verified and cited; pages tell the reader to request a certificate of insurance from any contractor. Do not re-add "licensed and insured" without a certificate on file |
+| 18 | Domain | No redirect map, and no inventory of any previous site | `REDIRECTS.md` is empty and explains why. **If a site currently ranks on this domain, export its indexed URLs from Search Console before switching DNS** |
 
 ## 13. HOMEPAGE ARCHITECTURE & CHANGE LOG
 
@@ -2178,6 +2176,64 @@ being shipped.
 **Verified.** Three guards exit 0. Zero third-party requests, zero overflow at
 seven widths, zero structural a11y findings, all interaction tests passing,
 LCP 156–288 ms, CLS ≤ 0.0161.
+
+### 13.20 Pass 17 — the final pre-launch audit
+
+Full record in **`FINAL-AUDIT.md`**, which is the client-facing deliverable. This
+is the engineering summary.
+
+**The claims came out.** Seven open items that had survived sixteen passes were
+closed, because every earlier pass had preserved the homepage design rather than
+touch them. A pre-launch audit is the point at which that stops being the right
+call. Removed or reworded: three fabricated Google-branded testimonials with
+names and cities, a "5.0" score, "180+ verified" reviews, "750+ Projects",
+"20 yrs", "20+ Years of Craftsmanship", two pricing guarantees, a 48-hour
+service-level promise, "100% free", an unverifiable reputation claim, and
+**"Licensed & Insured" in all 94 places it appeared** — the licence is verified,
+the insurance is evidenced nowhere. Three gallery captions and three category
+tags that described work their photographs do not show were corrected to match
+the `alt` text, which had been truthful all along and had therefore been
+contradicting them since pass 1.
+
+**The homepage stopped contradicting its own evidence pages.** `/gallery/` and
+`/projects/` both publish that the site's photography is reference imagery. The
+homepage said "Explore **our** custom outdoor transformations" over the same
+frames. It now says what the other two say.
+
+**Duplication was re-measured across the whole set at once**, which no previous
+pass had done — earlier passes only checked new pages against existing ones.
+Location pages: 16 near-duplicate pairs, driven to **zero** by rewriting nine
+templated passages (the permitting clause was identical at Jaccard 1.00 on two
+pages). Service pages: 62 pairs, of which the analysis showed 4 clusters are
+policy boilerplate that *should* read consistently — the permitting caution, the
+performed-versus-coordinated disclosure, the coastal-fixings note, the
+consultation offer — and the rest are physical facts genuinely shared by the four
+paver pages. Those were left alone deliberately; making a legal caution read
+differently on every page would be worse, not better.
+
+**Three FAQ questions were word-for-word identical across page pairs**, which is
+two pages competing for one query. All three differentiated. A first scan found
+only one because it covered `services/`, `service-areas/` and `blog/` but not the
+hub pages — the second scan covered every page and found the other two. Scope the
+scan to the whole site, not the interesting part of it.
+
+**What the audit found already correct**, across 39 pages: no duplicate,
+placeholder or half-built page; no lorem ipsum, `TODO` or "coming soon" in
+visible text; one consistent phone, email, address and licence (255 / 122 / 51 /
+191 occurrences, one value each); **3,554 link instances with zero dead links at
+both mount points**; zero console errors and zero failed requests; zero
+horizontal overflow at seven widths; zero structural accessibility findings;
+`audit-seo.py` green; no third-party request of any kind.
+
+**One genuine near-miss:** a form placeholder read `jane@email.com`. `email.com`
+is a real registered domain; RFC 2606 reserves `example.com` for exactly this.
+Changed. The `(305) 555-0100` phone placeholder was reviewed and **kept** — 555-01xx
+is the reserved fictional range and it is an input hint, not business information.
+
+**Forms remain the one launch blocker**, and the site is honest about it: submit
+produces "One more step — send it", explains the enquiry was prepared in the
+visitor's mail client, and offers the phone number. No form claims receipt. It is
+still one attribute per form away from working.
 
 ## 14. FORMS
 
