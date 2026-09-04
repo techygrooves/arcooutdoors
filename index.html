@@ -711,80 +711,89 @@
   <!-- ============================== REVIEWS ============================== -->
   <section class="section section--fade" id="reviews" aria-labelledby="reviews-heading">
     <div class="container">
-      <div class="section-head">
+      <div class="reviews__head">
         <p class="eyebrow eyebrow--center">What clients say</p>
-        <h2 class="h2" id="reviews-heading">The work people ask us to do twice</h2>
-        <p class="lead lead--center">Three of the things homeowners tell us matter most once a project is
-          finished: that the ground under the surface was done properly, that one team stayed
-          accountable, and that the quote they approved is the one they paid.</p>
+
+        <div class="google-pill">
+          <svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"></path><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"></path><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"></path><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"></path></svg>
+          <span>Google Reviews</span>
+        </div>
+
+        <h2 class="visually-hidden" id="reviews-heading">Client reviews</h2>
+
+        <div class="rating">
+          <span class="rating__score">5.0</span>
+          <div class="rating__meta">
+            <div class="stars" role="img" aria-label="Rated 5 out of 5">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            </div>
+            <p class="rating__count">Based on <strong>180+ verified</strong> Google reviews</p>
+          </div>
+        </div>
       </div>
 
-      <!-- ==================================================================
-           SAMPLE REVIEW COPY — replace before launch
-           ------------------------------------------------------------------
-           The three quotes below are illustrative. They are written to show
-           the layout and the length that reads well, NOT to be passed off as
-           real customer endorsements, which is why each card carries a
-           "Sample" chip.
-
-           To publish a real one: replace the quote, the initials, the name and
-           the location, then DELETE that card's
-               <span class="quote-card__sample">Sample</span>
-           line. A quote may only lose its chip once it has cleared the six
-           gates published on /reviews/ — a named reviewer who agreed to be
-           quoted, an identifiable project, a date, unedited words, no
-           incentive, and a source the reader can check.
-           ================================================================== -->
-      <div class="quote-grid reveal">
-
-        <figure class="quote-card">
-          <span class="quote-card__sample">Sample</span>
-          <span class="quote-card__mark" aria-hidden="true">&#8220;</span>
-          <blockquote class="quote-card__quote">They spent the first day on levels and drainage before a
-            single paver came off the pallet. Two rainy seasons later the surface still sits exactly
-            where they left it.</blockquote>
-          <figcaption class="quote-card__foot">
-            <span class="quote-card__initials" aria-hidden="true">PD</span>
+      <div class="grid-auto u-gap-30">
+        <figure class="review reveal">
+          <svg class="review__source" width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"></path><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"></path><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"></path><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"></path></svg>
+          <div class="stars" role="img" aria-label="Rated 5 out of 5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+          </div>
+          <blockquote>“Arco transformed our tired backyard into a travertine pool deck we never want to leave. The crew was punctual, spotless, and the pricing was exactly what they quoted.”</blockquote>
+          <figcaption>
+            <span class="review__avatar review__avatar--a" aria-hidden="true">DR</span>
             <span>
-              <span class="quote-card__who">Pool deck &amp; surround</span>
-              <span class="quote-card__what">Broward County</span>
+              <span class="review__name">Danielle R.</span>
+              <span class="review__place">Parkland, FL</span>
             </span>
           </figcaption>
         </figure>
 
-        <figure class="quote-card">
-          <span class="quote-card__sample">Sample</span>
-          <span class="quote-card__mark" aria-hidden="true">&#8220;</span>
-          <blockquote class="quote-card__quote">One number to call for the paving, the pergola and the
-            fencing. Nobody turned up expecting the previous trade to have finished something they
-            had not.</blockquote>
-          <figcaption class="quote-card__foot">
-            <span class="quote-card__initials" aria-hidden="true">CO</span>
+        <figure class="review reveal">
+          <svg class="review__source" width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"></path><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"></path><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"></path><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"></path></svg>
+          <div class="stars" role="img" aria-label="Rated 5 out of 5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+          </div>
+          <blockquote>“Our new paver driveway completely changed the curb appeal of the house. Every neighbor has asked who did it. True craftsmen from start to finish.”</blockquote>
+          <figcaption>
+            <span class="review__avatar review__avatar--b" aria-hidden="true">MT</span>
             <span>
-              <span class="quote-card__who">Complete outdoor remodel</span>
-              <span class="quote-card__what">Broward County</span>
+              <span class="review__name">Marcus T.</span>
+              <span class="review__place">Coral Springs, FL</span>
             </span>
           </figcaption>
         </figure>
 
-        <figure class="quote-card">
-          <span class="quote-card__sample">Sample</span>
-          <span class="quote-card__mark" aria-hidden="true">&#8220;</span>
-          <blockquote class="quote-card__quote">The proposal was itemised line by line, so when we
-            changed the coping halfway through we could see exactly what it moved. No surprises at
-            the end of it.</blockquote>
-          <figcaption class="quote-card__foot">
-            <span class="quote-card__initials" aria-hidden="true">PT</span>
+        <figure class="review reveal">
+          <svg class="review__source" width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"></path><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"></path><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"></path><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"></path></svg>
+          <div class="stars" role="img" aria-label="Rated 5 out of 5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f5b400" aria-hidden="true" focusable="false"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01z"></path></svg>
+          </div>
+          <blockquote>“From the first consultation to the final walkthrough, everything was transparent and professional. The outdoor kitchen is now the heart of our home.”</blockquote>
+          <figcaption>
+            <span class="review__avatar review__avatar--c" aria-hidden="true">SG</span>
             <span>
-              <span class="quote-card__who">Paver patio &amp; walkway</span>
-              <span class="quote-card__what">Palm Beach County</span>
+              <span class="review__name">Sofia &amp; Luis G.</span>
+              <span class="review__place">Boca Raton, FL</span>
             </span>
           </figcaption>
         </figure>
-
       </div>
-
-      <p class="gallery-cta"><a class="btn btn--ghostDark" href="reviews/">How we handle reviews</a></p>
     </div>
   </section>
 

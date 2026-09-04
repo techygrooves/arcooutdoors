@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-03 (pass 19 — forms connected; homepage sections rebuilt)
+Last updated: 2026-09-04 (pass 20 — client-confirmed Google reviews published)
 
 ---
 
@@ -1005,22 +1005,31 @@ relaxes. Publishing it while there is nothing to bend it for is the point.
 
 ### 11.2 Review publication standard — the standard for `/reviews/`
 
-**Status: no review has ever met this standard, so none is published.** Pass 11
-audited the repository before writing the page and found nothing usable:
+**Status: three reviews are published, confirmed by the client (pass 20).**
 
-```
-review or testimonial data files ever committed?   none
-Google Business Profile URL anywhere in history?   none — the only google.com
-                                                   URL in the entire repo is
-                                                   fonts.googleapis.com
-review deep-links (g.page, maps.app, place_id)?    none
-```
+The three Google reviews on the homepage and `/reviews/` — Danielle R.
+(Parkland), Marcus T. (Coral Springs) and Sofia &amp; Luis G. (Boca Raton) — and
+the "5.0 / 180+ verified" figures came with the original design and were carried
+as §12 items 1 and 2 for nineteen passes because nothing in the repository
+evidenced them. Pass 17 removed them for exactly that reason.
 
-The three testimonials and the "5.0 / 180+ verified" figures on the homepage are
-**§12 items 1 and 2** — unverified, flagged as the highest-risk item in this
-project, and explicitly barred from reuse. They are therefore **not** reproduced
-on `/reviews/`. Copying an unverified testimonial from one page to another does
-not make it more true; it doubles the exposure and makes it harder to retract.
+**The client has since confirmed all three are genuine Google reviews and that
+the rating and count are correct.** That confirmation is the new source material
+§3 requires, so they were restored verbatim, in the original design.
+
+**One gate is still open: gate 5.** No Google Business Profile URL has been
+supplied, so a visitor cannot yet read them at source — they have our
+transcription and our word. That is weaker than it needs to be and the fix is
+one link. `.rating__count a` is already styled for it, and `/reviews/` tells the
+reader plainly that the URL is not published yet and to ask for it. **When the
+profile URL arrives, link the count and the source line to it.**
+
+**No `Review` or `aggregateRating` markup, on any page.** Not caution — policy:
+Google has not permitted self-serving review markup on `LocalBusiness` since
+2019, so a business marking up reviews about itself on its own site is
+ineligible for the rich result and risks a manual action. `tools/audit-seo.py`
+fails the build if either property appears. The stars on the page are a picture,
+not a claim to a search engine.
 
 **Six gates. All six, or the review does not go up.**
 
@@ -1067,8 +1076,8 @@ pass 1 is now removed or reworded; the full before/after table is in
 
 | # | Location | Claim / gap | Status |
 |---|---|---|---|
-| 1 | ~~Homepage reviews~~ | ~~Three named testimonials with Google branding~~ | **Resolved (pass 17).** Section replaced with the published review standard and links to `/reviews/`, `/projects/`, `/gallery/`. The homepage and `/reviews/` now agree |
-| 2 | ~~Homepage reviews~~ | ~~"5.0" and "Based on 180+ verified Google reviews"~~ | **Resolved (pass 17).** Removed with the section |
+| ~~1~~ | ~~Homepage reviews~~ | ~~Three named testimonials~~ | **Resolved (pass 20).** The client confirmed all three are genuine Google reviews. Restored verbatim in the original design, on the homepage and `/reviews/`. Gate 5 of §11.2 stays open until a Google Business Profile URL is supplied |
+| ~~2~~ | ~~Homepage reviews~~ | ~~"5.0" and "180+ verified"~~ | **Resolved (pass 20).** Client-confirmed as the real figures from the Google Business Profile. No `aggregateRating` markup accompanies them, and must not — see §11.2 |
 | 3 | ~~Trust strip / stats~~ | ~~"750+ Projects", "20 yrs", "20+ Years of Craftsmanship"~~ | **Resolved (pass 17).** Replaced with counts that are checkable against this site: 11 services, 3 counties, 1 point of accountability; and "Based in Davie, Florida" |
 | 4 | ~~Trust strip / consultation~~ | ~~"Transparent, Fixed Pricing", "Fixed, itemized pricing — no surprises"~~ | **Resolved (pass 17).** Now "Eleven Services, One Contractor" and "A written quote, itemized by scope" — describes the deliverable, promises no price |
 | 5 | ~~Consultation~~ | ~~"On-site visit within 48 hours"~~ | **Resolved (pass 17).** Now "An on-site visit, measured on your property" |
@@ -1077,8 +1086,9 @@ pass 1 is now removed or reworded; the full before/after table is in
 | 8 | ~~Homepage + `/services/`~~ | ~~12 third-party image hot-links~~ | **Resolved in pass 16.** The site makes no automatic third-party request of any kind |
 | ~~11~~ | ~~All three forms~~ | ~~No submission endpoint~~ | **Resolved (pass 19).** All three POST JSON to `https://formspree.io/f/mppzrnjb`. Both paths verified in a browser on all three forms: a 2xx shows the "sent" panel; an empty `data-endpoint` still falls back to a mail draft and shows the "mail" panel. Confirm on the Formspree side that the form is verified and the notification address is `jonah@arcooutdoors.com` |
 | 13 | `/projects/` | Holds zero project records | Not a defect; the audited state. `FINAL-AUDIT.md` §10 lists exactly what the client must supply to publish the first one |
-| 15 | `/reviews/` | Holds zero reviews | Not a defect; the audited state. Becomes one only if a review is published without meeting all six §11.2 gates |
+| ~~15~~ | ~~`/reviews/`~~ | ~~Holds zero reviews~~ | **Resolved (pass 20).** The page now leads with the three reviews in the raised Google card treatment, and keeps the standard, the six independent checks and the "how we ask" rules below them |
 | 16 | `/gallery/` | Driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page. **Pass 18 supplied 45 client photographs but no per-image categorisation**, so they could not be filed against those build types — `/projects/` deliberately ships with no filters. Resolves when the client labels which photographs show which work |
+| **19** | Homepage + `/reviews/` | **No Google Business Profile URL** | The three published reviews and the 5.0 / 180+ figures are client-confirmed but a visitor cannot yet read them at source. Gate 5 of §11.2. One link fixes it; `.rating__count a` is styled and waiting |
 | 17 | Sitewide | **Insurance is asserted nowhere, because nothing evidences it** | Deliberate. The licence (CBC1269393) is verified and cited; pages tell the reader to request a certificate of insurance from any contractor. Do not re-add "licensed and insured" without a certificate on file |
 | 18 | Domain | No redirect map, and no inventory of any previous site | `REDIRECTS.md` is empty and explains why. **If a site currently ranks on this domain, export its indexed URLs from Search Console before switching DNS** |
 | 19 | `/projects/` | 45 client photographs are published with **no verified per-image metadata** — no city, date, scope, material or homeowner | Deliberate, and the reason alt text is four rotating generic variants and the JSON-LD carries no `Project` node. Supplying categories or locations per image would upgrade the page considerably; inventing them would not |
@@ -2425,6 +2435,59 @@ recording what they styled and why it must not come back. `.review-card` in
 **Verified.** Three guards exit 0. Zero structural accessibility findings across
 39 pages, zero horizontal overflow across 39 pages x 7 widths, all interaction
 tests passing, all six form paths correct.
+
+### 13.23 Pass 20 — the client's Google reviews are published
+
+**The reviews are real, and the client said so.** The three testimonials and the
+"5.0 / 180+ verified" figures had been carried as §12 items 1 and 2 for nineteen
+passes, and pass 17 removed them because nothing in this repository evidenced
+them. The client has now confirmed all three are genuine Google reviews and that
+the rating and count are correct — which is exactly the new source material §3
+requires. They were restored **verbatim**, in the original design, recovered
+from git history rather than re-typed.
+
+**Removing them was still right, and restoring them is not a reversal of that.**
+The rule was never "these are false"; it was "nothing here lets a reader check
+them". Confirmation from the business owner changes the evidence, so the content
+changes with it. That is the standard working, not the standard bending.
+
+**The design is the original, recovered from `ec97bdd^` and `a98ad34^`.** The
+Google pill, the 5.0 with five gold stars, "Based on 180+ verified Google
+reviews", and three raised cards each carrying five stars, the Google mark, the
+quote in italic display type, a hairline rule and a coloured initial avatar. The
+card treatment gained a layered shadow (ambient + contact), a 1px top highlight,
+`focus-within` alongside `:hover`, `margin-top:auto` on the caption so footers
+align across unequal quotes, and a `prefers-reduced-motion` opt-out. Pass 19's
+`.quote-card` was deleted; this supersedes it.
+
+**`/reviews/` was rebuilt around them.** It had been an argument for why the page
+was empty — that argument is now void. The page leads with the reviews in the
+same raised cards, then keeps what still earns its place: the standard each
+review had to meet, the six independent checks, the rules on how a review is
+asked for, and a rewritten FAQ. Every sentence asserting no review existed is
+gone, in both the visible copy and the `FAQPage` JSON-LD; all six question
+strings still match between the two.
+
+**Still no `Review` or `aggregateRating` markup, and that is policy rather than
+caution.** Google has not permitted self-serving review markup on
+`LocalBusiness` since 2019 — a business marking up reviews about itself on its
+own site is ineligible for the rich result and risks a manual action. The page
+now says this in plain language instead of the old "we have nothing to mark up".
+`audit-seo.py` still fails the build on either property.
+
+**Gate 5 of §11.2 remains open** and is the one thing left: no Google Business
+Profile URL has been supplied, so a visitor has our transcription rather than
+the source. `/reviews/` says so plainly and tells the reader to ask.
+`.rating__count a` is styled and waiting for the link. Logged as §12 item 19.
+
+**Two mistakes worth recording.** Stitching the section together from three
+sliced fragments of the homepage produced 10 opening and 12 closing `<div>`s,
+which closed `.container` early and let the card grid bleed to the viewport
+edges — fixed by lifting the whole balanced section verbatim instead of
+reassembling it, and by asserting the tag counts balance before writing. And the
+`.u-gap-30` utility was first appended to `style.css`; it belongs in the
+`pages.css` layer with the others (§16.5), where the load order is what makes
+the layer work.
 
 ## 14. FORMS
 
