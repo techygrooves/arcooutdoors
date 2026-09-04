@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-03 (pass 17 — final pre-launch audit; see FINAL-AUDIT.md)
+Last updated: 2026-09-03 (pass 19 — forms connected; homepage sections rebuilt)
 
 ---
 
@@ -1075,7 +1075,7 @@ pass 1 is now removed or reworded; the full before/after table is in
 | 6 | ~~Homepage gallery~~ | ~~Three captions describing work the photographs do not show~~ | **Resolved (pass 17).** Captions and category tags now match the frames, and agree with the `alt` text that was always truthful |
 | 7 | ~~Homepage gallery heading~~ | ~~Reference photography presented as "our custom outdoor transformations"~~ | **Resolved (pass 17).** Heading and lead now match what `/gallery/` and `/projects/` publish |
 | 8 | ~~Homepage + `/services/`~~ | ~~12 third-party image hot-links~~ | **Resolved in pass 16.** The site makes no automatic third-party request of any kind |
-| **11** | **All three forms** | **No submission endpoint. `data-endpoint=""` on all three** | **OPEN — the single launch blocker.** See §14 and `FINAL-AUDIT.md` §6. One attribute per form |
+| ~~11~~ | ~~All three forms~~ | ~~No submission endpoint~~ | **Resolved (pass 19).** All three POST JSON to `https://formspree.io/f/mppzrnjb`. Both paths verified in a browser on all three forms: a 2xx shows the "sent" panel; an empty `data-endpoint` still falls back to a mail draft and shows the "mail" panel. Confirm on the Formspree side that the form is verified and the notification address is `jonah@arcooutdoors.com` |
 | 13 | `/projects/` | Holds zero project records | Not a defect; the audited state. `FINAL-AUDIT.md` §10 lists exactly what the client must supply to publish the first one |
 | 15 | `/reviews/` | Holds zero reviews | Not a defect; the audited state. Becomes one only if a review is published without meeting all six §11.2 gates |
 | 16 | `/gallery/` | Driveways, outdoor kitchens and tiki huts have no photograph that depicts them | Stated on-page. **Pass 18 supplied 45 client photographs but no per-image categorisation**, so they could not be filed against those build types — `/projects/` deliberately ships with no filters. Resolves when the client labels which photographs show which work |
@@ -2368,75 +2368,114 @@ phrase, both transformation URLs, dedup, exclusions, alt-text discipline, the
 full Load More sequence, the complete lightbox contract, three breakpoints and
 the no-JavaScript path.
 
+### 13.22 Pass 19 — forms connected, and three homepage sections rebuilt
+
+**The forms deliver.** `https://formspree.io/f/mppzrnjb` is set on all three.
+Verified in a browser on both paths for each form: the JSON POST fires with
+every named field, and the mail-draft fallback still works when the attribute is
+emptied.
+
+**That change broke the success copy, which is the interesting part.** Every
+panel had been written for a site whose forms did not submit — "One more step —
+send it", "Over to your email app". The instant an endpoint existed, a
+successful submission told the visitor to go and press send somewhere. Panels
+now carry both messages, `[data-when="sent"]` and `[data-when="mail"]`, and
+`showSuccess(viaMail)` reveals the right one. **A behaviour change is not done
+when the code path works; it is done when the copy still tells the truth.**
+
+**Homepage process: five steps to eight**, so the grid reads as two rows of four
+instead of four-plus-one. The three additions are real stages, not padding —
+permits and approvals, structures and finishes, aftercare. `.steps` was pinned
+to four columns above 1000px, because `auto-fit` would otherwise give five and
+three on a wide viewport. The 34px step numerals were also moved off
+`--gold-deep` (2.14:1) onto `--gold-figure` (3.00:1); they are large text on
+sand and had never been measured, because a `::before` counter is not a text
+node the contrast pass enumerates.
+
+**Homepage services: six cards to eight**, likewise two even rows. "Fencing &
+More" — a bundle standing in for four services — became four honest cards:
+Pergolas, Tiki Huts and Fencing each got their own, all three using card crops
+that already existed, and each linking to its own service page.
+
+**The reviews section is a raised card component again**, built as `.quote-card`
+with layered ambient and contact shadows, a 1px top highlight, the brand gold
+rule and a small lift on hover, disabled under `prefers-reduced-motion`.
+
+**It is named `.quote-card`, not `.review-card`, and that was not a preference.**
+The first build used `.review-card` — which `pages.css` already defines, reserved
+for `/reviews/`. `pages.css` loads after `style.css`, so the existing rule
+silently won and the card footers stacked instead of sitting in a row. The
+symptom looked like a flexbox mistake; the cause was a name collision with a
+component in another file. **Check whether a class name is already taken before
+inventing it, especially across stylesheets with a load order.**
+
+**Every card carries a "Sample" chip.** The quotes are illustrative copy showing
+the layout, not customer endorsements, and the chip is what keeps that honest
+while real reviews are collected. Removing a chip is permitted only when the
+quote beside it has cleared the six gates published on `/reviews/` (§11.2). The
+rule is written in the CSS beside the component and in the markup beside the
+cards, because that is where someone editing it will actually be looking.
+
+**Dead CSS removed.** Pass 17 deleted the fabricated Google-review markup but
+left roughly 2.6 KB of rules behind — `.reviews__head`, `.google-pill`,
+`.rating*`, `.stars`, `.review*`. They are gone, with a comment in their place
+recording what they styled and why it must not come back. `.review-card` in
+`pages.css` stays: it is reserved, not dead.
+
+**Verified.** Three guards exit 0. Zero structural accessibility findings across
+39 pages, zero horizontal overflow across 39 pages x 7 widths, all interaction
+tests passing, all six form paths correct.
+
 ## 14. FORMS
 
-Three forms exist, and **one engine drives all of them** (`initForms` in
-`assets/js/main.js`, rewritten in pass 13 from the single-purpose `initForm`).
-A form opts in with `data-arco-form` and declares everything else in markup, so
-adding a fourth form never means editing JavaScript.
+Three forms, one controller (`initForms` over `form[data-arco-form]` in
+`main.js`). **All three POST JSON to `https://formspree.io/f/mppzrnjb`** —
+`/get-a-quote/`, `/contact-us/` and the homepage consultation block.
 
-| Form | Route | Purpose | Required fields |
-|---|---|---|---|
-| `#quote-request-form` | `/get-a-quote/` | primary conversion — a project enquiry with enough detail to answer usefully | first name, last name, phone, email, project ZIP, project type, description |
-| `#contact-form` | `/contact-us/` | general questions that are not yet a project | name, email, question |
-| `#quote-form` | `/` (consultation section) | the short in-page form a visitor already at the bottom of the homepage can use | name, phone, email |
+### 14.1 Markup contract
 
-**Markup contract.** On the `<form>`: `data-arco-form`, `data-endpoint`,
-`data-fallback-email`, `data-subject`, `data-success` and `data-status`
-(the last two are selectors). On a control: `data-validate` naming one of
-`text | name | phone | email | zip | choice`, an optional `data-error` for a
-custom message, an optional `data-label` used in the mail draft, an `id`, and a
-sibling `<span id="<id>-error">` wired through `aria-describedby`. The
-off-screen honeypot carries `data-honeypot`; the "send another" button in the
-success panel carries `data-form-reset`.
+| Attribute | On | Meaning |
+|---|---|---|
+| `data-arco-form` | `form` | opts the form into the controller |
+| `data-endpoint` | `form` | POST target. **Empty falls back to a mail draft** |
+| `data-fallback-email` | `form` | address the fallback draft is addressed to |
+| `data-subject` | `form` | subject line for the fallback draft |
+| `data-success` | `form` | selector for the success panel (starts hidden) |
+| `data-status` | `form` | selector for the `role="status" aria-live="polite"` region |
+| `data-validate` | control | `text` / `name` / `phone` / `email` / `zip` / `choice` |
+| `data-error` | control | optional custom message |
+| `data-label` | control | human label used in the fallback draft |
+| `data-honeypot` | control | off-screen field a human never fills |
+| `data-form-reset` | button | optional "send another" inside the panel |
+| `data-when` | inside panel | `sent` or `mail` — see §14.2 |
 
-**Validation and errors.** Messages are set inline and the field takes
-`aria-invalid="true"`; the status region is `role="status" aria-live="polite"`
-and names how many fields need attention; focus moves to the first invalid
-control; an error clears the moment its field becomes valid on `input` or
-`change`. Nothing depends on browser-native validation UI — every form is
-`novalidate` so the messages are ours and are announced consistently.
+Each validated control needs `id` plus a `<span id="<id>-error">` for its inline
+message.
 
-### None of them has a backend
+### 14.2 Two outcomes, two messages
 
-**`data-endpoint` is empty on all three, so nothing is transmitted anywhere.**
-On submit the visitor is handed a pre-filled `mailto:` draft to
-`jonah@arcooutdoors.com`, and the success panel appears only after that
-hand-off. The panel's wording says so plainly — it tells the visitor the
-message is not sent until they press send in their mail application, and gives
-the phone number for the case where no mail client opened.
+`showSuccess(viaMail)` reveals the `[data-when="sent"]` block or the
+`[data-when="mail"]` block and moves focus to whichever heading is showing.
 
-**Connecting a provider is a one-attribute change**, documented three times so
-it cannot be missed: a boxed comment above `initForms` in `main.js`, and a
-DEVELOPER CONFIG comment beside the form markup on `/get-a-quote/` and
-`/contact-us/`.
+**Do not collapse these into one message.** A form that posted successfully must
+not tell the visitor to go and press send in their email client, and a form that
+fell back must not claim the enquiry has arrived. Before pass 19 the panels
+carried only the mail-draft wording; the moment an endpoint was set, every
+successful submission began telling visitors to do something they did not need
+to do. Both paths are covered by the form suite.
 
-    data-endpoint="https://formspree.io/f/xxxxxxxx"
+A failed POST shows **no** success panel — the status region offers the phone
+number and email instead, and the submit button is re-enabled.
 
-Set it on all three forms, then send a live test through each. The engine
-already POSTs JSON keyed by each control's `name`, disables the submit button
-in flight, shows the success panel **only** on a 2xx, and on failure tells the
-visitor to call or email instead. No JavaScript change is required to go live.
+### 14.3 Changing provider
 
-Any handler must be static-host compatible — a form service or a serverless
-function. It must not turn the site into a Node application (§7).
+Swap the URL in `data-endpoint` on the three form elements. Anything that
+accepts a JSON POST and answers 2xx works; nothing else changes. Emptying the
+attribute restores the mail-draft fallback rather than breaking the form.
 
-**Secrets.** A form endpoint URL is a public destination, not a credential.
-Never put an API key, token or password in the markup or in `main.js`; both
-ship to every visitor. Anything that must stay private belongs behind a
-serverless function that holds the key server-side.
-
-**The success panel must never appear unless something actually happened.** The
-original bundled page showed "Thank you!" while sending nothing at all; do not
-reintroduce that behaviour, and do not soften the mail-draft panel's wording
-into implying the message has been delivered.
-
-**What the forms deliberately do not ask for.** No street address, no budget
-band, no financial detail of any kind, and nothing that could be mistaken for
-an account number. The quote page says so on the page. A project enquiry needs
-a name, two ways to reply, the ZIP the work is in, and what the visitor wants
-done; anything beyond that is collected at the consultation, in person, when
-there is a reason for it.
+**A form endpoint URL is a public destination, not a secret.** Never put an API
+key, token or password in the markup or in `main.js`; anything that must stay
+private belongs behind a serverless function.
 
 ## 15. ACCESSIBILITY
 

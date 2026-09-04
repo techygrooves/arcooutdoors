@@ -318,14 +318,16 @@
             <!-- ================================================================
                  DEVELOPER CONFIG — connecting a real backend
                  ----------------------------------------------------------------
-                 `data-endpoint` is EMPTY, so this form sends nothing anywhere.
-                 On submit the visitor is handed a pre-filled mail draft instead,
-                 and the success panel is only shown once that has happened.
+                 This form POSTs to Formspree at the URL in `data-endpoint`
+                 below. The success panel is shown only on a 2xx response.
 
-                 To connect Formspree (or Basin, Netlify Forms, a serverless
-                 function — anything accepting a JSON POST and answering 2xx):
+                 If `data-endpoint` is ever emptied, the form falls back to
+                 handing the visitor a pre-filled mail draft rather than
+                 pretending the send succeeded.
 
-                     data-endpoint="https://formspree.io/f/xxxxxxxx"
+                 To move to another provider (Basin, Netlify Forms, a
+                 serverless function — anything accepting a JSON POST and
+                 answering 2xx), swap the URL below. Nothing else changes.
 
                  Nothing else needs to change; assets/js/main.js already POSTs
                  the payload, handles failure and gates the success panel on a
@@ -337,7 +339,7 @@
                  ================================================================ -->
             <form id="contact-form" class="quote-form" method="post" action="" novalidate
                   data-arco-form
-                  data-endpoint=""
+                  data-endpoint="https://formspree.io/f/mppzrnjb"
                   data-fallback-email="jonah@arcooutdoors.com"
                   data-subject="Website question — Arco Outdoors"
                   data-success="#contact-success"
@@ -386,8 +388,14 @@
               <div class="form-success__icon" aria-hidden="true">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#241d15" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5L20 6"></path></svg>
               </div>
-              <h3 tabindex="-1" data-form-success-heading>Over to your email app</h3>
-              <p>We have handed the message to your mail application. It is not with us until you press send there. Nothing appeared? Then your device has no mail client set up — please phone <a href="tel:+13059518862">305-951-8862</a> during working hours, or write to <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a> from wherever you do read mail.</p>
+              <div data-when="sent">
+                <h3 tabindex="-1" data-form-success-heading>Message received</h3>
+                <p>It has been sent through and we will reply on the details you gave. If you would rather speak to someone, phone <a href="tel:+13059518862">305-951-8862</a> during working hours.</p>
+              </div>
+              <div data-when="mail" hidden>
+                <h3 tabindex="-1" data-form-success-heading>Over to your email app</h3>
+                <p>We have handed the message to your mail application. It is not with us until you press send there. Nothing appeared? Then your device has no mail client set up — please phone <a href="tel:+13059518862">305-951-8862</a> during working hours, or write to <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a> from wherever you do read mail.</p>
+              </div>
               <button class="btn btn--ghostDark" type="button" data-form-reset>Write another</button>
             </div>
           </div>
