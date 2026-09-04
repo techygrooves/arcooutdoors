@@ -143,14 +143,15 @@ Nothing below can be written without the client supplying it. Each is currently
 |---|---|---|---|
 | 1 | ~~Form endpoint~~ | **Supplied and wired** — `https://formspree.io/f/mppzrnjb`. Confirm the Formspree form is verified and the notification address is right | No |
 | 2 | Certificate of insurance | The site claims a licence, not insurance — see §9 | No |
-| 3 | Google Business Profile URL | No review strategy is possible without it; also the natural `sameAs` | No |
+| 3 | Google Business Profile URL | Needed to link the published reviews to their source, and as the natural `sameAs`. See item 11 | No |
 | 4 | Social profile URLs, if any exist | Header/footer icons were removed rather than pointed at invented URLs | No |
 | 5 | Real project photography, with addresses and owner consent | Every photograph on the site is reference imagery — see §10 | No |
 | 6 | Year founded, entity type | Would allow `foundingDate` and an honest company history | No |
 | 7 | Weekend / holiday hours, if different | Only Mon–Fri 8:00–18:00 is published | No |
 | 8 | Service radius, or a definitive city list | Three counties are named; no radius is claimed | No |
 | 9 | Old site URL export (Search Console) | Required before any redirect map can be written — see §8 | **Yes, if a site already ranks** |
-| 10 | Written customer reviews with consent | `/reviews/` is deliberately empty until then | No |
+| ~~10~~ | ~~Written customer reviews~~ | **Supplied** — three published | No |
+| 11 | **Google Business Profile URL** | The three published reviews and the 5.0 / 180+ figures are client-confirmed, but a visitor cannot read them at source without it. One link | No |
 
 ## 8. Redirects required — none identified, and that is not the same as none
 
@@ -173,8 +174,8 @@ the site before it.
 
 | Was on the site | Now | Why |
 |---|---|---|
-| Three named testimonials ("Danielle R., Parkland FL" etc.) with Google branding | Section replaced with the published review standard and links to `/reviews/`, `/projects/`, `/gallery/` | No customer review has ever been verified for this business. Fabricated endorsements are an FTC exposure, and the Google branding compounded it |
-| "5.0 ★" and "Based on **180+ verified** Google reviews" | Removed | Specific, checkable, supported by nothing |
+| ~~Three named testimonials~~ | **Restored in pass 20** — the client confirmed all three are genuine Google reviews. Published verbatim on the homepage and `/reviews/` | Removing them was right while nothing evidenced them; the client's confirmation is the source material that was missing. Gate 5 of the review standard is still open: no Google Business Profile link yet, so a reader cannot check them at source |
+| ~~"5.0 ★" and "180+ verified"~~ | **Restored in pass 20** — client-confirmed as the real Google figures | No `aggregateRating` markup accompanies them, and none may be added: Google has not permitted self-serving review markup on `LocalBusiness` since 2019 |
 | "750+ Projects completed" | "11 — Services under one contractor" | No project count is evidenced |
 | "20 yrs In South Florida" / "20+ Years of Craftsmanship" | "3 — Counties served" / "Based in Davie, Florida" | No founding date is known |
 | "5.0 ★ Average rating" | "1 — Point of accountability" | No rating exists |
