@@ -223,12 +223,13 @@
           <!-- ==================================================================
                DEVELOPER CONFIG — connecting a real backend
                ------------------------------------------------------------------
-               STATE TODAY: `data-endpoint` below is EMPTY. Nothing on this page
-               transmits anywhere. On submit the visitor is handed a pre-filled
-               mail draft addressed to `data-fallback-email`, and the success
-               panel is shown only after that hand-off. No enquiry is ever
-               silently discarded and no "thank you" is ever shown for a send
-               that did not happen.
+               STATE TODAY: this form POSTs to the Formspree endpoint in
+               `data-endpoint` below, and the success panel is shown only on a
+               2xx response. If that attribute is ever emptied, the form falls
+               back to handing the visitor a pre-filled mail draft addressed to
+               `data-fallback-email`. Either way no enquiry is silently
+               discarded and no "thank you" is ever shown for a send that did
+               not happen.
 
                TO CONNECT A PROVIDER (Formspree, Basin, Netlify Forms, or a
                serverless function — anything that accepts a JSON POST and
@@ -258,7 +259,7 @@
                ================================================================== -->
           <form id="quote-request-form" class="quote-form" method="post" action="" novalidate
                 data-arco-form
-                data-endpoint=""
+                data-endpoint="https://formspree.io/f/mppzrnjb"
                 data-fallback-email="jonah@arcooutdoors.com"
                 data-subject="Project enquiry — Arco Outdoors"
                 data-success="#quote-success"
@@ -377,8 +378,14 @@
             <div class="form-success__icon" aria-hidden="true">
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#241d15" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5L20 6"></path></svg>
             </div>
-            <h2 tabindex="-1" data-form-success-heading>One more step — send it</h2>
-            <p>Your enquiry has been prepared as a message in your email application. Press send there and it reaches us directly. If nothing opened, or you would rather not use email, call <a href="tel:+13059518862">305-951-8862</a> or write to <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a>.</p>
+            <div data-when="sent">
+              <h2 tabindex="-1" data-form-success-heading>Thank you — your enquiry is with us</h2>
+              <p>It has been sent through and we will come back to you on the details you gave. If it is easier to talk it through, call <a href="tel:+13059518862">305-951-8862</a> — Monday to Friday, 8:00 AM to 6:00 PM.</p>
+            </div>
+            <div data-when="mail" hidden>
+              <h2 tabindex="-1" data-form-success-heading>One more step — send it</h2>
+              <p>Your enquiry has been prepared as a message in your email application. Press send there and it reaches us directly. If nothing opened, or you would rather not use email, call <a href="tel:+13059518862">305-951-8862</a> or write to <a href="mailto:jonah@arcooutdoors.com">jonah@arcooutdoors.com</a>.</p>
+            </div>
             <button class="btn btn--ghostDark" type="button" data-form-reset>Start another enquiry</button>
           </div>
         </div>

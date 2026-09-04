@@ -282,15 +282,17 @@
 
      ┌── CONFIGURING A REAL BACKEND ─────────────────────────────────────────┐
      │ Every form here posts JSON to whatever URL sits in `data-endpoint`.    │
-     │ That attribute is EMPTY on all three forms today, so nothing is sent   │
-     │ anywhere — the visitor is handed a pre-filled mail draft instead.      │
+     │ All three forms now POST to a Formspree endpoint:                      │
+     │        https://formspree.io/f/mppzrnjb                                 │
+     │ set on /get-a-quote/, /contact-us/ and the homepage consultation form. │
      │                                                                        │
-     │ To connect a provider (Formspree, Basin, Netlify Forms, a serverless   │
-     │ function — anything that accepts a JSON POST and answers 2xx):         │
+     │ If that URL is ever cleared, the code falls back to handing the visitor │
+     │ a pre-filled mail draft rather than pretending the send succeeded.      │
      │                                                                        │
-     │   1. Create the endpoint with the provider.                            │
-     │   2. Put its URL in `data-endpoint` on the form element:                │
-     │        data-endpoint="https://formspree.io/f/xxxxxxxx"                  │
+     │ To move to another provider (Basin, Netlify Forms, a serverless        │
+     │ function — anything accepting a JSON POST and answering 2xx), swap the  │
+     │ URL in `data-endpoint` on each of the three form elements. Nothing      │
+     │ else changes.                                                          │
      │      Forms live at: /get-a-quote/, /contact-us/, and the homepage       │
      │      consultation section (#quote-form).                               │
      │   3. Nothing else changes. This file already POSTs, handles failure,    │
@@ -392,10 +394,21 @@
       field.addEventListener('change', clear);
     });
 
-    function showSuccess() {
+    /* `viaMail` is true only when the mail-draft fallback ran, which happens
+       when data-endpoint is empty. The panel carries copy for both outcomes and
+       shows one of them -- a form that posted successfully must not tell the
+       visitor to go and press send in their email client, and a form that fell
+       back must not claim the enquiry has arrived. */
+    function showSuccess(viaMail) {
       form.hidden = true;
       success.hidden = false;
-      var heading = success.querySelector('[data-form-success-heading]') || success.querySelector('h2, h3');
+      Array.prototype.slice.call(success.querySelectorAll('[data-when]'))
+        .forEach(function (el) {
+          el.hidden = (el.getAttribute('data-when') === 'mail') !== !!viaMail;
+        });
+      var heading = success.querySelector('[data-when]:not([hidden]) [data-form-success-heading]')
+        || success.querySelector('[data-form-success-heading]')
+        || success.querySelector('h2, h3');
       if (heading) {
         if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1');
         heading.focus();
@@ -434,14 +447,14 @@
       window.location.href = 'mailto:' + address +
         '?subject=' + encodeURIComponent(form.getAttribute('data-subject') || 'Website enquiry') +
         '&body=' + encodeURIComponent(body);
-      window.setTimeout(showSuccess, 900);
+      window.setTimeout(function () { showSuccess(true); }, 900);
     }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
       // A real visitor never fills a field they cannot see.
-      if (honeypot && honeypot.value) { showSuccess(); return; }
+      if (honeypot && honeypot.value) { showSuccess(false); return; }
 
       var result = validate();
       if (result.first) {
@@ -466,7 +479,7 @@
       }).then(function (res) {
         if (!res.ok) throw new Error('Request failed with status ' + res.status);
         status.textContent = '';
-        showSuccess();
+        showSuccess(false);
       }).catch(function () {
         status.textContent =
           'We could not send that automatically. Please call 305-951-8862 or ' +

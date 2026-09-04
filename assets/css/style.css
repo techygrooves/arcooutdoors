@@ -69,6 +69,122 @@
 }
 
 
+
+/* --------------------------------------------------------------------------
+   Quote cards — the raised "3D" testimonial treatment
+   --------------------------------------------------------------------------
+   Depth here is built from light, not from a drop shadow bolted on: a soft
+   ambient shadow, a tighter contact shadow beneath the card, a 1px top
+   highlight where light would catch the edge, and a very slight lift on hover.
+   The gold rule down the left is the same accent used by .note, so the card
+   reads as part of the system rather than a widget dropped into it.
+
+   Named `.quote-card`, NOT `.review-card`: pages.css already defines a
+   `.review-card` reserved for /reviews/ when a verified review exists, and it
+   loads after this file, so reusing that name silently overrode this one.
+
+   Every card carries a "Sample" chip. Remove `.quote-card__sample` from a card
+   only when the quote on it is a real, attributable review that has cleared the
+   six gates published on /reviews/ — see PROJECT-SPEC.md §11.2. The chip is
+   what keeps this section honest while the copy is illustrative.
+   -------------------------------------------------------------------------- */
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 30px;
+  margin-top: 52px;
+}
+@media (min-width: 1000px) { .quote-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.quote-card {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, #ffffff 0%, var(--sand-50) 100%);
+  border-radius: 4px;
+  padding: 34px 32px 28px;
+  /* Column layout so the attribution can be pushed to the bottom: quotes are
+     not the same length, and three footers at three different heights is the
+     detail that makes a card row look unconsidered. */
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255, 255, 255, .9);
+  box-shadow:
+    0 1px 1px rgba(36, 29, 21, .05),
+    0 8px 18px -6px rgba(36, 29, 21, .13),
+    0 26px 44px -22px rgba(36, 29, 21, .30);
+  transition: transform .28s cubic-bezier(.22, .8, .3, 1),
+              box-shadow .28s cubic-bezier(.22, .8, .3, 1);
+}
+.quote-card::before {           /* the gold rule, matching .note */
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--gold);
+  border-radius: 4px 0 0 4px;
+}
+.quote-card:hover,
+.quote-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow:
+    0 1px 1px rgba(36, 29, 21, .05),
+    0 14px 26px -8px rgba(36, 29, 21, .16),
+    0 40px 60px -28px rgba(36, 29, 21, .34);
+}
+.quote-card__mark {
+  font-family: var(--font-display);
+  font-size: 52px;
+  line-height: .6;
+  color: var(--gold-figure);
+  display: block;
+  margin-bottom: 10px;
+}
+.quote-card__quote {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0 0 24px;
+  quotes: none;
+}
+.quote-card__foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid rgba(36, 29, 21, .1);
+  padding-top: 18px;
+  margin-top: auto;
+}
+.quote-card__initials {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ink);
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: .04em;
+}
+.quote-card__who { display: block; font-weight: 600; color: var(--ink); font-size: 15px; }
+.quote-card__what { display: block; color: var(--body); font-size: 13.5px; margin-top: 2px; }
+.quote-card__sample {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--body);
+  background: var(--sand-100);
+  border: 1px solid rgba(36, 29, 21, .12);
+  border-radius: 2px;
+  padding: 4px 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .quote-card { transition: none; }
+  .quote-card:hover, .quote-card:focus-within { transform: none; }
+}
+
 /* --------------------------------------------------------------------------
    2. Design tokens
    -------------------------------------------------------------------------- */
@@ -1062,84 +1178,20 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
 
 /* --------------------------------------------------------------------------
    13. Reviews
+
+   The rules that used to live here (.reviews__head, .google-pill, .rating*,
+   .stars, .review, .review__avatar/name/place/source) styled a block of three
+   fabricated Google-branded testimonials with a "5.0" score and a "180+
+   verified reviews" count. That markup was removed in the pre-launch audit and
+   these rules went with it, deliberately: leaving them in place is an invitation
+   to paste the block back.
+
+   Homepage testimonials now use `.quote-card` (defined near the top of this
+   file), which carries a "Sample" chip on every card until the quote on it is a
+   real, attributable review. `/reviews/` has its own `.review-card` in
+   pages.css, reserved for the same purpose. Neither may present an unverified
+   quote as a customer endorsement -- see PROJECT-SPEC.md §11.2.
    -------------------------------------------------------------------------- */
-.reviews__head { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 60px; }
-.reviews__head .eyebrow { margin-bottom: 18px; }
-
-.google-pill {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--white);
-  padding: 18px 30px;
-  border-radius: var(--r-pill);
-  box-shadow: var(--sh-pill);
-}
-.google-pill span {
-  font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.rating { display: flex; align-items: center; gap: 16px; margin-top: 26px; }
-.rating__score {
-  font-family: var(--font-display);
-  font-size: 56px;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1;
-}
-.rating__meta { text-align: left; }
-.stars { display: flex; gap: 3px; }
-.rating__count { font-size: 13.5px; color: var(--body); margin-top: 6px; }
-.rating__count strong { color: var(--ink); }
-
-.review {
-  position: relative;
-  background: linear-gradient(160deg, var(--white), #f4eee2);
-  border-radius: var(--r-md);
-  padding: 34px 32px 30px;
-  box-shadow: var(--sh-raised);
-  transition: transform .3s ease, box-shadow .3s ease;
-  margin: 0;
-}
-.review:hover { transform: translateY(-8px); box-shadow: var(--sh-raised-hover); }
-.review__source { position: absolute; top: 28px; right: 30px; }
-.review .stars { gap: 2px; margin-bottom: 18px; }
-.review blockquote {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 20px;
-  line-height: 1.55;
-  color: #332b20;
-  margin: 0 0 26px;
-}
-.review figcaption {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-top: 1px solid var(--hairline);
-  padding-top: 20px;
-}
-/* The three avatar grounds carry white initials, so each is the darkest form of
-   its hue that still clears 4.5:1 against white (pass 16). The initials are
-   aria-hidden -- the reviewer's name sits beside them in real text -- but a
-   sighted reader still has to make them out. */
-.review__avatar--a { background: #966f2f; }
-.review__avatar--b { background: #2170f2; }
-.review__avatar--c { background: #2a8743; }
-.review__avatar {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700;
-  font-size: 16px;
-  flex: none;
-}
-.review__name { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
-.review__place { display: block; font-size: 12.5px; color: var(--muted); }
 
 /* --------------------------------------------------------------------------
    14. Service areas

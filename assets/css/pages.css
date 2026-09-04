@@ -210,6 +210,12 @@
   gap: 40px;
   counter-reset: step;
 }
+/* The homepage process is eight steps and has to read as two even rows of four.
+   auto-fit alone would give five-and-three on a wide viewport, so the column
+   count is pinned once there is room for four. */
+@media (min-width: 1000px) {
+  .steps { grid-template-columns: repeat(4, 1fr); }
+}
 .steps > li {
   counter-increment: step;
   border-top: 1px solid var(--gold-deep);
@@ -221,7 +227,9 @@
   font-family: var(--font-display);
   font-size: 34px;
   font-weight: 600;
-  color: var(--gold-deep);
+  /* Large text still needs 3:1. --gold-deep manages only 2.14:1 on sand; this
+     is the same gold at the lightness that clears it (see PROJECT-SPEC §15). */
+  color: var(--gold-figure);
   line-height: 1;
   margin-bottom: 14px;
 }

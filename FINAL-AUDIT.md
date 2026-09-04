@@ -99,36 +99,40 @@ the shared header and footer; the only page with none is `404.html`, correctly.
 `priceRange`, `foundingDate`, employee count or geo coordinate anywhere on the
 site, and the audit tool fails the build if one is added.
 
-## 6. Form status — **NOT CONNECTED. This is the one true launch blocker.**
+## 6. Form status — **CONNECTED**
 
-There are three forms: the homepage consultation block, `/contact-us/` and
-`/get-a-quote/`. **All three have `data-endpoint=""` and therefore submit
-nowhere.**
+All three forms — the homepage consultation block, `/contact-us/` and
+`/get-a-quote/` — now POST JSON to **`https://formspree.io/f/mppzrnjb`**.
 
-The site does not pretend otherwise. On submit the visitor sees "One more step —
-send it", is told the enquiry has been prepared in their email application, and
-is given the phone number and email address as alternatives. No form claims the
-message was received.
+Verified end to end in a browser, on all three forms, on both paths:
 
-**The fallback loses any visitor without a configured mail client**, which on a
-phone is a substantial share of them. Do not launch a paid campaign against these
-pages until an endpoint is set.
+| Path | Behaviour | Panel shown |
+|---|---|---|
+| Endpoint answers 2xx | JSON `POST` with every named field | "Thank you — your enquiry is with us" / "Message received" / "Thank you!" |
+| `data-endpoint` empty | Pre-filled mail draft to `jonah@arcooutdoors.com` | "One more step — send it" / "Over to your email app" |
+| Endpoint errors | No success panel at all | Status line offering the phone number and email |
 
-**To connect one (a five-minute change, no code):**
+**The success copy is not shared between the two paths**, and that is the point:
+a form that posted successfully must not tell the visitor to go and press send
+in their email client, and a form that fell back must not claim the enquiry has
+arrived. `showSuccess(viaMail)` reveals the `[data-when="sent"]` or
+`[data-when="mail"]` block accordingly.
 
-1. Create an endpoint with any provider that accepts a JSON `POST` and answers
-   2xx — Formspree, Basin, Netlify Forms, a serverless function.
-2. Put the URL in `data-endpoint` on each of the three `<form>` elements.
-3. Nothing else changes. `assets/js/main.js` already POSTs, handles failure, and
-   only shows the success panel on a 2xx.
+Validation and errors were tested and are correct: inline messages,
+`aria-invalid` on failed fields, a `role="status" aria-live="polite"` region,
+focus moved to the first invalid field, and an off-screen honeypot.
 
-A form endpoint URL is a public destination, not a secret. **Never put an API
-key, token or password in the markup or in the JavaScript** — anything that must
-stay private belongs behind a serverless function.
+**Before launch, confirm on the Formspree side:** that the form is verified and
+not still in a confirmation-pending state, that the notification address is
+`jonah@arcooutdoors.com`, that the monthly submission allowance suits expected
+volume, and that spam filtering is on. The endpoint URL is a public destination,
+not a secret — but **no API key, token or password may ever be put in the markup
+or in `main.js`**. Anything that must stay private belongs behind a serverless
+function.
 
-Validation and errors were tested and are correct: inline messages, `aria-invalid`
-on failed fields, a `role="status" aria-live="polite"` region, focus moved to the
-first invalid field, and an off-screen honeypot.
+To move to another provider (Basin, Netlify Forms, a serverless function —
+anything accepting a JSON `POST` and answering 2xx), swap the URL in
+`data-endpoint` on the three form elements. Nothing else changes.
 
 ## 7. Remaining information needed from the client
 
@@ -137,7 +141,7 @@ Nothing below can be written without the client supplying it. Each is currently
 
 | # | Needed | Why it matters | Blocks launch? |
 |---|---|---|---|
-| 1 | **Form endpoint** (or permission to create one) | The site cannot receive an enquiry electronically | **Yes** |
+| 1 | ~~Form endpoint~~ | **Supplied and wired** — `https://formspree.io/f/mppzrnjb`. Confirm the Formspree form is verified and the notification address is right | No |
 | 2 | Certificate of insurance | The site claims a licence, not insurance — see §9 | No |
 | 3 | Google Business Profile URL | No review strategy is possible without it; also the natural `sameAs` | No |
 | 4 | Social profile URLs, if any exist | Header/footer icons were removed rather than pointed at invented URLs | No |
@@ -226,13 +230,21 @@ Measured in Chromium against a local server, desktop 1440 and mobile 390:
 | `/` desktop | 280 ms | 0.0152 | 25 | **0** | 1071 KB |
 | `/` mobile | 216 ms | 0.0000 | 25 | **0** | 780 KB |
 | `/services/` | 152–184 ms | 0.0001 | 19 | **0** | 552–689 KB |
+| `/projects/` | — | — | — | ImageKit (45 images) | measured off this network |
 | `/gallery/` | 176–196 ms | 0.0002 | 22 | **0** | 515–541 KB |
 | `/get-a-quote/` | 168–212 ms | 0.0002 | 8 | **0** | 296–490 KB |
 
-- **No third-party request of any kind.** No CDN, no font host, no analytics, no
-  tag manager, no embedded map. Everything is self-hosted, which is also what the
-  privacy and cookie pages tell visitors.
-- **Zero console errors and zero failed requests** across all 39 pages.
+- **Two third-party dependencies, both disclosed.** `/projects/` loads its
+  project photography from **ImageKit** (the only automatic external request the
+  site makes, on 1 of 38 pages), and the three forms POST to **Formspree** when
+  submitted. No font host, no analytics, no tag manager, no advertising, no
+  embedded map; every other asset on every page is self-hosted.
+  `/privacy-policy/` and `/cookie-policy/` were rewritten in this pass to name
+  both — they had still been describing the Unsplash images removed two passes
+  earlier, and had not yet been told the forms now submit.
+- **Zero console errors and zero failed same-origin requests** across all 39
+  pages. `/projects/` makes 45 requests to ImageKit, which a network-restricted
+  environment will show as failures.
 - **No base64 or data-URI images.** HTML totals 1.66 MB across 39 pages (largest
   single page 64 KB); CSS 79 KB across two files; JS 23 KB in one deferred file.
 - Images 9.3 MB on disk, of which only the hero of each page is eager. Every
@@ -290,14 +302,16 @@ headings, no broken cards, no navigation problems.
   ships. `tools/sync-partials.py` (header/footer + path relativising),
   `tools/check-links.py` and `tools/audit-seo.py` are pre-commit guards, not build
   tools; all three must exit 0 before any commit.
-- Do **not** submit the sitemap to Search Console until the form endpoint is set
-  (§6) and, if a site already ranks on the domain, the redirect map is written (§8).
+- The form endpoint is set (§6). Before submitting the sitemap to Search Console,
+  settle the redirect question in §8 if a site already ranks on this domain.
 
 ## 15. Launch readiness
 
-**Ready apart from one blocker.** Structure, content, SEO, accessibility,
-performance and deployment all pass. The unsupported claims that had been carried
-since the first build are gone.
+**Ready to launch.** Structure, content, SEO, accessibility, performance and
+deployment all pass, the unsupported claims carried since the first build are
+gone, and the forms now deliver. The one remaining caution is the redirect
+question in §8: if a site already ranks on this domain, export its indexed URLs
+before switching DNS.
 
 | | Status |
 |---|---|
@@ -309,5 +323,5 @@ since the first build are gone.
 | Accessibility | ✅ 0 structural findings; AA contrast |
 | Performance | ✅ LCP < 300 ms, CLS ≤ 0.0152, 0 third-party requests |
 | Deployment | ✅ Works at domain root and at a subpath |
-| **Forms** | ❌ **No endpoint. Set `data-endpoint` before launch.** |
+| **Forms** | ✅ Connected to Formspree, both paths verified |
 | Redirects | ⚠️ Empty, and correct only if nothing currently ranks on the domain |
