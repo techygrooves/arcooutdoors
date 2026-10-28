@@ -85,6 +85,12 @@ def main() -> int:
                     f"run tools/sync-partials.py")
                 continue
 
+            # A cache-busting ?v=<hash> is part of the URL the browser asks
+            # for, but not part of the path on disk. Strip it before resolving.
+            url = url.split("?", 1)[0]
+            if not url:
+                continue
+
             target = resolve(page, url)
             if target.exists():
                 continue

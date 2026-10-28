@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-10-28 (pass 21 — the client's real logo replaces the placeholder mark)
+Last updated: 2026-10-28 (pass 22 — asset cache-busting, after a stale-CSS bug on the live host)
 
 ---
 
@@ -194,6 +194,7 @@ the tooling must not become a repository dependency.
   tools/sync-partials.py        ← inserts partials + relativises paths
   tools/check-links.py          ← resolves every link/asset against the disk
   tools/audit-seo.py            ← metadata, headings, JSON-LD, sitemap (§8.7)
+  tools/stamp-assets.py         ← content-hash ?v= on CSS/JS links (§16.6)
   tools/make-og-cards.py        ← regenerates the share cards (build-time only)
   REDIRECTS.md                  ← 301 map; deliberately empty, see the file
   .nojekyll                     ← stops GitHub Pages running Jekyll
@@ -2578,6 +2579,41 @@ marks present as images with non-zero natural width, `alt=""` and
 no 4xx beyond the ImageKit host the sandbox proxy blocks. No horizontal overflow
 at 360 or 390.
 
+### 13.25 Pass 22 — a stale-CSS bug on the live host, and the fix for it
+
+**Reported:** after pass 21 went up, the logo on the live site was squashed
+inside the old gold disc. **Nothing was wrong with the code.**
+
+The host served the **new HTML** with a **cached copy of the old
+`style.css`**, so the previous `.brand__mark` rules were still applied to the
+new `<img>`: `border-radius: 50%` clipped the wreath, the gold radial gradient
+put a disc behind it, and a 52×52 box squashed a 63×52 emblem. Injecting the old
+rules over the current markup locally reproduced the reported screenshot
+exactly, which is what confirmed the diagnosis rather than guessing at it.
+
+**Local testing could never have caught this.** Nothing local is cached, so the
+broken pairing does not exist on `localhost`. It only appears on a host that
+caches CSS independently of HTML — every CDN, and LiteSpeed here.
+
+**Fix: `tools/stamp-assets.py`** stamps `?v=<content hash>` on every stylesheet
+and script link, so new HTML can never ask for a URL a cache might answer with
+old bytes. A hash rather than a hand-bumped number, because a number depends on
+someone remembering and this failure is silent — the page still loads, it just
+looks subtly wrong. `--check` joins the pre-commit guards.
+
+**`check-links.py` had a real gap** that this exposed: it resolved the raw URL
+against disk, so any `?query` would have been reported as a missing file. It now
+strips the query first.
+
+**What the fix does not do:** it cannot clean a cache that is already holding
+old bytes. The immediate remedy on the live site is a cache purge; the stamp
+prevents the next occurrence.
+
+**Verified.** Four guards exit 0. All 38 pages load the stamped CSS and compute
+the *new* brand rules (`border-radius: 0`, 63px wide) — the exact property the
+stale sheet got wrong — with no 4xx beyond the ImageKit host the sandbox blocks.
+Stamping is idempotent.
+
 ## 14. FORMS
 
 Three forms, one controller (`initForms` over `form[data-arco-form]` in
@@ -2822,6 +2858,42 @@ pixels, because `.reveal` transitions were still running when the shot was
 taken. Any visual regression check on this site must set `reduced_motion` **and**
 inject `*{transition:none!important;animation:none!important}` before capturing.
 
+### 16.6 Cache-busting, and the bug that forced it
+
+**Every stylesheet and script link carries `?v=<content hash>`**, stamped by
+`tools/stamp-assets.py`. Run it whenever `assets/css/*.css` or
+`assets/js/*.js` changes; `--check` is a pre-commit guard beside the other
+three.
+
+**What went wrong.** After pass 21 shipped the real logo, the live site showed
+the new emblem squashed inside the old gold disc. Nothing was wrong with the
+code. The host had served the **new HTML** alongside a **cached copy of the old
+`style.css`**, so the previous `.brand__mark` rules — `border-radius: 50%`, a
+gold radial-gradient ground, a 1.5px ring and a 52×52 box — were still being
+applied to the new `<img>`, squashing a 63×52 emblem into a square and clipping
+the wreath. It reproduced exactly when the old rules were injected over the new
+markup locally.
+
+**Why it could not be caught in testing.** Nothing local is cached. The broken
+pairing only exists on a host that caches CSS independently of HTML, which is
+every CDN and, here, LiteSpeed. A visual check on `localhost` will pass forever
+while production is wrong.
+
+**Why a content hash rather than a version number.** A hand-bumped number only
+works if somebody remembers to bump it, and the failure it prevents is silent —
+the page still loads, it just looks subtly wrong, so nothing alerts anyone. A
+hash of the file's own bytes cannot be forgotten: change the CSS and the URL
+changes with it; change nothing and the URL is stable, so the cache still does
+its job.
+
+`check-links.py` strips `?query` before resolving a URL to disk — it is part of
+what the browser requests, not part of the path.
+
+**This does not fix a cache that is already poisoned.** After deploying a CSS
+change, purge the host's cache (on LiteSpeed: *Purge All*). The stamp prevents
+the next occurrence; it cannot reach into a cache that is already holding old
+bytes against a URL the new HTML no longer requests.
+
 ## 17. WHY THE ORIGINAL index.html WAS 4.7 MB
 
 It was not a hand-written page. It was a **Claude Design canvas (`.dc.html`)
@@ -2881,6 +2953,8 @@ repository root is enough to serve it.
 - [ ] `python3 tools/sync-partials.py --check` exits 0
 - [ ] `python3 tools/check-links.py` exits 0
 - [ ] `python3 tools/audit-seo.py` exits 0 (metadata, headings, JSON-LD, sitemap)
+- [ ] `python3 tools/stamp-assets.py --check` exits 0 — CSS/JS changes MUST be
+      restamped, or a caching host will serve new HTML with old CSS (§16.6)
 - [ ] No third-party request of any kind (§16.1) — check the network panel, not the markup
 - [ ] Any new decorative texture is judged on its *composite* at its real opacity (§16.2)
 - [ ] Contrast measured from rendered pixels wherever text sits over a photograph (§15)
