@@ -423,19 +423,15 @@ summary:focus-visible,
 
 .brand { display: flex; align-items: center; gap: 16px; color: inherit; }
 .brand:hover { color: inherit; }
+/* The emblem is gold line-art with a transparent ground, so it carries itself
+   on the sand header and the ink footer alike. The filled gold disc that used
+   to sit behind a typographic "A" was removed with it: gold artwork inside a
+   gold circle is invisible. Width and height are set in the markup too, so the
+   header reserves the space before the image decodes. */
 .brand__mark {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gold-deep);
-  display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 30% 25%, #f6e6c4, #d7ab5a);
-  box-shadow: 0 6px 18px rgba(198, 151, 73, .28);
+  width: 63px; height: 52px;
+  object-fit: contain;
   flex: none;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 28px;
-  color: var(--ink);
-  line-height: 1;
 }
 .brand__text { display: flex; flex-direction: column; line-height: 1; }
 .brand__name {
@@ -1382,15 +1378,8 @@ html:not(.js) .nav__group:focus-within > .nav__panel[hidden] { display: block; }
 
 .footer-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
 .footer-brand__mark {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gold-deep);
-  display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 30% 25%, #f6e6c4, #d7ab5a);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 24px;
-  color: var(--ink);
+  width: 56px; height: 46px;
+  object-fit: contain;
   flex: none;
 }
 .footer-brand__name {

@@ -4,7 +4,7 @@
 repository. Read it before writing any code. Update it whenever a decision,
 route, token, or verified fact changes.**
 
-Last updated: 2026-09-04 (pass 20 — client-confirmed Google reviews published)
+Last updated: 2026-10-28 (pass 21 — the client's real logo replaces the placeholder mark)
 
 ---
 
@@ -149,7 +149,7 @@ the tooling must not become a repository dependency.
 /
   index.html                    ← homepage (live)
   404.html                      ← live
-  robots.txt  sitemap.xml  favicon.svg  PROJECT-SPEC.md
+  robots.txt  sitemap.xml  favicon-32.png  PROJECT-SPEC.md
 
   services/index.html                        ← live (hub)
   services/outdoor-remodeling/index.html     ← live
@@ -593,7 +593,7 @@ The identity is predominantly **square**. Radius is the exception, not the rule.
 | Google pill | `60px` | `0 24px 44px -14px rgba(36,29,21,.3), …` |
 | About image | `0` | `0 30px 60px rgba(36,29,21,.22)` |
 | About badge | `0` | `0 20px 40px rgba(36,29,21,.3)` |
-| Avatars, logo mark, social dots | `50%` | logo `0 6px 18px rgba(198,151,73,.28)` |
+| Avatars, social dots | `50%` | — (the brand mark is artwork now, not a styled disc — §9.14) |
 | Form input | `0` | inset `0 2px 5px rgba(36,29,21,.09)`; focus `0 0 0 3px rgba(198,151,73,.18)` + `--gold-deep` border |
 
 ### 9.5 Spacing & layout
@@ -881,6 +881,46 @@ documented exception to the site-wide "every image carries dimensions" rule.
 45 photographs. Nothing names a city, a service or a material, because none of
 those is verified for any individual image (§11.1). Guessing "pool deck" from a
 photograph is exactly the error §12 item 6 records on the homepage.
+
+### 9.15 Brand marks (pass 21)
+
+The placeholder mark — a gold gradient disc with a typographic "A" — is gone.
+The client's real logo replaces it: a laurel wreath enclosing an "A" set against
+a classical column, in gold.
+
+| Asset | Size | Where |
+|---|---|---|
+| `assets/images/arco-emblem.webp` | 320×264, alpha | header and footer brand marks |
+| `assets/images/arco-outdoors-logo.webp` | 760×495, alpha | JSON-LD `logo` — the full lockup, emblem over the wordmark |
+| `assets/images/apple-touch-icon.png` | 180×180, ink ground | `apple-touch-icon` |
+| `favicon-32.png` | 32×32, ink ground | `rel="icon"` |
+
+**The ground is transparent, recovered rather than keyed out.** The supplied
+artwork is flat gold composited on near-black, so every pixel is `gold × alpha`.
+Dividing the alpha back out of each channel gives clean antialiased edges that
+sit correctly on the sand header *and* the ink footer. Keying out black instead
+would leave a dark fringe on the cream ground. The source ground is `(5,5,5)`,
+not pure black, so the alpha cutoff is 10% — at 1.2% the background survived as
+a 2% ghost tint across the whole rectangle and defeated the tight crop.
+
+**The disc went with the "A".** Gold line-art inside a filled gold circle is
+invisible, so `.brand__mark` and `.footer-brand__mark` are now plain `<img>`
+with `object-fit: contain` and no background, border or shadow. Both carry
+`width`/`height` in the markup so the header reserves its space before decode.
+Both are `alt="" aria-hidden="true"`: the wordmark beside them is live text, so
+the emblem is decorative and announcing it would duplicate the brand name.
+
+**The favicon is the A and column only, not the whole emblem.** The wreath turns
+to mush below about 48px. The glyph sits at `x 555–845, y 635–935` in the source
+— measured from row and column ink profiles, because a loose "centre region"
+crop pulled in laurel fragments. A connected-component pass then drops anything
+under 400px, which removes a leaf tip that clips the corner of any rectangle
+tight enough to hold the glyph; nudging the crop inward instead would shave the
+A's swash. Both icons sit on the ink ground, which is the logo's native
+presentation and the only one legible against light and dark browser chrome.
+
+**Regenerating:** `tools/make-brand-assets.py` from the repository root. Build
+time only; needs Pillow.
 
 ## 10. SEO RULES
 
@@ -2488,6 +2528,55 @@ reassembling it, and by asserting the tag counts balance before writing. And the
 `.u-gap-30` utility was first appended to `style.css`; it belongs in the
 `pages.css` layer with the others (§16.5), where the load order is what makes
 the layer work.
+
+### 13.24 Pass 21 — the client's real logo replaces the placeholder mark
+
+The header and footer had carried a placeholder since pass 1: a gold gradient
+disc with a typographic "A". The client supplied the real logo — a laurel wreath
+enclosing an "A" set against a classical column — and it is now the mark
+everywhere, including the favicon, the Apple touch icon and the JSON-LD `logo`.
+Full asset table and reasoning in §9.15.
+
+**The ground was recovered, not keyed out.** The artwork arrived as flat gold
+composited on near-black with no alpha channel. Every pixel is therefore
+`gold × alpha`, so dividing alpha back out of each channel reconstructs clean
+antialiased edges. That matters because this one asset has to sit on the sand
+header *and* the ink footer: a black key would have left a dark fringe on cream.
+
+**Three things the measurements caught that assumption would not:**
+
+1. *The ground is `(5,5,5)`, not `#000`.* At a 1.2% alpha cutoff the background
+   survived as a 2% ghost tint across the whole rectangle — invisible, but it
+   defeated `getbbox()` and left the emblem reported as 1064×511 instead of its
+   true 619×511. Raised to 10%.
+2. *A favicon cannot be the whole emblem.* The wreath turns to mush below about
+   48px, so the icons use the A and column alone, located at `x 555–845,
+   y 635–935` by row and column ink profiles. A loose "centre region" crop tried
+   first and pulled in laurel fragments that showed plainly at 180px.
+3. *A leaf tip clips the corner of any rectangle tight enough to hold the
+   glyph.* Dropping connected components under 400px removes it; nudging the
+   crop inward instead would have shaved the A's swash.
+
+**The disc went with the "A".** Gold line-art inside a filled gold circle is
+invisible, so `.brand__mark` and `.footer-brand__mark` lost their background,
+border and shadow and became plain `<img>` with `object-fit: contain`. Both keep
+`width`/`height` in the markup so the header still reserves its space before the
+image decodes — the mark sits above the fold on every page and a late reflow
+there would be the site's largest layout shift.
+
+**`favicon.svg` and `arco-outdoors-logo.svg` were deleted**, and all 39 pages
+repointed. Leaving the old SVG favicon in place would have shown the superseded
+mark in any browser that prefers SVG — the inconsistency would have been
+invisible in testing and obvious to a visitor.
+
+**`tools/make-brand-assets.py`** regenerates all four assets from the source
+artwork, and was verified to reproduce the committed files byte for byte.
+
+**Verified.** Three guards exit 0. All 38 pages at both mount points: brand
+marks present as images with non-zero natural width, `alt=""` and
+`aria-hidden="true"`, every icon and logo URL returning 200, no broken image and
+no 4xx beyond the ImageKit host the sandbox proxy blocks. No horizontal overflow
+at 360 or 390.
 
 ## 14. FORMS
 
